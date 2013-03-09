@@ -81,6 +81,7 @@ public class TileMapRenderer {
     {
         Sprite player = map.getPlayer();
         int mapWidth = tilesToPixels(map.getWidth());
+        int mapHeight = tilesToPixels(map.getHeight());
 
         // get the scrolling position of the map
         // based on player's position
@@ -90,8 +91,10 @@ public class TileMapRenderer {
         offsetX = Math.max(offsetX, screenWidth - mapWidth);
 
         // get the y offset to draw all sprites and tiles
-        int offsetY = screenHeight -
-            tilesToPixels(map.getHeight());
+        int offsetY = screenHeight / 2 -
+                Math.round(player.getY()) - TILE_SIZE;
+            offsetY = Math.min(offsetY, 0);
+            offsetY = Math.max(offsetY, screenHeight - mapHeight);
 
         // draw black background, if needed
         if (background == null ||
@@ -106,7 +109,9 @@ public class TileMapRenderer {
             int x = offsetX *
                 (screenWidth - background.getWidth(null)) /
                 (screenWidth - mapWidth);
-            int y = screenHeight - background.getHeight(null);
+            int y = offsetY *
+                    (screenHeight - background.getHeight(null)) /
+                    (screenHeight - mapHeight);
 
             g.drawImage(background, x, y, null);
         }
@@ -117,6 +122,21 @@ public class TileMapRenderer {
             pixelsToTiles(screenWidth) + 1;
         for (int y=0; y<map.getHeight(); y++) {
             for (int x=firstTileX; x <= lastTileX; x++) {
+                Image image = map.getTile(x, y);
+                if (image != null) {
+                    g.drawImage(image,
+                        tilesToPixels(x) + offsetX,
+                        tilesToPixels(y) + offsetY,
+                        null);
+                }
+            }
+        }
+        
+        int firstTileY = pixelsToTiles(-offsetY);
+        int lastTileY = firstTileY +
+            pixelsToTiles(screenHeight) + 1;
+        for (int y=0; y<map.getWidth(); y++) {
+            for (int x=firstTileY; x <= lastTileY; x++) {
                 Image image = map.getTile(x, y);
                 if (image != null) {
                     g.drawImage(image,
