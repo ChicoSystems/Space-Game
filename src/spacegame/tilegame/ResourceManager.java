@@ -2,6 +2,7 @@ package spacegame.tilegame;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
@@ -47,8 +48,21 @@ public class ResourceManager {
     */
     public Image loadImage(String name) {
         String filename = "images/" + name;
-        return new ImageIcon(filename).getImage();
+        ImageIcon icon = new ImageIcon(filename);
+        return icon.getImage();
+       // return new ImageIcon(filename).getImage();
     }
+    
+    /*private Image resizeImage(Image originalImage, int img_width, int img_height)
+		{
+    		BufferedImage bi = new BufferedImage(originalImage.getWidth(null), originalImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+    		Graphics g = bi.createGraphics();
+    		g.drawImage(originalImage, 0, 0, img_width, img_height, null);
+    		ImageIcon newIcon = new ImageIcon(bi);
+			g.dispose();
+			
+			return newIcon.getImage();
+		}*/
 
 
     public Image getMirrorImage(Image image) {
@@ -58,6 +72,30 @@ public class ResourceManager {
 
     public Image getFlippedImage(Image image) {
         return getScaledImage(image, 1, -1);
+    }
+    
+    public Image getHalfSizedImage(Image image){
+    	AffineTransform transform = new AffineTransform();
+    	transform.scale(.5, .5);
+    	transform.translate(.5, .5);
+    	
+    	 // create a transparent (not translucent) image
+        Image newImage = gc.createCompatibleImage(
+            image.getWidth(null),
+            image.getHeight(null),
+            Transparency.BITMASK);
+
+        // draw the transformed image
+        Graphics2D g = (Graphics2D)newImage.getGraphics();
+        g.drawImage(image, transform, null);
+        g.dispose();
+        
+        System.out.println("old: " + image.getWidth(null) + " : " + image.getHeight(null));
+        System.out.println("new: " + newImage.getWidth(null) + " : " + newImage.getHeight(null));
+
+        return newImage;
+    	
+    
     }
 
 
@@ -180,8 +218,9 @@ public class ResourceManager {
         // add the player to the map
         Sprite player = (Sprite)playerSprite.clone();
         player.setX(TileMapRenderer.tilesToPixels(3));
-        player.setY(0);
+        player.setY(2);
         newMap.setPlayer(player);
+        System.out.println(player.toString() + " " + player.getWidth() + " " + player.getHeight());
 
         return newMap;
     }
@@ -227,6 +266,7 @@ public class ResourceManager {
             if (!file.exists()) {
                 break;
             }
+           
             tiles.add(loadImage(name));
             ch++;
         }
@@ -239,9 +279,9 @@ public class ResourceManager {
 
         // load left-facing images
         images[0] = new Image[] {
-            loadImage("player1.png"),
-            loadImage("player2.png"),
-            loadImage("player3.png"),
+        	getHalfSizedImage(loadImage("player1.png")),
+        	getHalfSizedImage(loadImage("player2.png")),
+        	getHalfSizedImage(loadImage("player3.png")),
             loadImage("fly1.png"),
             loadImage("fly2.png"),
             loadImage("fly3.png"),
