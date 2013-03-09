@@ -81,8 +81,8 @@ public class ResourceManager {
     	
     	 // create a transparent (not translucent) image
         Image newImage = gc.createCompatibleImage(
-            image.getWidth(null),
-            image.getHeight(null),
+            image.getWidth(null)/2,
+            image.getHeight(null)/2,
             Transparency.BITMASK);
 
         // draw the transformed image
