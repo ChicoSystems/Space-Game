@@ -118,6 +118,7 @@ public class TileMapRenderer {
 
         // draw the visible tiles
         int firstTileX = pixelsToTiles(-offsetX);
+        //System.out.println(firstTileX);
         int lastTileX = firstTileX +
             pixelsToTiles(screenWidth) + 1;
         for (int y=0; y<map.getHeight(); y++) {
