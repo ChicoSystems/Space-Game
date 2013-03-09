@@ -267,7 +267,7 @@ public class ResourceManager {
                 break;
             }
            
-            tiles.add(loadImage(name));
+            tiles.add(getHalfSizedImage(loadImage(name)));
             ch++;
         }
     }
@@ -282,11 +282,11 @@ public class ResourceManager {
         	getHalfSizedImage(loadImage("player1.png")),
         	getHalfSizedImage(loadImage("player2.png")),
         	getHalfSizedImage(loadImage("player3.png")),
-            loadImage("fly1.png"),
-            loadImage("fly2.png"),
-            loadImage("fly3.png"),
-            loadImage("grub1.png"),
-            loadImage("grub2.png"),
+        	getHalfSizedImage(loadImage("fly1.png")),
+        	getHalfSizedImage(loadImage("fly2.png")),
+        	getHalfSizedImage(loadImage("fly3.png")),
+        	getHalfSizedImage(loadImage("grub1.png")),
+        	getHalfSizedImage(loadImage("grub2.png")),
         };
 
         images[1] = new Image[images[0].length];
@@ -361,26 +361,26 @@ public class ResourceManager {
     private void loadPowerUpSprites() {
         // create "goal" sprite
         Animation anim = new Animation();
-        anim.addFrame(loadImage("heart1.png"), 150);
-        anim.addFrame(loadImage("heart2.png"), 150);
-        anim.addFrame(loadImage("heart3.png"), 150);
-        anim.addFrame(loadImage("heart2.png"), 150);
+        anim.addFrame(getHalfSizedImage(loadImage("heart1.png")), 150);
+        anim.addFrame(getHalfSizedImage(loadImage("heart2.png")), 150);
+        anim.addFrame(getHalfSizedImage(loadImage("heart3.png")), 150);
+        anim.addFrame(getHalfSizedImage(loadImage("heart2.png")), 150);
         goalSprite = new PowerUp.Goal(anim);
 
         // create "star" sprite
         anim = new Animation();
-        anim.addFrame(loadImage("star1.png"), 100);
-        anim.addFrame(loadImage("star2.png"), 100);
-        anim.addFrame(loadImage("star3.png"), 100);
-        anim.addFrame(loadImage("star4.png"), 100);
+        anim.addFrame(getHalfSizedImage(loadImage("star1.png")), 100);
+        anim.addFrame(getHalfSizedImage(loadImage("star2.png")), 100);
+        anim.addFrame(getHalfSizedImage(loadImage("star3.png")), 100);
+        anim.addFrame(getHalfSizedImage(loadImage("star4.png")), 100);
         coinSprite = new PowerUp.Star(anim);
 
         // create "music" sprite
         anim = new Animation();
-        anim.addFrame(loadImage("music1.png"), 150);
-        anim.addFrame(loadImage("music2.png"), 150);
-        anim.addFrame(loadImage("music3.png"), 150);
-        anim.addFrame(loadImage("music2.png"), 150);
+        anim.addFrame(getHalfSizedImage(loadImage("music1.png")), 150);
+        anim.addFrame(getHalfSizedImage(loadImage("music2.png")), 150);
+        anim.addFrame(getHalfSizedImage(loadImage("music3.png")), 150);
+        anim.addFrame(getHalfSizedImage(loadImage("music2.png")), 150);
         musicSprite = new PowerUp.Music(anim);
     }
 
