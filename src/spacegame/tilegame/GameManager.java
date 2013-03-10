@@ -380,16 +380,14 @@ public class GameManager extends GameCore {
             if(rotation < 0){
             	rotation = rotation + 360;
             }
-            
+       
             rotation = rotation + 90;
-           // rotation += 90;
-            
-           // if(rotation <= 0){
-            //	rotation = 360 - rotation;
-            //}
             rotation %= 360;
+            if((dx == 0) && (dy == 0)){
+            	rotation = creature.getRotation(); // keeps from reseting rotation when velocity is 0
+            }
             
-            System.out.println("xVel: " + dx + " yVel: " + dy + " Rot: " + rotation);
+           // System.out.println("xVel: " + dx + " yVel: " + dy + " Rot: " + rotation);
             ((Player)creature).setRotation(rotation);
         }
         
