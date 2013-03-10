@@ -1,10 +1,15 @@
 package spacegame.tilegame.sprites;
 
+import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+
+import javax.swing.ImageIcon;
 
 import spacegame.graphics.*;
 
@@ -151,18 +156,27 @@ public abstract class Creature extends Sprite {
     	rotation = rot;
     }
     
+    /*
     public Animation rotateAnimation(Animation anim, double rot){
+    	System.out.println("Rotating: " + rot);
     	Animation newAnim = (Animation) anim.clone();
-    	ArrayList oldFrames = newAnim.getFrames();
-    	ArrayList newFrames = new ArrayList();
+    	ArrayList <AnimFrame> oldFrames = anim.getFrames();
+    	ArrayList <AnimFrame> newFrames = new ArrayList<AnimFrame>();
+    	
     	for(int i = 0; i < oldFrames.size(); i++){
-    		newFrames.add(rotateImage(oldFrames.get(i)));
+    		AnimFrame oldAnimFrame = oldFrames.get(i);
+	    		Image oldImage = oldFrames.get(i).image;
+	    		Image newImage = rotateImage(oldImage, rot);
+    		AnimFrame newAnimFrame = new AnimFrame(newImage, oldAnimFrame.endTime);
+    		newFrames.add(newAnimFrame);
     	}
     	newAnim.setFrames(newFrames);
     	return newAnim;
     }
     
-    public Image rotateImage(Image rotateImage) {
+    public Image rotateImage(Image img, double rot) {
+    	BufferedImage rotateImage = (BufferedImage)img;
+    		
     	AffineTransformOp op = null;
     	 
     	try {
@@ -170,7 +184,7 @@ public abstract class Creature extends Sprite {
     	   AffineTransform tx = new AffineTransform();
     	 
     	   //Rotate 90º
-    	   tx.rotate(Math.toRadians(90), rotateImage.getWidth(null)
+    	   tx.rotate(Math.toRadians(rot), rotateImage.getWidth(null)
     	              / 2.0, rotateImage.getHeight(null) / 2.0);
     	 
     	   AffineTransform translationTransform;
@@ -183,9 +197,30 @@ public abstract class Creature extends Sprite {
     	   } catch (Exception e) {
     	      //Do something here
     	   }
-    	 
-    	   return op.filter(rotateImage, null);
+    		
+    	
+    	   return (Image)rotateImage;
     	}
+    
+    private AffineTransform findTranslation(AffineTransform at, BufferedImage bi) {
+    	   Point2D p2din, p2dout;
+    	 
+    	   p2din = new Point2D.Double(0.0, 0.0);
+    	   p2dout = at.transform(p2din, null);
+    	   double ytrans = p2dout.getY();
+    	 
+    	   p2din = new Point2D.Double(0, bi.getHeight());
+    	   p2dout = at.transform(p2din, null);
+    	   double xtrans = p2dout.getX();
+    	 
+    	   AffineTransform tat = new AffineTransform();
+    	   tat.translate(-xtrans, -ytrans);
+    	 
+    	   return tat;
+    	}
+    
+    */
+    
 
 
     /**
@@ -196,7 +231,7 @@ public abstract class Creature extends Sprite {
     	
         // select the correct Animation
         Animation newAnim = anim;
-        newAnim = rotateAnimation((Animation)left.clone(), rotation);
+        //newAnim = rotateAnimation((Animation)left, rotation);
 
         // update the Animation
         if (anim != newAnim) {
