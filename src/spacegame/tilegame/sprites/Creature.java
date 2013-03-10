@@ -26,6 +26,7 @@ public abstract class Creature extends Sprite {
     private Animation deadRight;
     private int state;
     private long stateTime;
+    private int rotation;
 
     /**
         Creates a new Creature with the specified Animations.
@@ -136,6 +137,14 @@ public abstract class Creature extends Sprite {
     */
     public void collideVertical() {
         setVelocityY(0);
+    }
+    
+    public int getRotation(){
+    	return rotation;
+    }
+    
+    public void setRotation(int rot){
+    	rotation = rot;
     }
 
 
