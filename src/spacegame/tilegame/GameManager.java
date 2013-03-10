@@ -375,7 +375,25 @@ public class GameManager extends GameCore {
         if (creature instanceof Player) {
             boolean canKill = (oldY < creature.getY());
             checkPlayerCollision((Player)creature, canKill);
+            double rotation = Math.atan2(dy, dx);
+            rotation = Math.toDegrees(rotation);
+            if(rotation < 0){
+            	rotation = rotation + 360;
+            }
+            
+            rotation = rotation + 90;
+           // rotation += 90;
+            
+           // if(rotation <= 0){
+            //	rotation = 360 - rotation;
+            //}
+            rotation %= 360;
+            
+            System.out.println("xVel: " + dx + " yVel: " + dy + " Rot: " + rotation);
+            ((Player)creature).setRotation(rotation);
         }
+        
+        
 
     }
 

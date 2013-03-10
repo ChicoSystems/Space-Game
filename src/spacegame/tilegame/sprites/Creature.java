@@ -38,7 +38,7 @@ public abstract class Creature extends Sprite {
     Animation[] creatureAnim = new Animation[360];
     private int state;
     private long stateTime;
-    private double rotation;
+    private double rotation = 0;
 
     /**
         Creates a new Creature with the specified Animations.
@@ -172,12 +172,14 @@ public abstract class Creature extends Sprite {
         Updates the animaton for this creature.
     */
     public void update(long elapsedTime) {
-    	rotation = Math.atan2(this.getVelocityX(), this.getVelocityY());
+    	//rotation = Math.atan2(this.getVelocityX(), this.getVelocityY());
     	
         // select the correct Animation
         Animation newAnim = anim;
         //newAnim = rotateAnimation((Animation)left, rotation);
-
+        //System.out.println("x: " + this.getVelocityX() + " y: " + this.getVelocityY());
+        //newAnim = creatureAnim[(int) (Math.toDegrees(rotation)-1)];
+        newAnim = creatureAnim[(int)rotation];
         // update the Animation
         if (anim != newAnim) {
             anim = newAnim;
