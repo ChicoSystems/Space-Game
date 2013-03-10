@@ -279,9 +279,10 @@ public class ResourceManager {
 
         // load left-facing images
         images[0] = new Image[] {
-        	getHalfSizedImage(loadImage("player1.png")),
-        	getHalfSizedImage(loadImage("player2.png")),
-        	getHalfSizedImage(loadImage("player3.png")),
+        	getHalfSizedImage(loadImage("1ship1.png")),
+        	getHalfSizedImage(loadImage("1ship2.png")),
+        	getHalfSizedImage(loadImage("1ship3.png")),
+        	getHalfSizedImage(loadImage("1ship4.png")),
         	getHalfSizedImage(loadImage("fly1.png")),
         	getHalfSizedImage(loadImage("fly2.png")),
         	getHalfSizedImage(loadImage("fly3.png")),
@@ -307,11 +308,11 @@ public class ResourceManager {
         Animation[] grubAnim = new Animation[4];
         for (int i=0; i<4; i++) {
             playerAnim[i] = createPlayerAnim(
-                images[i][0], images[i][1], images[i][2]);
+                images[i][0], images[i][1], images[i][2], images[i][3]);
             flyAnim[i] = createFlyAnim(
-                images[i][3], images[i][4], images[i][5]);
+                images[i][4], images[i][5], images[i][6]);
             grubAnim[i] = createGrubAnim(
-                images[i][6], images[i][7]);
+                images[i][7], images[i][8]);
         }
 
         // create creature sprites
@@ -325,7 +326,7 @@ public class ResourceManager {
 
 
     private Animation createPlayerAnim(Image player1,
-        Image player2, Image player3)
+        Image player2, Image player3, Image player4)
     {
         Animation anim = new Animation();
         anim.addFrame(player1, 250);
@@ -334,6 +335,7 @@ public class ResourceManager {
         anim.addFrame(player2, 150);
         anim.addFrame(player3, 200);
         anim.addFrame(player2, 150);
+        anim.addFrame(player4, 150);
         return anim;
     }
 
