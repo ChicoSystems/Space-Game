@@ -59,6 +59,18 @@ public class Animation {
         animTime = 0;
         currFrameIndex = 0;
     }
+    
+    public int getNumFrames(){
+    	return frames.size();
+    }
+    
+    public void setFrames(ArrayList f){
+    	frames = f;
+    }
+    
+    public ArrayList getFrames(){
+    	return frames;
+    }
 
 
     /**
