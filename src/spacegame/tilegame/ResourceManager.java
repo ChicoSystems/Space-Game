@@ -2,6 +2,8 @@ package spacegame.tilegame;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
@@ -79,6 +81,7 @@ public class ResourceManager {
     	transform.scale(.5, .5);
     	transform.translate(.5, .5);
     	
+    	
     	 // create a transparent (not translucent) image
         Image newImage = gc.createCompatibleImage(
             image.getWidth(null)/2,
@@ -92,11 +95,66 @@ public class ResourceManager {
         
         System.out.println("old: " + image.getWidth(null) + " : " + image.getHeight(null));
         System.out.println("new: " + newImage.getWidth(null) + " : " + newImage.getHeight(null));
+        newImage = rotateImage(newImage, 95);
+        return newImage;
+    }
+    
+    
+    public Animation rotateAnimation(Animation anim, double rot){
+    	System.out.println("Rotating: " + rot);
+    	Animation newAnim = (Animation) anim.clone();
+    	ArrayList <AnimFrame> oldFrames = anim.getFrames();
+    	ArrayList <AnimFrame> newFrames = new ArrayList<AnimFrame>();
+    	
+    	for(int i = 0; i < oldFrames.size(); i++){
+    		AnimFrame oldAnimFrame = oldFrames.get(i);
+	    		Image oldImage = oldFrames.get(i).image;
+	    		Image newImage = rotateImage(oldImage, rot);
+    		AnimFrame newAnimFrame = new AnimFrame(newImage, oldAnimFrame.endTime);
+    		newFrames.add(newAnimFrame);
+    	}
+    	newAnim.setFrames(newFrames);
+    	return newAnim;
+    }
+    
+    public Image rotateImage(Image image, double rot) {
+    	// set up the transform
+        AffineTransform transform = new AffineTransform();
+        transform.rotate(rot, image.getWidth(null)/2, image.getWidth(null)/2);
+       
+
+        // create a transparent (not translucent) image
+        Image newImage = gc.createCompatibleImage(
+            image.getWidth(null),
+            image.getHeight(null),
+            Transparency.BITMASK);
+
+        // draw the transformed image
+        Graphics2D g = (Graphics2D)newImage.getGraphics();
+        g.drawImage(image, transform, null);
+        g.dispose();
 
         return newImage;
-    	
+    	}
     
-    }
+    private AffineTransform findTranslation(AffineTransform at, BufferedImage bi) {
+    	   Point2D p2din, p2dout;
+    	 
+    	   p2din = new Point2D.Double(0.0, 0.0);
+    	   p2dout = at.transform(p2din, null);
+    	   double ytrans = p2dout.getY();
+    	 
+    	   p2din = new Point2D.Double(0, bi.getHeight());
+    	   p2dout = at.transform(p2din, null);
+    	   double xtrans = p2dout.getX();
+    	 
+    	   AffineTransform tat = new AffineTransform();
+    	   tat.translate(-xtrans, -ytrans);
+    	 
+    	   return tat;
+    	}
+    
+    
 
 
     private Image getScaledImage(Image image, float x, float y) {
