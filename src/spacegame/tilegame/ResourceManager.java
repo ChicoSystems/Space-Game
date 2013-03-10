@@ -95,7 +95,7 @@ public class ResourceManager {
         
         System.out.println("old: " + image.getWidth(null) + " : " + image.getHeight(null));
         System.out.println("new: " + newImage.getWidth(null) + " : " + newImage.getHeight(null));
-        newImage = rotateImage(newImage, 95);
+        //newImage = rotateImage(newImage, 95);
         return newImage;
     }
     
@@ -333,7 +333,7 @@ public class ResourceManager {
 
     public void loadCreatureSprites() {
 
-        Image[][] images = new Image[4][];
+        Image[][] images = new Image[360][];
 
         // load left-facing images
         images[0] = new Image[] {
@@ -348,36 +348,53 @@ public class ResourceManager {
         	getHalfSizedImage(loadImage("grub2.png")),
         };
 
+        /*
         images[1] = new Image[images[0].length];
         images[2] = new Image[images[0].length];
         images[3] = new Image[images[0].length];
-        for (int i=0; i<images[0].length; i++) {
+        */
+        for(int i = 1; i < 360; i++){
+        	images[i] = new Image[images[0].length];
+        }
+        /*for (int i=0; i<images[0].length; i++) {
             // right-facing images
             images[1][i] = getMirrorImage(images[0][i]);
             // left-facing "dead" images
             images[2][i] = getFlippedImage(images[0][i]);
             // right-facing "dead" images
             images[3][i] = getFlippedImage(images[1][i]);
+        }*/
+        
+        for(int j = 0; j < 360; j++){
+        	for(int i = 0; i<images[j].length; i++){
+        		System.out.println("j: " + j + " i: " + i);
+        		
+        		images[j][i] = rotateImage(images[0][i], Math.toRadians(j+1));
+        	}
         }
 
         // create creature animations
-        Animation[] playerAnim = new Animation[4];
-        Animation[] flyAnim = new Animation[4];
-        Animation[] grubAnim = new Animation[4];
-        for (int i=0; i<4; i++) {
-            playerAnim[i] = createPlayerAnim(
-                images[i][0], images[i][1], images[i][2], images[i][3]);
-            flyAnim[i] = createFlyAnim(
-                images[i][4], images[i][5], images[i][6]);
-            grubAnim[i] = createGrubAnim(
-                images[i][7], images[i][8]);
+        Animation[] playerAnim = new Animation[360];
+        Animation[] flyAnim = new Animation[360];
+        Animation[] grubAnim = new Animation[360];
+        for (int j=0; j<360; j++) {
+            playerAnim[j] = createPlayerAnim(
+                images[j][0], images[j][1], images[j][2], images[j][3]);
+            
+            flyAnim[j] = createFlyAnim(
+                images[j][4], images[j][5], images[j][6]);
+            
+            grubAnim[j] = createGrubAnim(
+                images[j][7], images[j][8]);
         }
 
         // create creature sprites
         playerSprite = new Player(playerAnim[0], playerAnim[1],
             playerAnim[2], playerAnim[3]);
+        
         flySprite = new Fly(flyAnim[0], flyAnim[1],
             flyAnim[2], flyAnim[3]);
+        
         grubSprite = new Grub(grubAnim[0], grubAnim[1],
             grubAnim[2], grubAnim[3]);
     }
