@@ -29,10 +29,13 @@ public abstract class Creature extends Sprite {
     public static final int STATE_DYING = 1;
     public static final int STATE_DEAD = 2;
 
+    /*
     private Animation left;
     private Animation right;
     private Animation deadLeft;
     private Animation deadRight;
+    */
+    Animation[] creatureAnim = new Animation[360];
     private int state;
     private long stateTime;
     private double rotation;
@@ -40,14 +43,17 @@ public abstract class Creature extends Sprite {
     /**
         Creates a new Creature with the specified Animations.
     */
-    public Creature(Animation left, Animation right,
-        Animation deadLeft, Animation deadRight)
+    public Creature(Animation[] anim/*Animation left, Animation right,
+        Animation deadLeft, Animation deadRight*/)
     {
-        super(right);
+        super(anim[0]);
+        this.creatureAnim = anim;
+        /*
+         * super(right);
         this.left = left;
         this.right = right;
         this.deadLeft = deadLeft;
-        this.deadRight = deadRight;
+        this.deadRight = deadRight;*/
         state = STATE_NORMAL;
     }
 
@@ -57,10 +63,12 @@ public abstract class Creature extends Sprite {
         Constructor constructor = getClass().getConstructors()[0];
         try {
             return constructor.newInstance(new Object[] {
+            		/*
                 (Animation)left.clone(),
                 (Animation)right.clone(),
                 (Animation)deadLeft.clone(),
-                (Animation)deadRight.clone()
+                (Animation)deadRight.clone()*/
+            		creatureAnim.clone()
             });
         }
         catch (Exception ex) {
