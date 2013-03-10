@@ -1,6 +1,10 @@
 package spacegame.tilegame.sprites;
 
+import java.awt.Image;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 
 import spacegame.graphics.*;
 
@@ -26,7 +30,7 @@ public abstract class Creature extends Sprite {
     private Animation deadRight;
     private int state;
     private long stateTime;
-    private int rotation;
+    private double rotation;
 
     /**
         Creates a new Creature with the specified Animations.
@@ -139,33 +143,60 @@ public abstract class Creature extends Sprite {
         setVelocityY(0);
     }
     
-    public int getRotation(){
+    public double getRotation(){
     	return rotation;
     }
     
-    public void setRotation(int rot){
+    public void setRotation(double rot){
     	rotation = rot;
     }
+    
+    public Animation rotateAnimation(Animation anim, double rot){
+    	Animation newAnim = (Animation) anim.clone();
+    	ArrayList oldFrames = newAnim.getFrames();
+    	ArrayList newFrames = new ArrayList();
+    	for(int i = 0; i < oldFrames.size(); i++){
+    		newFrames.add(rotateImage(oldFrames.get(i)));
+    	}
+    	newAnim.setFrames(newFrames);
+    	return newAnim;
+    }
+    
+    public Image rotateImage(Image rotateImage) {
+    	AffineTransformOp op = null;
+    	 
+    	try {
+    	 
+    	   AffineTransform tx = new AffineTransform();
+    	 
+    	   //Rotate 90º
+    	   tx.rotate(Math.toRadians(90), rotateImage.getWidth(null)
+    	              / 2.0, rotateImage.getHeight(null) / 2.0);
+    	 
+    	   AffineTransform translationTransform;
+    	   translationTransform = findTranslation(tx, rotateImage);
+    	 
+    	   tx.preConcatenate(translationTransform);
+    	 
+    	   op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
+    	 
+    	   } catch (Exception e) {
+    	      //Do something here
+    	   }
+    	 
+    	   return op.filter(rotateImage, null);
+    	}
 
 
     /**
         Updates the animaton for this creature.
     */
     public void update(long elapsedTime) {
+    	rotation = Math.atan2(this.getVelocityX(), this.getVelocityY());
+    	
         // select the correct Animation
         Animation newAnim = anim;
-        if (getVelocityX() < 0) {
-            newAnim = left;
-        }
-        else if (getVelocityX() > 0) {
-            newAnim = right;
-        }
-        if (state == STATE_DYING && newAnim == left) {
-            newAnim = deadLeft;
-        }
-        else if (state == STATE_DYING && newAnim == right) {
-            newAnim = deadRight;
-        }
+        newAnim = rotateAnimation((Animation)left.clone(), rotation);
 
         // update the Animation
         if (anim != newAnim) {
