@@ -156,70 +156,7 @@ public abstract class Creature extends Sprite {
     	rotation = rot;
     }
     
-    /*
-    public Animation rotateAnimation(Animation anim, double rot){
-    	System.out.println("Rotating: " + rot);
-    	Animation newAnim = (Animation) anim.clone();
-    	ArrayList <AnimFrame> oldFrames = anim.getFrames();
-    	ArrayList <AnimFrame> newFrames = new ArrayList<AnimFrame>();
-    	
-    	for(int i = 0; i < oldFrames.size(); i++){
-    		AnimFrame oldAnimFrame = oldFrames.get(i);
-	    		Image oldImage = oldFrames.get(i).image;
-	    		Image newImage = rotateImage(oldImage, rot);
-    		AnimFrame newAnimFrame = new AnimFrame(newImage, oldAnimFrame.endTime);
-    		newFrames.add(newAnimFrame);
-    	}
-    	newAnim.setFrames(newFrames);
-    	return newAnim;
-    }
-    
-    public Image rotateImage(Image img, double rot) {
-    	BufferedImage rotateImage = (BufferedImage)img;
-    		
-    	AffineTransformOp op = null;
-    	 
-    	try {
-    	 
-    	   AffineTransform tx = new AffineTransform();
-    	 
-    	   //Rotate 90º
-    	   tx.rotate(Math.toRadians(rot), rotateImage.getWidth(null)
-    	              / 2.0, rotateImage.getHeight(null) / 2.0);
-    	 
-    	   AffineTransform translationTransform;
-    	   translationTransform = findTranslation(tx, rotateImage);
-    	 
-    	   tx.preConcatenate(translationTransform);
-    	 
-    	   op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-    	 
-    	   } catch (Exception e) {
-    	      //Do something here
-    	   }
-    		
-    	
-    	   return (Image)rotateImage;
-    	}
-    
-    private AffineTransform findTranslation(AffineTransform at, BufferedImage bi) {
-    	   Point2D p2din, p2dout;
-    	 
-    	   p2din = new Point2D.Double(0.0, 0.0);
-    	   p2dout = at.transform(p2din, null);
-    	   double ytrans = p2dout.getY();
-    	 
-    	   p2din = new Point2D.Double(0, bi.getHeight());
-    	   p2dout = at.transform(p2din, null);
-    	   double xtrans = p2dout.getX();
-    	 
-    	   AffineTransform tat = new AffineTransform();
-    	   tat.translate(-xtrans, -ytrans);
-    	 
-    	   return tat;
-    	}
-    
-    */
+   
     
 
 
