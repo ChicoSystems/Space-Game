@@ -32,6 +32,7 @@ public class ResourceManager {
     private Sprite goalSprite;
     private Sprite grubSprite;
     private Sprite flySprite;
+    private Sprite planetSprite;
 
     /**
         Creates a new ResourceManager with the specified
@@ -270,6 +271,9 @@ public class ResourceManager {
                 else if (ch == '2') {
                     addSprite(newMap, flySprite, x, y);
                 }
+                else if (ch == 'p') {
+                    addSprite(newMap, planetSprite, x, y);
+                }
             }
         }
 
@@ -346,6 +350,7 @@ public class ResourceManager {
         	getHalfSizedImage(loadImage("fly3.png")),
         	getHalfSizedImage(loadImage("grub1.png")),
         	getHalfSizedImage(loadImage("grub2.png")),
+        	getHalfSizedImage(loadImage("planet1.png")),
         };
 
         /*
@@ -377,6 +382,7 @@ public class ResourceManager {
         Animation[] playerAnim = new Animation[360];
         Animation[] flyAnim = new Animation[360];
         Animation[] grubAnim = new Animation[360];
+        Animation[] planetAnim = new Animation[360];
         for (int j=0; j<360; j++) {
             playerAnim[j] = createPlayerAnim(
                 images[j][0], images[j][1], images[j][2], images[j][3]);
@@ -386,12 +392,16 @@ public class ResourceManager {
             
             grubAnim[j] = createGrubAnim(
                 images[j][7], images[j][8]);
+            
+            planetAnim[j] = createPlanetAnim(images[j][9]);
         }
 
         // create creature sprites
         playerSprite = new Player(playerAnim);
         
         flySprite = new Fly(flyAnim);
+        
+        planetSprite = new Planet(planetAnim);
         
         grubSprite = new Grub(grubAnim);
     }
@@ -410,6 +420,13 @@ public class ResourceManager {
         anim.addFrame(player4, 150);
         return anim;
     }
+    
+    private Animation createPlanetAnim(Image planet)
+        {
+            Animation anim = new Animation();
+            anim.addFrame(planet, 250);
+            return anim;
+        }
 
 
     private Animation createFlyAnim(Image img1, Image img2,
