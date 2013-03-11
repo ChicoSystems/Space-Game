@@ -375,21 +375,43 @@ public class GameManager extends GameCore {
         if (creature instanceof Player) {
             boolean canKill = (oldY < creature.getY());
             checkPlayerCollision((Player)creature, canKill);
-            double rotation = Math.atan2(dy, dx);
-            rotation = Math.toDegrees(rotation);
-            if(rotation < 0){
-            	rotation = rotation + 360;
-            }
-       
-            rotation = rotation + 90;
-            rotation %= 360;
-            if((dx == 0) && (dy == 0)){
-            	rotation = creature.getRotation(); // keeps from reseting rotation when velocity is 0
-            }
-            
-           // System.out.println("xVel: " + dx + " yVel: " + dy + " Rot: " + rotation);
-            ((Player)creature).setRotation(rotation);
         }
+        
+        double rotation = Math.atan2(dy, dx);
+        rotation = Math.toDegrees(rotation);
+        if(rotation < 0){
+        	rotation = rotation + 360;
+        }
+   
+        rotation = rotation + 90;
+        rotation %= 360;
+        
+        
+        
+        if((creature.getRotation() < 50 && rotation > 265 ) ||(creature.getRotation()  > 265 && rotation < 50 ) ){
+        	rotation += 180;
+        	rotation = (creature.getRotation()+rotation )/2;
+        }else{
+        	rotation = (creature.getRotation()+rotation )/2;
+        }
+        
+        
+        rotation %= 360;
+        
+        /*if(rotation == 21 || rotation == 213 || rotation == 309 || rotation == 357){
+        	rotation++;
+        }*/
+        
+        
+        if((dx == 0) && (dy == 0)){
+        	rotation = creature.getRotation(); // keeps from reseting rotation when velocity is 0
+        }
+        
+        
+        if (creature instanceof Player) {
+        	System.out.println("xVel: " + dx + " yVel: " + dy + " Rot: " + rotation);
+        }
+        creature.setRotation(rotation);
         
         
 
