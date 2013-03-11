@@ -416,18 +416,23 @@ public class GameManager extends GameCore {
             acquirePowerUp((PowerUp)collisionSprite);
         }
         else if (collisionSprite instanceof Creature) {
-            Creature badguy = (Creature)collisionSprite;
-            if (canKill) {
-                // kill the badguy and make player bounce
-                soundManager.play(boopSound);
-                badguy.setState(Creature.STATE_DYING);
-                player.setY(badguy.getY() - player.getHeight());
-                player.jump(true);
-            }
-            else {
-                // player dies!
-                player.setState(Creature.STATE_DYING);
-            }
+        	if(collisionSprite instanceof Planet){
+        		player.setVelocityX(0);
+        		//player.setVelocityY(0);
+        	}else{
+	            Creature badguy = (Creature)collisionSprite;
+	            if (canKill) {
+	                // kill the badguy and make player bounce
+	                soundManager.play(boopSound);
+	                badguy.setState(Creature.STATE_DYING);
+	                player.setY(badguy.getY() - player.getHeight());
+	                player.jump(true);
+	            }
+	            else {
+	                // player dies!
+	                player.setState(Creature.STATE_DYING);
+	            }
+        	}
         }
     }
 
