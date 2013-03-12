@@ -377,6 +377,7 @@ public class GameManager extends GameCore {
             checkPlayerCollision((Player)creature, canKill);
         }
         
+        
         double rotation = Math.atan2(dy, dx);
         rotation = Math.toDegrees(rotation);
         if(rotation < 0){
@@ -387,7 +388,7 @@ public class GameManager extends GameCore {
         rotation %= 360;
         
         
-        
+        /*
         if((creature.getRotation() < 50 && rotation > 265 ) ||(creature.getRotation()  > 265 && rotation < 50 ) ){
         	rotation += 180;
         	rotation = (creature.getRotation()+rotation )/2;
@@ -397,23 +398,27 @@ public class GameManager extends GameCore {
         
         
         rotation %= 360;
+        */
         
         /*if(rotation == 21 || rotation == 213 || rotation == 309 || rotation == 357){
         	rotation++;
         }*/
         
         
+        /*
         if((dx == 0) && (dy == 0)){
         	rotation = creature.getRotation(); // keeps from reseting rotation when velocity is 0
         }
         
+       
+        creature.setRotation(rotation);
+        */
+        
+        creature.setToRotation(rotation);
         
         if (creature instanceof Player) {
-        	System.out.println("xVel: " + dx + " yVel: " + dy + " Rot: " + rotation);
+        	System.out.println("xVel: " + dx + " yVel: " + dy + " Rot: " + creature.getRotation());
         }
-        creature.setRotation(rotation);
-        
-        
 
     }
 

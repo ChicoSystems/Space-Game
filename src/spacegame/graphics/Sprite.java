@@ -4,6 +4,7 @@ import java.awt.Image;
 
 public class Sprite {
 
+	protected double SPEED_ROTATION = .9;
     protected Animation anim;
     // position (pixels)
     private float x;
@@ -11,6 +12,10 @@ public class Sprite {
     // velocity (pixels per millisecond)
     private float dx;
     private float dy;
+    
+    private double currentRotation = 0;
+    private double futureRotation = 0;
+    private double rotationSpeed = .9;
 
     /**
         Creates a new Sprite object with the specified Animation.
@@ -26,6 +31,7 @@ public class Sprite {
     public void update(long elapsedTime) {
         x += dx * elapsedTime;
         y += dy * elapsedTime;
+        updateRotation(elapsedTime);
         anim.update(elapsedTime);
     }
 
@@ -119,4 +125,45 @@ public class Sprite {
     public Object clone() {
         return new Sprite(anim);
     }
+
+	public double getRotationSpeed() {
+		return rotationSpeed;
+	}
+
+	public void setRotationSpeed(double rotationSpeed) {
+		this.rotationSpeed = rotationSpeed;
+	}
+
+	public double getRotation() {
+		return currentRotation;
+	}
+
+	public void setRotation(double rotation) {
+		this.currentRotation = rotation;
+	}
+
+	public double getToRotation() {
+		return futureRotation;
+	}
+
+	public void setToRotation(double toRotation) {
+		this.futureRotation = toRotation;
+	}
+	
+	public void updateRotation(long elapsedTime){
+	
+		if(currentRotation == futureRotation){
+			rotationSpeed = 0;
+			return;
+		}else{
+			double rotationChange = futureRotation - currentRotation;
+			if(rotationChange < 0){
+				setRotationSpeed(-SPEED_ROTATION);
+			}else{
+				setRotationSpeed(SPEED_ROTATION);
+			}
+			currentRotation = currentRotation + rotationSpeed * elapsedTime;
+		}
+		
+	}
 }
