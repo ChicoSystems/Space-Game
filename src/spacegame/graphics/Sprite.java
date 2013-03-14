@@ -5,7 +5,7 @@ import java.awt.Image;
 
 public class Sprite {
 
-	protected double SPEED_ROTATION = .9;
+	protected float SPEED_ROTATION = .3f;
     protected Animation anim;
     // position (pixels)
     private float x;
@@ -14,9 +14,9 @@ public class Sprite {
     private float dx;
     private float dy;
     
-    protected double currentRotation = 1;
-    protected double futureRotation = 1;
-    protected double rotationSpeed = .9;
+    protected float currentRotation = 0;
+    protected float futureRotation = 0;
+    protected float rotationSpeed = SPEED_ROTATION;
 
     /**
         Creates a new Sprite object with the specified Animation.
@@ -131,23 +131,28 @@ public class Sprite {
 		return rotationSpeed;
 	}
 
-	public void setRotationSpeed(double rotationSpeed) {
+	public void setRotationSpeed(float rotationSpeed) {
 		this.rotationSpeed = rotationSpeed;
 	}
 
-	public double getRotation() {
+	public float getRotation() {
+		if(currentRotation < 0){
+			currentRotation = 360 - currentRotation;
+		}
+		
+		currentRotation %= 360;
 		return currentRotation;
 	}
 
-	public void setRotation(double rotation) {
+	public void setRotation(float rotation) {
 		this.currentRotation = rotation;
 	}
 
-	public double getToRotation() {
+	public float getToRotation() {
 		return futureRotation;
 	}
 
-	public void setToRotation(double toRotation) {
+	public void setToRotation(float toRotation) {
 		//System.out.println("Set to Rotation: " + toRotation);
 		this.futureRotation = toRotation;
 	}

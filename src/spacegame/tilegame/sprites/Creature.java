@@ -164,9 +164,6 @@ public abstract class Creature extends Sprite {
     	
         // select the correct Animation
         Animation newAnim = anim;
-        //newAnim = rotateAnimation((Animation)left, rotation);
-        //System.out.println("x: " + this.getVelocityX() + " y: " + this.getVelocityY());
-        //newAnim = creatureAnim[(int) (Math.toDegrees(rotation)-1)];
         newAnim = creatureAnim[(int)getRotation()];
         // update the Animation
         if (anim != newAnim) {

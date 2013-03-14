@@ -61,16 +61,14 @@ public class Player extends Creature {
 
     public void updateRotation(long elapsedTime){
 		
-			System.out.println("Current: " + currentRotation + " Future: " + futureRotation);
-	
-		
-	
-		if(currentRotation == futureRotation){
+		//System.out.println("Current: " + currentRotation + " Future: " + futureRotation);
+		if(Math.abs(currentRotation - futureRotation) < 2){
 			rotationSpeed = 0;
 			return;
 		}else{
 			double rotationChange = futureRotation - currentRotation;
-			if(rotationChange < 0){
+			System.out.println("Rot Change: " + futureRotation + " : " + currentRotation + " : " +rotationChange);
+			if(rotationChange <= 0){
 				setRotationSpeed(-SPEED_ROTATION);
 			}else{
 				setRotationSpeed(SPEED_ROTATION);
