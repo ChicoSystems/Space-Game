@@ -163,6 +163,7 @@ public class Sprite {
 				setRotationSpeed(SPEED_ROTATION);
 			}
 			currentRotation = currentRotation + rotationSpeed * elapsedTime;
+			System.out.println("Update Rot: " + currentRotation);
 		}
 		
 	}
