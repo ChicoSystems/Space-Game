@@ -5,7 +5,7 @@ import java.awt.Image;
 
 public class Sprite {
 
-	protected float SPEED_ROTATION = .3f;
+	protected float SPEED_ROTATION = .25f;
     protected Animation anim;
     // position (pixels)
     private float x;
@@ -148,15 +148,18 @@ public class Sprite {
 		if(rotation < 0){
 			rotation = 360 + rotation;
 		}
-		System.out.println("Set Rot: " + rotation);
+		//System.out.println("Set Rot: " + rotation);
 		this.currentRotation = rotation;
 	}
 
-	public float getToRotation() {
+	public float getFutureRotation() {
 		return futureRotation;
 	}
 
-	public void setToRotation(float toRotation) {
+	public void setFutureRotation(float toRotation) {
+		if(toRotation < 0){
+			toRotation = 360 + toRotation;
+		}
 		//System.out.println("Set to Rotation: " + toRotation);
 		this.futureRotation = toRotation;
 	}

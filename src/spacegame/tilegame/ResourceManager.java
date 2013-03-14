@@ -275,7 +275,7 @@ public class ResourceManager {
 
         // add the player to the map
         Sprite player = (Sprite)playerSprite.clone();
-        player.setX(TileMapRenderer.tilesToPixels(200));
+        player.setX(TileMapRenderer.tilesToPixels(250));
         player.setY(TileMapRenderer.tilesToPixels(200));
         newMap.setPlayer(player);
         System.out.println(player.toString() + " " + player.getWidth() + " " + player.getHeight());
