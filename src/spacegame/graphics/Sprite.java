@@ -11,8 +11,8 @@ public class Sprite {
     private float x;
     private float y;
     // velocity (pixels per millisecond)
-    private float dx;
-    private float dy;
+    protected float dx;
+    protected float dy;
     
     protected float currentRotation = 0;
     protected float futureRotation = 0;
@@ -145,6 +145,10 @@ public class Sprite {
 	}
 
 	public void setRotation(float rotation) {
+		if(rotation < 0){
+			rotation = 360 + rotation;
+		}
+		System.out.println("Set Rot: " + rotation);
 		this.currentRotation = rotation;
 	}
 

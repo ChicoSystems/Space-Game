@@ -1,5 +1,7 @@
 package spacegame.tilegame.sprites;
 
+import java.io.ObjectInputStream.GetField;
+
 import spacegame.graphics.Animation;
 
 /**
@@ -60,20 +62,36 @@ public class Player extends Creature {
 
 
     public void updateRotation(long elapsedTime){
+    	
+    	 float rotation = (float) Math.atan2(this.dy, this.dx);
+         rotation = (float) Math.toDegrees(rotation);
+         rotation = rotation + 90;
+         
+         
+         if((this.dx == 0) && (this.dy == 0)){
+         	rotation = this.getRotation(); // keeps from reseting rotation when velocity is 0
+         }
+         	this.setToRotation(rotation);
+         	
 		
 		//System.out.println("Current: " + currentRotation + " Future: " + futureRotation);
-		if(Math.abs(currentRotation - futureRotation) < 2){
+		if(Math.abs(currentRotation - futureRotation) < 2){//don't rotate if change is less then 2 degrees
 			rotationSpeed = 0;
 			return;
 		}else{
-			double rotationChange = futureRotation - currentRotation;
-			System.out.println("Rot Change: " + futureRotation + " : " + currentRotation + " : " +rotationChange);
+			float rotationChange = futureRotation - currentRotation;
+			if(rotationChange > 180){
+				rotationChange = 360 - rotationChange;
+				rotationChange = -rotationChange;
+			}
+			System.out.println("Rot Change: " + getToRotation() + " : " + getRotation() + " : " +rotationChange + " : " + rotationSpeed);
 			if(rotationChange <= 0){
 				setRotationSpeed(-SPEED_ROTATION);
 			}else{
 				setRotationSpeed(SPEED_ROTATION);
 			}
-			currentRotation = currentRotation + rotationSpeed * elapsedTime;
+			//System.out.println("Set Rot: " + ((float)(getRotation() + getRotationSpeed() * elapsedTime)));
+			setRotation((float)(getRotation() + getRotationSpeed() * elapsedTime));
 			
 		}
 		
