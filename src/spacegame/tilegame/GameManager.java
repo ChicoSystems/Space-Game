@@ -379,8 +379,8 @@ public class GameManager extends GameCore {
         }
         
         
-        double rotation = Math.atan2(dy, dx);
-        rotation = Math.toDegrees(rotation);
+        float rotation = (float) Math.atan2(dy, dx);
+        rotation = (float) Math.toDegrees(rotation);
         if(rotation < 0){
         	rotation = rotation + 360;
         }
