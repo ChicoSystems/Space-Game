@@ -71,20 +71,21 @@ public class Player extends Creature {
          if((this.dx == 0) && (this.dy == 0)){
          	rotation = this.getRotation(); // keeps from reseting rotation when velocity is 0
          }
-         	this.setToRotation(rotation);
+         	this.setFutureRotation(rotation);
          	
 		
 		//System.out.println("Current: " + currentRotation + " Future: " + futureRotation);
-		if(Math.abs(currentRotation - futureRotation) < 2){//don't rotate if change is less then 2 degrees
+		if(Math.abs(getRotation() - getFutureRotation()) < 3){//don't rotate if change is less then 2 degrees
 			rotationSpeed = 0;
 			return;
 		}else{
-			float rotationChange = futureRotation - currentRotation;
-			if(rotationChange > 180){
+			float rotationChange = getFutureRotation() - getRotation();
+			if(Math.abs(rotationChange) > 180){
+				rotationChange = Math.abs(rotationChange);
 				rotationChange = 360 - rotationChange;
 				rotationChange = -rotationChange;
 			}
-			System.out.println("Rot Change: " + getToRotation() + " : " + getRotation() + " : " +rotationChange + " : " + rotationSpeed);
+			System.out.println("Rot Change: " + getFutureRotation() + " : " + getRotation() + " : " +rotationChange + " : " + rotationSpeed);
 			if(rotationChange <= 0){
 				setRotationSpeed(-SPEED_ROTATION);
 			}else{
