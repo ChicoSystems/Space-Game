@@ -1,4 +1,5 @@
 package spacegame.graphics;
+import spacegame.tilegame.sprites.*;
 
 import java.awt.Image;
 
@@ -13,9 +14,9 @@ public class Sprite {
     private float dx;
     private float dy;
     
-    private double currentRotation = 0;
-    private double futureRotation = 0;
-    private double rotationSpeed = .9;
+    protected double currentRotation = 1;
+    protected double futureRotation = 1;
+    protected double rotationSpeed = .9;
 
     /**
         Creates a new Sprite object with the specified Animation.
@@ -31,7 +32,7 @@ public class Sprite {
     public void update(long elapsedTime) {
         x += dx * elapsedTime;
         y += dy * elapsedTime;
-        updateRotation(elapsedTime);
+        
         anim.update(elapsedTime);
     }
 
@@ -147,24 +148,9 @@ public class Sprite {
 	}
 
 	public void setToRotation(double toRotation) {
+		//System.out.println("Set to Rotation: " + toRotation);
 		this.futureRotation = toRotation;
 	}
 	
-	public void updateRotation(long elapsedTime){
 	
-		if(currentRotation == futureRotation){
-			rotationSpeed = 0;
-			return;
-		}else{
-			double rotationChange = futureRotation - currentRotation;
-			if(rotationChange < 0){
-				setRotationSpeed(-SPEED_ROTATION);
-			}else{
-				setRotationSpeed(SPEED_ROTATION);
-			}
-			currentRotation = currentRotation + rotationSpeed * elapsedTime;
-			System.out.println("Update Rot: " + currentRotation);
-		}
-		
-	}
 }
