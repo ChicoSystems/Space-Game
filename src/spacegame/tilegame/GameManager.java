@@ -417,7 +417,7 @@ public class GameManager extends GameCore {
         creature.setToRotation(rotation);
         
         if (creature instanceof Player) {
-        	System.out.println("xVel: " + dx + " yVel: " + dy + " Rot: " + creature.getRotation());
+        	//System.out.println("xVel: " + dx + " yVel: " + dy + " Rot: " + creature.getRotation());
         }
 
     }
