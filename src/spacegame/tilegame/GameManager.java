@@ -289,6 +289,7 @@ public class GameManager extends GameCore {
 
         // update player
         updateCreature(player, elapsedTime);
+        ((Player)player).updateRotation(elapsedTime);
         player.update(elapsedTime);
 
         // update other sprites
@@ -388,35 +389,12 @@ public class GameManager extends GameCore {
         rotation %= 360;
         
         
-        /*
-        if((creature.getRotation() < 50 && rotation > 265 ) ||(creature.getRotation()  > 265 && rotation < 50 ) ){
-        	rotation += 180;
-        	rotation = (creature.getRotation()+rotation )/2;
-        }else{
-        	rotation = (creature.getRotation()+rotation )/2;
-        }
-        
-        
-        rotation %= 360;
-        */
-        
-        /*if(rotation == 21 || rotation == 213 || rotation == 309 || rotation == 357){
-        	rotation++;
-        }*/
-        
-        
-        /*
         if((dx == 0) && (dy == 0)){
         	rotation = creature.getRotation(); // keeps from reseting rotation when velocity is 0
         }
         
-       
-        creature.setRotation(rotation);
-        */
-        
-        creature.setToRotation(rotation);
-        
         if (creature instanceof Player) {
+        	creature.setToRotation(rotation);
         	//System.out.println("xVel: " + dx + " yVel: " + dy + " Rot: " + creature.getRotation());
         }
 
