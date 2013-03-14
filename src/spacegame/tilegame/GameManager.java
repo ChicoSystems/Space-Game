@@ -379,24 +379,7 @@ public class GameManager extends GameCore {
         }
         
         
-        float rotation = (float) Math.atan2(dy, dx);
-        rotation = (float) Math.toDegrees(rotation);
-        if(rotation < 0){
-        	rotation = rotation + 360;
-        }
-   
-        rotation = rotation + 90;
-        rotation %= 360;
-        
-        
-        if((dx == 0) && (dy == 0)){
-        	rotation = creature.getRotation(); // keeps from reseting rotation when velocity is 0
-        }
-        
-        if (creature instanceof Player) {
-        	creature.setToRotation(rotation);
-        	//System.out.println("xVel: " + dx + " yVel: " + dy + " Rot: " + creature.getRotation());
-        }
+       
 
     }
 
