@@ -13,8 +13,4 @@ public class Projectile extends Creature {
     }
 
 
-    public float getMaxSpeed() {
-        return 0.75f;
-    }
-
 }

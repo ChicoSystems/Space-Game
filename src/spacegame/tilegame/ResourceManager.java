@@ -33,6 +33,11 @@ public class ResourceManager {
     private Sprite grubSprite;
     private Sprite flySprite;
     private Sprite planetSprite;
+ // create creature animations
+    Animation[] playerAnim = new Animation[360];
+    Animation[] flyAnim = new Animation[360];
+    Animation[] grubAnim = new Animation[360];
+    Animation[] planetAnim = new Animation[360];
 
     /**
         Creates a new ResourceManager with the specified
@@ -378,11 +383,7 @@ public class ResourceManager {
         	}
         }
 
-        // create creature animations
-        Animation[] playerAnim = new Animation[360];
-        Animation[] flyAnim = new Animation[360];
-        Animation[] grubAnim = new Animation[360];
-        Animation[] planetAnim = new Animation[360];
+        
         for (int j=0; j<360; j++) {
             playerAnim[j] = createPlayerAnim(
                 images[j][0], images[j][1], images[j][2], images[j][3]);
