@@ -94,8 +94,8 @@ public class ResourceManager {
         g.drawImage(image, transform, null);
         g.dispose();
         
-        System.out.println("old: " + image.getWidth(null) + " : " + image.getHeight(null));
-        System.out.println("new: " + newImage.getWidth(null) + " : " + newImage.getHeight(null));
+       // System.out.println("old: " + image.getWidth(null) + " : " + image.getHeight(null));
+        //System.out.println("new: " + newImage.getWidth(null) + " : " + newImage.getHeight(null));
         //newImage = rotateImage(newImage, 95);
         return newImage;
     }
@@ -279,8 +279,8 @@ public class ResourceManager {
 
         // add the player to the map
         Sprite player = (Sprite)playerSprite.clone();
-        player.setX(TileMapRenderer.tilesToPixels(3));
-        player.setY(2);
+        player.setX(TileMapRenderer.tilesToPixels(250));
+        player.setY(TileMapRenderer.tilesToPixels(200));
         newMap.setPlayer(player);
         System.out.println(player.toString() + " " + player.getWidth() + " " + player.getHeight());
 
@@ -372,7 +372,7 @@ public class ResourceManager {
         
         for(int j = 0; j < 360; j++){
         	for(int i = 0; i<images[j].length; i++){
-        		System.out.println("j: " + j + " i: " + i);
+        		//System.out.println("j: " + j + " i: " + i);
         		
         		images[j][i] = rotateImage(images[0][i], Math.toRadians(j+1));
         	}
