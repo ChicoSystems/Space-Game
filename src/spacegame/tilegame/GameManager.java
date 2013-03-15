@@ -147,6 +147,12 @@ public class GameManager extends GameCore {
             if (jump.isPressed()) {
                 player.jump(false);
             }
+            if (fire.isPressed()) {
+               Projectile p = new Projectile(resourceManager.flyAnim);
+               p.setX(player.getX());
+               p.setY(player.getY());
+               map.addSprite(p);
+            }
             player.setVelocityX(velocityX);
             player.setVelocityY(velocityY);
         }

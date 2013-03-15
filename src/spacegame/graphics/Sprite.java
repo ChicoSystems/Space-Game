@@ -183,7 +183,7 @@ public class Sprite {
 			return;
 		}else{
 			float rotationChange = calculateDifferenceBetweenAngles(getRotation(), getFutureRotation());
-			System.out.println("Rot Change: " + getFutureRotation() + " : " + getRotation() + " : " +rotationChange + " : " + rotationSpeed);
+			//System.out.println("Rot Change: " + getFutureRotation() + " : " + getRotation() + " : " +rotationChange + " : " + rotationSpeed);
 			if(rotationChange <= 0){
 				setRotationSpeed(-SPEED_ROTATION);
 			}else{
