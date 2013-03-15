@@ -1,5 +1,7 @@
 package spacegame.tilegame.sprites;
 
+import java.io.ObjectInputStream.GetField;
+
 import spacegame.graphics.Animation;
 
 /**
