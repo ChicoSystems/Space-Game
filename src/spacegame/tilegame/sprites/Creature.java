@@ -28,6 +28,9 @@ public abstract class Creature extends Sprite {
     public static final int STATE_NORMAL = 0;
     public static final int STATE_DYING = 1;
     public static final int STATE_DEAD = 2;
+    protected float maxSpeed = 0;
+    protected float currentSpeed = 0;
+    protected float boostSpeed = 0;
 
     /*
     private Animation left;
@@ -82,8 +85,43 @@ public abstract class Creature extends Sprite {
         Gets the maximum speed of this Creature.
     */
     public float getMaxSpeed() {
-        return 0;
+        return maxSpeed;
     }
+    
+    /**
+    Gets the maximum speed of this Creature.
+	*/
+	public void setMaxSpeed(Float speed) {
+	    maxSpeed = speed;
+	}
+    /**
+    Gets the maximum speed of this Creature.
+	*/
+	public float getCurrentSpeed() {
+	    return currentSpeed;
+	}
+	
+	/**
+	Gets the maximum speed of this Creature.
+	*/
+	public void setCurrentSpeed(Float speed) {
+	    currentSpeed = speed;
+	}
+
+	
+	/**
+    Gets the maximum speed of this Creature.
+	*/
+	public float getBoostSpeed() {
+	    return boostSpeed;
+	}
+	
+	/**
+	Gets the maximum speed of this Creature.
+	*/
+	public void setBoostSpeed(Float speed) {
+	    boostSpeed = speed;
+	}
 
 
     /**

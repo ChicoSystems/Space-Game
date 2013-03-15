@@ -18,6 +18,9 @@ public class Player extends Creature {
     {
         //super(left, right, deadLeft, deadRight);
     	super(anim);
+    	this.setMaxSpeed(.5f);
+    	this.setBoostSpeed(this.getMaxSpeed()*2);
+    	this.setCurrentSpeed(this.getMaxSpeed());
     }
     
     public void collide(){
@@ -65,9 +68,5 @@ public class Player extends Creature {
         }
     }
 
-
-    public float getMaxSpeed() {
-        return 0.5f;
-    }
 
 }

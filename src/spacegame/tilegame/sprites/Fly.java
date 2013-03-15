@@ -12,6 +12,7 @@ public class Fly extends Creature {
     {
         //super(left, right, deadLeft, deadRight);
     	super(anim);
+    	this.setCurrentSpeed(getMaxSpeed());
     }
 
 
