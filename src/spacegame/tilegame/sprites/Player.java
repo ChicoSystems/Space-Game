@@ -61,42 +61,7 @@ public class Player extends Creature {
     }
 
 
-    public void updateRotation(long elapsedTime){
-    	
-    	 float rotation = (float) Math.atan2(this.dy, this.dx);
-         rotation = (float) Math.toDegrees(rotation);
-         rotation = rotation + 90;
-         
-         
-         if((this.dx == 0) && (this.dy == 0)){
-         	rotation = this.getRotation(); // keeps from reseting rotation when velocity is 0
-         }
-         	this.setFutureRotation(rotation);
-         	
-		
-		//System.out.println("Current: " + currentRotation + " Future: " + futureRotation);
-		if(Math.abs(getRotation() - getFutureRotation()) < 3){//don't rotate if change is less then 2 degrees
-			rotationSpeed = 0;
-			return;
-		}else{
-			float rotationChange = getFutureRotation() - getRotation();
-			if(Math.abs(rotationChange) > 180){
-				rotationChange = Math.abs(rotationChange);
-				rotationChange = 360 - rotationChange;
-				rotationChange = -rotationChange;
-			}
-			System.out.println("Rot Change: " + getFutureRotation() + " : " + getRotation() + " : " +rotationChange + " : " + rotationSpeed);
-			if(rotationChange <= 0){
-				setRotationSpeed(-SPEED_ROTATION);
-			}else{
-				setRotationSpeed(SPEED_ROTATION);
-			}
-			//System.out.println("Set Rot: " + ((float)(getRotation() + getRotationSpeed() * elapsedTime)));
-			setRotation((float)(getRotation() + getRotationSpeed() * elapsedTime));
-			
-		}
-		
-	}
+    
     
     public float getMaxSpeed() {
         return 0.5f;
