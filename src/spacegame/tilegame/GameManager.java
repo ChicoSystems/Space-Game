@@ -148,7 +148,7 @@ public class GameManager extends GameCore {
                 player.jump(false);
             }
             if (fire.isPressed()) {
-               Projectile p = new Projectile(resourceManager.flyAnim);
+               Projectile p = new Projectile(resourceManager.planetAnim);
                p.setX(player.getX());
                p.setY(player.getY());
                map.addSprite(p);
@@ -414,6 +414,8 @@ public class GameManager extends GameCore {
         	if(collisionSprite instanceof Planet){
         		player.setVelocityX(0);
         		//player.setVelocityY(0);
+        	}else if(collisionSprite instanceof Projectile){
+        		
         	}else{
 	            Creature badguy = (Creature)collisionSprite;
 	            if (canKill) {
