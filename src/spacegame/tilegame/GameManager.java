@@ -46,6 +46,7 @@ public class GameManager extends GameCore {
     private GameAction moveDown;
     private GameAction moveLeft;
     private GameAction moveRight;
+    private GameAction speedBoost;
     private GameAction fire;
     private GameAction jump;
     private GameAction exit;
@@ -98,6 +99,7 @@ public class GameManager extends GameCore {
         moveDown = new GameAction("moveDown");
         moveLeft = new GameAction("moveLeft");
         moveRight = new GameAction("moveRight");
+        speedBoost = new GameAction("speedBoost");
         fire = new GameAction("fire",
                 GameAction.DETECT_INITAL_PRESS_ONLY);
         jump = new GameAction("jump",
@@ -117,6 +119,7 @@ public class GameManager extends GameCore {
         inputManager.mapToKey(moveDown, KeyEvent.VK_S);
         inputManager.mapToKey(moveLeft, KeyEvent.VK_A);
         inputManager.mapToKey(moveRight, KeyEvent.VK_D);
+        inputManager.mapToKey(speedBoost, KeyEvent.VK_SHIFT);
         inputManager.mapToKey(fire, KeyEvent.VK_SPACE);
         inputManager.mapToKey(exit, KeyEvent.VK_ESCAPE);
     }
@@ -133,24 +136,31 @@ public class GameManager extends GameCore {
             float velocityX = 0;
             float velocityY = 0;
             if (moveLeft.isPressed()) {
-                velocityX-=player.getMaxSpeed();
+                velocityX-=player.getCurrentSpeed();
             }
             if (moveRight.isPressed()) {
-                velocityX+=player.getMaxSpeed();
+                velocityX+=player.getCurrentSpeed();
             }
             if (moveUp.isPressed()) {
-                velocityY-=player.getMaxSpeed();
+                velocityY-=player.getCurrentSpeed();
             }
             if (moveDown.isPressed()) {
-                velocityY+=player.getMaxSpeed();
+                velocityY+=player.getCurrentSpeed();
             }
             if (jump.isPressed()) {
                 player.jump(false);
+            }
+            if (speedBoost.isPressed()) {
+                player.setCurrentSpeed(player.getBoostSpeed());
+            }else if (!speedBoost.isPressed()) {
+                player.setCurrentSpeed(player.getMaxSpeed());
             }
             if (fire.isPressed()) {
                Projectile p = new Projectile(resourceManager.planetAnim);
                p.setX(player.getX());
                p.setY(player.getY());
+               p.setVelocityX(player.getVelocityX());
+               p.setVelocityY(player.getVelocityY());
                map.addSprite(p);
             }
             player.setVelocityX(velocityX);
