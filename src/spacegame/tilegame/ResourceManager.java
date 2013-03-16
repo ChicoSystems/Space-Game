@@ -22,6 +22,11 @@ import spacegame.tilegame.sprites.*;
 public class ResourceManager {
 
     private ArrayList tiles;
+    
+    //Planet Images
+    private ArrayList planetImages;
+    private ArrayList <Sprite> planetSprites;
+    
     private int currentMap;
     private GraphicsConfiguration gc;
 
@@ -32,7 +37,10 @@ public class ResourceManager {
     private Sprite goalSprite;
     private Sprite grubSprite;
     private Sprite flySprite;
-    private Sprite planetSprite;
+    
+    //Planet Images
+    Image[] planets = new Image[76];
+    
  // create creature animations
     Animation[] playerAnim = new Animation[360];
     Animation[] flyAnim = new Animation[360];
@@ -45,7 +53,10 @@ public class ResourceManager {
     */
     public ResourceManager(GraphicsConfiguration gc) {
         this.gc = gc;
+        loadPlanetImages();
+        loadPlanetSprites();
         loadTileImages();
+        
         loadCreatureSprites();
         loadPowerUpSprites();
     }
@@ -60,51 +71,35 @@ public class ResourceManager {
         return icon.getImage();
        // return new ImageIcon(filename).getImage();
     }
-    
-    /*private Image resizeImage(Image originalImage, int img_width, int img_height)
-		{
-    		BufferedImage bi = new BufferedImage(originalImage.getWidth(null), originalImage.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-    		Graphics g = bi.createGraphics();
-    		g.drawImage(originalImage, 0, 0, img_width, img_height, null);
-    		ImageIcon newIcon = new ImageIcon(bi);
-			g.dispose();
-			
-			return newIcon.getImage();
-		}*/
-
 
     public Image getMirrorImage(Image image) {
         return getScaledImage(image, -1, 1);
     }
 
-
     public Image getFlippedImage(Image image) {
         return getScaledImage(image, 1, -1);
     }
     
-    public Image getHalfSizedImage(Image image){
-    	AffineTransform transform = new AffineTransform();
-    	transform.scale(.5, .5);
-    	transform.translate(.5, .5);
+    public Image getSmallerImage(Image image , float scale){
     	
+    	float f_invScale = 1/scale;
+    	int invScale = (int) f_invScale;
+    	AffineTransform transform = new AffineTransform();
+    	transform.scale(scale, scale);
+    	//transform.translate(.5, .5);
     	
     	 // create a transparent (not translucent) image
         Image newImage = gc.createCompatibleImage(
-            image.getWidth(null)/2,
-            image.getHeight(null)/2,
+            image.getWidth(null)/invScale,
+            image.getHeight(null)/invScale,
             Transparency.BITMASK);
 
         // draw the transformed image
         Graphics2D g = (Graphics2D)newImage.getGraphics();
         g.drawImage(image, transform, null);
         g.dispose();
-        
-       // System.out.println("old: " + image.getWidth(null) + " : " + image.getHeight(null));
-        //System.out.println("new: " + newImage.getWidth(null) + " : " + newImage.getHeight(null));
-        //newImage = rotateImage(newImage, 95);
         return newImage;
     }
-    
     
     public Animation rotateAnimation(Animation anim, double rot){
     	System.out.println("Rotating: " + rot);
@@ -120,6 +115,7 @@ public class ResourceManager {
     		newFrames.add(newAnimFrame);
     	}
     	newAnim.setFrames(newFrames);
+    	
     	return newAnim;
     }
     
@@ -128,7 +124,6 @@ public class ResourceManager {
         AffineTransform transform = new AffineTransform();
         transform.rotate(rot, image.getWidth(null)/2, image.getWidth(null)/2);
        
-
         // create a transparent (not translucent) image
         Image newImage = gc.createCompatibleImage(
             image.getWidth(null),
@@ -277,7 +272,7 @@ public class ResourceManager {
                     addSprite(newMap, flySprite, x, y);
                 }
                 else if (ch == 'p') {
-                    addSprite(newMap, planetSprite, x, y);
+                    addSprite(newMap, planetSprites.get(22), x, y);
                 }
             }
         }
@@ -334,9 +329,41 @@ public class ResourceManager {
                 break;
             }
            
-            tiles.add(getHalfSizedImage(loadImage(name)));
+            tiles.add(getSmallerImage(loadImage(name), .5f));
             ch++;
         }
+    }
+    
+    public void loadPlanetImages(){
+    	planetImages = new ArrayList();
+    	int i = 1;
+    	while(true){
+    		String name = "planets/p_" + i + ".png";
+    		File file = new File("images/" + name);
+    		if(!file.exists()){
+    			break;
+    		}
+    		//System.out.println(i + " : " + file);
+    		planetImages.add(getSmallerImage(loadImage(name), .5f));
+    		i++;
+    	}
+    }
+    
+    public void loadPlanetSprites(){
+    	planetSprites = new ArrayList();
+    	ArrayList anims = new ArrayList();
+    	for(int i = 0; i < planetImages.size(); i++){
+    		Animation a = createPlanetAnim((Image)planetImages.get(i));
+    		anims.add(a);
+    	}
+    	
+    	for(int i = 0; i < planetImages.size(); i++){
+    		Animation[] animation = new Animation[1];
+    		animation[0] = (Animation) anims.get(i);
+    		Sprite s = new Planet(animation);
+    		System.out.println(i);
+    		planetSprites.add(s);
+    	}
     }
 
 
@@ -346,34 +373,21 @@ public class ResourceManager {
 
         // load left-facing images
         images[0] = new Image[] {
-        	getHalfSizedImage(loadImage("1ship1.png")),
-        	getHalfSizedImage(loadImage("1ship2.png")),
-        	getHalfSizedImage(loadImage("1ship3.png")),
-        	getHalfSizedImage(loadImage("1ship4.png")),
-        	getHalfSizedImage(loadImage("fly1.png")),
-        	getHalfSizedImage(loadImage("fly2.png")),
-        	getHalfSizedImage(loadImage("fly3.png")),
-        	getHalfSizedImage(loadImage("grub1.png")),
-        	getHalfSizedImage(loadImage("grub2.png")),
-        	getHalfSizedImage(loadImage("star1.png")),
+        		getSmallerImage(loadImage("1ship1.png"), .5f),
+        		getSmallerImage(loadImage("1ship2.png"), .5f),
+        		getSmallerImage(loadImage("1ship3.png"), .5f),
+        		getSmallerImage(loadImage("1ship4.png"), .5f),
+        		getSmallerImage(loadImage("fly1.png"), .5f),
+        		getSmallerImage(loadImage("fly2.png"), .5f),
+        		getSmallerImage(loadImage("fly3.png"), .5f),
+        		getSmallerImage(loadImage("grub1.png"), .5f),
+        		getSmallerImage(loadImage("grub2.png"), .5f),
+        		getSmallerImage(loadImage("star1.png"), .5f),
         };
 
-        /*
-        images[1] = new Image[images[0].length];
-        images[2] = new Image[images[0].length];
-        images[3] = new Image[images[0].length];
-        */
         for(int i = 1; i < 360; i++){
         	images[i] = new Image[images[0].length];
         }
-        /*for (int i=0; i<images[0].length; i++) {
-            // right-facing images
-            images[1][i] = getMirrorImage(images[0][i]);
-            // left-facing "dead" images
-            images[2][i] = getFlippedImage(images[0][i]);
-            // right-facing "dead" images
-            images[3][i] = getFlippedImage(images[1][i]);
-        }*/
         
         for(int j = 0; j < 360; j++){
         	for(int i = 0; i<images[j].length; i++){
@@ -393,16 +407,12 @@ public class ResourceManager {
             
             grubAnim[j] = createGrubAnim(
                 images[j][7], images[j][8]);
-            
-            planetAnim[j] = createPlanetAnim(images[j][9]);
         }
 
         // create creature sprites
         playerSprite = new Player(playerAnim);
         
         flySprite = new Fly(flyAnim);
-        
-        planetSprite = new Planet(planetAnim);
         
         grubSprite = new Grub(grubAnim);
     }
@@ -453,26 +463,26 @@ public class ResourceManager {
     private void loadPowerUpSprites() {
         // create "goal" sprite
         Animation anim = new Animation();
-        anim.addFrame(getHalfSizedImage(loadImage("heart1.png")), 150);
-        anim.addFrame(getHalfSizedImage(loadImage("heart2.png")), 150);
-        anim.addFrame(getHalfSizedImage(loadImage("heart3.png")), 150);
-        anim.addFrame(getHalfSizedImage(loadImage("heart2.png")), 150);
+        anim.addFrame(getSmallerImage(loadImage("heart1.png"), .5f), 150);
+        anim.addFrame(getSmallerImage(loadImage("heart2.png"), .5f), 150);
+        anim.addFrame(getSmallerImage(loadImage("heart3.png"), .5f), 150);
+        anim.addFrame(getSmallerImage(loadImage("heart2.png"), .5f), 150);
         goalSprite = new PowerUp.Goal(anim);
 
         // create "star" sprite
         anim = new Animation();
-        anim.addFrame(getHalfSizedImage(loadImage("star1.png")), 100);
-        anim.addFrame(getHalfSizedImage(loadImage("star2.png")), 100);
-        anim.addFrame(getHalfSizedImage(loadImage("star3.png")), 100);
-        anim.addFrame(getHalfSizedImage(loadImage("star4.png")), 100);
+        anim.addFrame(getSmallerImage(loadImage("star1.png"), .5f), 100);
+        anim.addFrame(getSmallerImage(loadImage("star2.png"), .5f), 100);
+        anim.addFrame(getSmallerImage(loadImage("star3.png"), .5f), 100);
+        anim.addFrame(getSmallerImage(loadImage("star4.png"), .5f), 100);
         coinSprite = new PowerUp.Star(anim);
 
         // create "music" sprite
         anim = new Animation();
-        anim.addFrame(getHalfSizedImage(loadImage("music1.png")), 150);
-        anim.addFrame(getHalfSizedImage(loadImage("music2.png")), 150);
-        anim.addFrame(getHalfSizedImage(loadImage("music3.png")), 150);
-        anim.addFrame(getHalfSizedImage(loadImage("music2.png")), 150);
+        anim.addFrame(getSmallerImage(loadImage("music1.png"), .5f), 150);
+        anim.addFrame(getSmallerImage(loadImage("music2.png"), .5f), 150);
+        anim.addFrame(getSmallerImage(loadImage("music3.png"), .5f), 150);
+        anim.addFrame(getSmallerImage(loadImage("music2.png"), .5f), 150);
         musicSprite = new PowerUp.Music(anim);
     }
 
