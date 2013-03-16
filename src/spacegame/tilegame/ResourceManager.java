@@ -27,6 +27,10 @@ public class ResourceManager {
     private ArrayList planetImages;
     private ArrayList <Sprite> planetSprites;
     
+    private ArrayList <ArrayList> rocketImages;
+    private ArrayList rocketSprites;
+    
+    
     private int currentMap;
     private GraphicsConfiguration gc;
 
@@ -53,10 +57,18 @@ public class ResourceManager {
     */
     public ResourceManager(GraphicsConfiguration gc) {
         this.gc = gc;
-        loadPlanetImages();
-        loadPlanetSprites();
+        loadSprites();
         loadTileImages();
         
+        
+    }
+    
+    public void loadSprites(){
+    	
+    	loadRocketImages();
+    	loadRocketSprites();
+        loadPlanetImages();
+        loadPlanetSprites();
         loadCreatureSprites();
         loadPowerUpSprites();
     }
@@ -334,6 +346,37 @@ public class ResourceManager {
         }
     }
     
+    public void loadRocketImages(){
+    	rocketImages = new ArrayList();
+    	
+    	int i = 1;
+    	int j = 1;
+    	
+    	while(true){ //cycle through i
+    		ArrayList r_img = new ArrayList();
+    		while(true){ //cycle through j
+	    		String name = "rockets/" + i + "r" + j + ".png";
+	    		File file = new File("images/" + name);
+	    		if(!file.exists()){
+	    			j = 1;
+	    			break;
+	    		}
+	    		//rocketImages.add(getSmallerImage(loadImage(name), .5f));
+	    		r_img.add(getSmallerImage(loadImage(name), .5f));
+	    		j++;
+	    	}// end j loop
+    		i++;
+    		rocketImages.add(r_img); // add arraylist of images to arraylist of rockets
+    		String name = "rockets/" + i + "r" + j + ".png";
+    		File file = new File("images/" + name);
+    		if(!file.exists()){
+    			break;
+    		}
+    		
+    	}// end i loop
+	    	
+    }
+    
     public void loadPlanetImages(){
     	planetImages = new ArrayList();
     	int i = 1;
@@ -346,6 +389,21 @@ public class ResourceManager {
     		//System.out.println(i + " : " + file);
     		planetImages.add(getSmallerImage(loadImage(name), .5f));
     		i++;
+    	}
+    }
+    
+    public void loadRocketSprites(){
+    	rocketSprites = new ArrayList();
+    	ArrayList anims = new ArrayList();
+    	for(int i = 0; i < rocketImages.size(); i++){
+    		Animation a = new Animation();
+    		for(int j = 0; j < rocketImages.get(i).size(); j++){
+    			a.addFrame((Image) rocketImages.get(i).get(j), 200);
+    		}
+    		Animation[] a_array = new Animation[1];
+    		a_array[0] = a;
+    		Sprite s = new Projectile(a_array, 0);
+    		rocketSprites.add(s);
     	}
     }
     
