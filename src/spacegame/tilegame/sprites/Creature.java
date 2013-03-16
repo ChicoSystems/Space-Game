@@ -31,6 +31,7 @@ public abstract class Creature extends Sprite {
     protected float maxSpeed = 0;
     protected float currentSpeed = 0;
     protected float boostSpeed = 0;
+    public double id;
 
     /*
     private Animation left;
@@ -56,6 +57,7 @@ public abstract class Creature extends Sprite {
         this.right = right;
         this.deadLeft = deadLeft;
         this.deadRight = deadRight;*/
+        id = Math.random();
         state = STATE_NORMAL;
     }
 

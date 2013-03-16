@@ -355,7 +355,7 @@ public class ResourceManager {
         	getHalfSizedImage(loadImage("fly3.png")),
         	getHalfSizedImage(loadImage("grub1.png")),
         	getHalfSizedImage(loadImage("grub2.png")),
-        	getHalfSizedImage(loadImage("planet1.png")),
+        	getHalfSizedImage(loadImage("star1.png")),
         };
 
         /*

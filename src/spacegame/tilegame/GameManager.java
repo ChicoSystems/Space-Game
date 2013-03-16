@@ -156,12 +156,7 @@ public class GameManager extends GameCore {
                 player.setCurrentSpeed(player.getMaxSpeed());
             }
             if (fire.isPressed()) {
-               Projectile p = new Projectile(resourceManager.planetAnim);
-               p.setX(player.getX());
-               p.setY(player.getY());
-               p.setVelocityX(player.getVelocityX());
-               p.setVelocityY(player.getVelocityY());
-               map.addSprite(p);
+               createProjectile(player);
             }
             player.setVelocityX(velocityX);
             player.setVelocityY(velocityY);
@@ -170,7 +165,36 @@ public class GameManager extends GameCore {
     }
 
 
-    public void draw(Graphics2D g) {
+    private void createProjectile(Player player) {
+		// TODO Auto-generated method stub
+    	Projectile p = new Projectile(resourceManager.playerAnim, player.id);
+        p.setRotation(player.getRotation());
+        p.setVelocityX(player.getVelocityX()*1.5f);
+        p.setVelocityY(player.getVelocityY()*1.5f);
+        
+        float dist = 50;
+        
+        if(p.getVelocityX()>0){
+        	p.setX(player.getX()+dist);
+        }else if(p.getVelocityX()<0){
+        	p.setX(player.getX()-dist);
+        }else if(p.getVelocityX() == 0){
+        	p.setX(player.getX());
+        }
+        
+        if(p.getVelocityY()>0){
+        	p.setY(player.getY()+dist);
+        }else if(p.getVelocityY()<0){
+        	p.setY(player.getY()-dist);
+        }else if(p.getVelocityY() == 0){
+        	p.setY(player.getY());
+        }
+        map.addSprite(p);
+		
+	}
+
+
+	public void draw(Graphics2D g) {
         renderer.draw(g, map,
             screen.getWidth(), screen.getHeight());
     }
@@ -308,7 +332,7 @@ public class GameManager extends GameCore {
 
         // update player
         updateCreature(player, elapsedTime);
-        ((Player)player).updateRotation(elapsedTime);
+        
         player.update(elapsedTime);
 
         // update other sprites
@@ -344,6 +368,8 @@ public class GameManager extends GameCore {
             creature.setVelocityY(creature.getVelocityY() +
                 GRAVITY * elapsedTime);
         }*/
+    	
+    	creature.updateRotation(elapsedTime);
 
         // change x
         float dx = creature.getVelocityX();
@@ -425,7 +451,12 @@ public class GameManager extends GameCore {
         		player.setVelocityX(0);
         		//player.setVelocityY(0);
         	}else if(collisionSprite instanceof Projectile){
-        		
+        		if(((Projectile)collisionSprite).parentId == player.id){
+        			
+        		}else{
+        			player.setState(Creature.STATE_DYING);
+        			((Creature) collisionSprite).setState(Creature.STATE_DYING);
+        		}
         	}else{
 	            Creature badguy = (Creature)collisionSprite;
 	            if (canKill) {
