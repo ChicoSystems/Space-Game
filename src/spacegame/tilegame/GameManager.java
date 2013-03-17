@@ -167,7 +167,7 @@ public class GameManager extends GameCore {
 
     private void createProjectile(Player player) {
 		// TODO Auto-generated method stub
-    	Projectile p = (Projectile) ((Projectile) resourceManager.rocketSprites.get(4)).clone();
+    	Projectile p = (Projectile) ((Projectile) resourceManager.rocketSprites.get((int)(Math.random()*resourceManager.rocketSprites.size()))).clone();
     	p.parentId = player.id;
         p.setRotation(player.getRotation());
         p.setVelocityX(player.getVelocityX()*1.5f);
