@@ -9,6 +9,9 @@ import java.io.*;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
+import org.imgscalr.Scalr;
+import org.imgscalr.Scalr.Rotation;
+
 import spacegame.graphics.*;
 import spacegame.tilegame.sprites.*;
 
@@ -25,10 +28,10 @@ public class ResourceManager {
     
     //Planet Images
     private ArrayList planetImages;
-    private ArrayList <Sprite> planetSprites;
+    public ArrayList <Sprite> planetSprites;
     
     private ArrayList <ArrayList> rocketImages;
-    private ArrayList rocketSprites;
+    public ArrayList rocketSprites;
     
     
     private int currentMap;
@@ -116,7 +119,7 @@ public class ResourceManager {
     public Animation rotateAnimation(Animation anim, double rot){
     	System.out.println("Rotating: " + rot);
     	Animation newAnim = (Animation) anim.clone();
-    	ArrayList <AnimFrame> oldFrames = anim.getFrames();
+    	ArrayList <AnimFrame> oldFrames = (ArrayList<AnimFrame>) newAnim.getFrames().clone();
     	ArrayList <AnimFrame> newFrames = new ArrayList<AnimFrame>();
     	
     	for(int i = 0; i < oldFrames.size(); i++){
@@ -131,24 +134,44 @@ public class ResourceManager {
     	return newAnim;
     }
     
+    
+    public Image rotateImage(Image im, double angle) {
+    	BufferedImage image = (BufferedImage)im;
+    	
+        double sin = Math.abs(Math.sin(angle)), cos = Math.abs(Math.cos(angle));
+        int w = image.getWidth(), h = image.getHeight();
+        int neww = (int)Math.floor(w*cos+h*sin), newh = (int)Math.floor(h*cos+w*sin);
+       // GraphicsConfiguration gc = gc.getDefaultConfiguration();
+        
+        BufferedImage result = gc.createCompatibleImage(neww, newh, Transparency.BITMASK);
+        Graphics2D g = result.createGraphics();
+        g.translate((neww-w)/2, (newh-h)/2);
+        g.rotate(angle, w/2, h/2);
+        g.drawRenderedImage(image, null);
+        g.dispose();
+        return result;
+    }
+    
+    /*
     public Image rotateImage(Image image, double rot) {
     	// set up the transform
         AffineTransform transform = new AffineTransform();
+        
         transform.rotate(rot, image.getWidth(null)/2, image.getWidth(null)/2);
        
         // create a transparent (not translucent) image
         Image newImage = gc.createCompatibleImage(
             image.getWidth(null),
             image.getHeight(null),
-            Transparency.BITMASK);
-
+            Transparency.OPAQUE);
+        
         // draw the transformed image
         Graphics2D g = (Graphics2D)newImage.getGraphics();
         g.drawImage(image, transform, null);
         g.dispose();
 
         return newImage;
-    	}
+    	}*/
     
     private AffineTransform findTranslation(AffineTransform at, BufferedImage bi) {
     	   Point2D p2din, p2dout;
@@ -346,7 +369,7 @@ public class ResourceManager {
         }
     }
     
-    public void loadRocketImages(){
+    public void loadRocketImages(){// loads rocket images into a 2d arraylist 
     	rocketImages = new ArrayList();
     	
     	int i = 1;
@@ -362,7 +385,7 @@ public class ResourceManager {
 	    			break;
 	    		}
 	    		//rocketImages.add(getSmallerImage(loadImage(name), .5f));
-	    		r_img.add(getSmallerImage(loadImage(name), .5f));
+	    		r_img.add(getSmallerImage(loadImage(name), 1f));
 	    		j++;
 	    	}// end j loop
     		i++;
@@ -400,8 +423,18 @@ public class ResourceManager {
     		for(int j = 0; j < rocketImages.get(i).size(); j++){
     			a.addFrame((Image) rocketImages.get(i).get(j), 200);
     		}
-    		Animation[] a_array = new Animation[1];
-    		a_array[0] = a;
+    		Animation[] a_array = new Animation[360];
+    		 for(int j = 0; j < 360; j++){
+    	        	//a_array[j] = rotateAnimation(a, j);
+    			    Animation newAnim = new Animation();
+    			    for(int l = 0; l < a.getNumFrames(); l ++){
+    			    	Image oldImage = ((AnimFrame)a.getFrames().get(l)).image;
+    			    	long imgTime = ((AnimFrame)a.getFrames().get(l)).endTime;
+    			    	Image newImage = rotateImage(oldImage, j);
+    			    	newAnim.addFrame(newImage, imgTime);
+    			    }
+    			    a_array[j] = newAnim;
+    	        }
     		Sprite s = new Projectile(a_array, 0);
     		rocketSprites.add(s);
     	}
@@ -431,10 +464,10 @@ public class ResourceManager {
 
         // load left-facing images
         images[0] = new Image[] {
-        		getSmallerImage(loadImage("1ship1.png"), .5f),
-        		getSmallerImage(loadImage("1ship2.png"), .5f),
-        		getSmallerImage(loadImage("1ship3.png"), .5f),
-        		getSmallerImage(loadImage("1ship4.png"), .5f),
+        		getSmallerImage(loadImage("2ship1.png"), .5f),
+        		getSmallerImage(loadImage("2ship2.png"), .5f),
+        		getSmallerImage(loadImage("2ship3.png"), .5f),
+        		getSmallerImage(loadImage("2ship4.png"), .5f),
         		getSmallerImage(loadImage("fly1.png"), .5f),
         		getSmallerImage(loadImage("fly2.png"), .5f),
         		getSmallerImage(loadImage("fly3.png"), .5f),
