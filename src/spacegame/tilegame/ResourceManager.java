@@ -425,15 +425,7 @@ public class ResourceManager {
     		}
     		Animation[] a_array = new Animation[360];
     		 for(int j = 0; j < 360; j++){
-    	        	//a_array[j] = rotateAnimation(a, j);
-    			    Animation newAnim = new Animation();
-    			    for(int l = 0; l < a.getNumFrames(); l ++){
-    			    	Image oldImage = ((AnimFrame)a.getFrames().get(l)).image;
-    			    	long imgTime = ((AnimFrame)a.getFrames().get(l)).endTime;
-    			    	Image newImage = rotateImage(oldImage, j);
-    			    	newAnim.addFrame(newImage, imgTime);
-    			    }
-    			    a_array[j] = newAnim;
+    	        	a_array[j] = rotateAnimation(a, Math.toRadians(j+1));
     	        }
     		Sprite s = new Projectile(a_array, 0);
     		rocketSprites.add(s);
