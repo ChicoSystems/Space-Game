@@ -9,9 +9,6 @@ import java.io.*;
 import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
-import org.imgscalr.Scalr;
-import org.imgscalr.Scalr.Rotation;
-
 import spacegame.graphics.*;
 import spacegame.tilegame.sprites.*;
 
