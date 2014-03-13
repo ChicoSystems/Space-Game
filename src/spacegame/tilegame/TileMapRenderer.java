@@ -1,10 +1,12 @@
 package spacegame.tilegame;
 
 import java.awt.*;
+import java.awt.geom.Line2D;
 import java.util.Iterator;
 
 import spacegame.graphics.Sprite;
 import spacegame.tilegame.sprites.Creature;
+import spacegame.tilegame.sprites.Laser;
 
 
 /**
@@ -153,6 +155,21 @@ public class TileMapRenderer {
             Math.round(player.getX()) + offsetX,
             Math.round(player.getY()) + offsetY,
             null);
+        
+        // draw lasers
+        Iterator l = map.getLasers();
+        while(l.hasNext()){
+        	Laser laser = (Laser)l.next();
+        	Line2D line = laser.getLine();
+        	int x1 = (int)Math.round(line.getX1())+offsetX;
+        	int y1 = (int)Math.round(line.getY1())+offsetY;
+        	int x2 = (int) line.getX2()+offsetX;
+        	int y2 = (int) line.getY2()+offsetY;
+        	System.out.println("width: " + screenWidth + " height: "+ screenHeight);
+        	g.drawLine(x1,  y1,  x2,  y2);
+        	
+        }
+        
 
         // draw sprites
         Iterator i = map.getSprites();

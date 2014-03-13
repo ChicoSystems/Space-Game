@@ -16,11 +16,11 @@ public class InputManager implements KeyListener, MouseListener,
     /**
         An invisible cursor.
     */
-    public static final Cursor INVISIBLE_CURSOR =
-        Toolkit.getDefaultToolkit().createCustomCursor(
-            Toolkit.getDefaultToolkit().getImage(""),
-            new Point(0,0),
-            "invisible");
+   // public static final Cursor INVISIBLE_CURSOR =
+       // Toolkit.getDefaultToolkit().createCustomCursor(
+           // Toolkit.getDefaultToolkit().getImage(""),
+           // new Point(0,0),
+           // "invisible");
 
     // mouse codes
     public static final int MOUSE_MOVE_LEFT = 0;

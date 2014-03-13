@@ -2,6 +2,7 @@ package spacegame.tilegame;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.Iterator;
 
 import javax.sound.midi.Sequence;
@@ -48,6 +49,7 @@ public class GameManager extends GameCore {
     private GameAction moveRight;
     private GameAction speedBoost;
     private GameAction fire;
+    private GameAction laser;
     private GameAction jump;
     private GameAction exit;
 
@@ -100,8 +102,8 @@ public class GameManager extends GameCore {
         moveLeft = new GameAction("moveLeft");
         moveRight = new GameAction("moveRight");
         speedBoost = new GameAction("speedBoost");
-        fire = new GameAction("fire",
-                GameAction.DETECT_INITAL_PRESS_ONLY);
+        fire = new GameAction("fire");
+        laser = new GameAction("laser");
         jump = new GameAction("jump",
             GameAction.DETECT_INITAL_PRESS_ONLY);
         exit = new GameAction("exit",
@@ -109,7 +111,7 @@ public class GameManager extends GameCore {
 
         inputManager = new InputManager(
             screen.getFullScreenWindow());
-        inputManager.setCursor(InputManager.INVISIBLE_CURSOR);
+       // inputManager.setCursor(InputManager.INVISIBLE_CURSOR);
 
         inputManager.mapToKey(moveUp, KeyEvent.VK_UP);
         inputManager.mapToKey(moveDown, KeyEvent.VK_DOWN);
@@ -122,6 +124,8 @@ public class GameManager extends GameCore {
         inputManager.mapToKey(speedBoost, KeyEvent.VK_SHIFT);
         inputManager.mapToKey(fire, KeyEvent.VK_SPACE);
         inputManager.mapToKey(exit, KeyEvent.VK_ESCAPE);
+        
+        inputManager.mapToMouse(laser, InputManager.MOUSE_BUTTON_1);
     }
 
 
@@ -151,19 +155,30 @@ public class GameManager extends GameCore {
                 player.jump(false);
             }
             if (speedBoost.isPressed()) {
-                player.setCurrentSpeed(player.getBoostSpeed());
+                player.setCurrentSpeed(player.getBoostSpeed()*4);
             }else if (!speedBoost.isPressed()) {
                 player.setCurrentSpeed(player.getMaxSpeed());
             }
             if (fire.isPressed()) {
                createProjectile(player);
             }
+            if (laser.isPressed()) {
+                createLaser(player, inputManager.getMouseX(), inputManager.getMouseY());
+             }
             player.setVelocityX(velocityX);
             player.setVelocityY(velocityY);
         }
 
     }
-
+    
+    private void createLaser(Player player, int xTarget, int yTarget) {
+    	map.addLaser(player.getX()+player.getWidth()/2,
+    				 player.getY()+player.getHeight()/2, 
+    				(player.getX()+xTarget-screen.getWidth()/2)+player.getWidth()/2, 
+    				(player.getY()+yTarget-screen.getHeight()/2)+player.getHeight()/2, 
+    				player);
+    }
+    
 
     private void createProjectile(Player player) {
 		// TODO Auto-generated method stub

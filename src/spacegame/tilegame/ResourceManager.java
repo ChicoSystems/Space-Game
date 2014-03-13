@@ -114,7 +114,7 @@ public class ResourceManager {
     }
     
     public Animation rotateAnimation(Animation anim, double rot){
-    	System.out.println("Rotating: " + rot);
+    	//System.out.println("Rotating: " + rot);
     	Animation newAnim = (Animation) anim.clone();
     	ArrayList <AnimFrame> oldFrames = (ArrayList<AnimFrame>) newAnim.getFrames().clone();
     	ArrayList <AnimFrame> newFrames = new ArrayList<AnimFrame>();

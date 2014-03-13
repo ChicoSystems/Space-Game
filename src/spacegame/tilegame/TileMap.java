@@ -1,10 +1,14 @@
 package spacegame.tilegame;
 
 import java.awt.Image;
+import java.awt.geom.Line2D;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Iterator;
 
 import spacegame.graphics.Sprite;
+import spacegame.tilegame.sprites.Laser;
+import spacegame.tilegame.sprites.Player;
 
 
 /**
@@ -17,6 +21,7 @@ public class TileMap {
 
     private Image[][] tiles;
     private LinkedList sprites;
+    private ArrayList <Laser> lasers;
     private Sprite player;
 
     /**
@@ -26,6 +31,7 @@ public class TileMap {
     public TileMap(int width, int height) {
         tiles = new Image[width][height];
         sprites = new LinkedList();
+        lasers = new ArrayList<Laser>();
     }
 
 
@@ -109,5 +115,20 @@ public class TileMap {
     public Iterator getSprites() {
         return sprites.iterator();
     }
+    
+    /**
+    Gets an Iterator of all the Sprites in this map,
+    excluding the player Sprite.
+	*/
+	public Iterator getLasers() {
+	    return lasers.iterator();
+	}
+    
+    public void addLaser(float f, float g, float h, float i, Player player){
+    	//Line2D laser = new Line2D.Double(f, g, h, i);
+    	Laser laser = new Laser(f, g, h, i, player);
+    	lasers.add(laser);
+    }
+    
 
 }
