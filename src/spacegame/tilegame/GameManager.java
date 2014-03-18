@@ -135,7 +135,7 @@ public class GameManager extends GameCore {
             stop();
         }
 
-        Player player = (Player)map.getPlayer();
+        Ship player = (Ship)map.getPlayer();
         if (player.isAlive()) {
             float velocityX = 0;
             float velocityY = 0;
@@ -152,7 +152,7 @@ public class GameManager extends GameCore {
                 velocityY+=player.getCurrentSpeed();
             }
             if (jump.isPressed()) {
-                player.jump(false);
+               // player.jump(false);
             }
             if (speedBoost.isPressed()) {
                 player.setCurrentSpeed(player.getBoostSpeed()*4);
@@ -160,27 +160,42 @@ public class GameManager extends GameCore {
                 player.setCurrentSpeed(player.getMaxSpeed());
             }
             if (fire.isPressed()) {
+            	player.setX(100);
+            	player.setY(100);
                createProjectile(player);
             }
-            if (laser.isPressed()) {
+            if(laser.isPressed()) {
                 createLaser(player, inputManager.getMouseX(), inputManager.getMouseY());
-             }
+            }else{
+            	destroyLaser(player); 
+            }
+             
             player.setVelocityX(velocityX);
             player.setVelocityY(velocityY);
         }
 
     }
     
-    private void createLaser(Player player, int xTarget, int yTarget) {
-    	map.addLaser(player.getX()+player.getWidth()/2,
-    				 player.getY()+player.getHeight()/2, 
-    				(player.getX()+xTarget-screen.getWidth()/2)+player.getWidth()/2, 
-    				(player.getY()+yTarget-screen.getHeight()/2)+player.getHeight()/2, 
-    				player);
+    private void createLaser(Ship player, int xTarget, int yTarget) {
+    	if(map.laserExists(player)){
+    		//do nothing there is already a laser for this player.
+    	}else{
+    		//this player does not already have a laser, it is being added.
+    		map.addLaser((float)player.nose.noseX,
+    					(float)player.nose.noseY, 
+   				 		 (player.getX()+xTarget-screen.getWidth()/2)+player.getWidth()/2, 
+   				 		 (player.getY()+yTarget-screen.getHeight()/2)+player.getHeight()/2, 
+   				player);
+    	}
     }
     
+    private void destroyLaser(Ship player){
+    	map.removeLaser(player);
+    }
+    
+    
 
-    private void createProjectile(Player player) {
+    private void createProjectile(Ship player) {
 		// TODO Auto-generated method stub
     	Projectile p = (Projectile) ((Projectile) resourceManager.rocketSprites.get((int)(Math.random()*resourceManager.rocketSprites.size()))).clone();
     	p.parentId = player.id;
@@ -235,6 +250,38 @@ public class GameManager extends GameCore {
         }
     }
 
+    public Point getTileCollision(Ship ship,
+            float newX, float newY)
+        {
+            float fromX = Math.min(ship.getX(), newX);
+            float fromY = Math.min(ship.getY(), newY);
+            float toX = Math.max(ship.getX(), newX);
+            float toY = Math.max(ship.getY(), newY);
+
+            // get the tile locations
+            int fromTileX = TileMapRenderer.pixelsToTiles(fromX);
+            int fromTileY = TileMapRenderer.pixelsToTiles(fromY);
+            int toTileX = TileMapRenderer.pixelsToTiles(
+                toX + ship.getWidth() - 1);
+            int toTileY = TileMapRenderer.pixelsToTiles(
+                toY + ship.getHeight() - 1);
+
+            // check each tile for a collision
+            for (int x=fromTileX; x<=toTileX; x++) {
+                for (int y=fromTileY; y<=toTileY; y++) {
+                    if (x < 0 || x >= map.getWidth() ||
+                        map.getTile(x, y) != null)
+                    {
+                        // collision found, return the tile
+                        pointCache.setLocation(x, y);
+                        return pointCache;
+                    }
+                }
+            }
+
+            // no collision found
+            return null;
+        }
 
     /**
         Gets the tile that a Sprites collides with. Only the
@@ -306,19 +353,42 @@ public class GameManager extends GameCore {
             s1y < s2y + s2.getHeight() &&
             s2y < s1y + s1.getHeight());
     }
+    
+    public boolean isCollision(Ship s1, Sprite s2) {
+
+        // if one of the Sprites is a dead Creature, return false
+        if (s1 instanceof Ship && !((Ship)s1).isAlive()) {
+            return false;
+        }
+        if (s2 instanceof Creature && !((Creature)s2).isAlive()) {
+            return false;
+        }
+
+        // get the pixel location of the Sprites
+        int s1x = Math.round(s1.getX());
+        int s1y = Math.round(s1.getY());
+        int s2x = Math.round(s2.getX());
+        int s2y = Math.round(s2.getY());
+
+        // check if the two sprites' boundaries intersect
+        return (s1x < s2x + s2.getWidth() &&
+            s2x < s1x + s1.getWidth() &&
+            s1y < s2y + s2.getHeight() &&
+            s2y < s1y + s1.getHeight());
+    }
 
 
     /**
         Gets the Sprite that collides with the specified Sprite,
         or null if no Sprite collides with the specified Sprite.
     */
-    public Sprite getSpriteCollision(Sprite sprite) {
+    public Sprite getSpriteCollision(Ship ship) {
 
         // run through the list of Sprites
         Iterator i = map.getSprites();
         while (i.hasNext()) {
             Sprite otherSprite = (Sprite)i.next();
-            if (isCollision(sprite, otherSprite)) {
+            if (isCollision(ship, otherSprite)) {
                 // collision found, return the Sprite
                 return otherSprite;
             }
@@ -334,7 +404,7 @@ public class GameManager extends GameCore {
         in the current map.
     */
     public void update(long elapsedTime) {
-        Creature player = (Creature)map.getPlayer();
+        Ship player = (Ship)map.getPlayer();
 
 
         // player is dead! start map over
@@ -347,9 +417,11 @@ public class GameManager extends GameCore {
         checkInput(elapsedTime);
 
         // update player
-        updateCreature(player, elapsedTime);
+        updateShip(player, elapsedTime);
         
         player.update(elapsedTime);
+        
+        updateLasers();
 
         // update other sprites
         Iterator i = map.getSprites();
@@ -369,6 +441,23 @@ public class GameManager extends GameCore {
         }
     }
 
+    //updates one end of each laser too follow it's parent.
+    private void updateLasers(){
+    	Iterator l = map.getLasers();
+    	Laser laser;
+    	Ship player;
+    	while(l.hasNext()){
+    		laser = (Laser)l.next();
+    		player = laser.getParent();
+    		double x1 = (float)player.nose.noseX;
+    		double y1 = (float)player.nose.noseY;
+    		double mouseX = inputManager.getMouseX();
+    		double mouseY = inputManager.getMouseY();
+    		double x2 = (player.getX()+mouseX-screen.getWidth()/2)+player.getWidth();
+    		double y2 = (player.getY()+mouseY-screen.getHeight()/2)+player.getHeight();
+    		laser.getLine().setLine(x1, y1, x2, y2);
+    	}
+    }
 
     /**
         Updates the creature, applying gravity for creatures that
@@ -377,14 +466,6 @@ public class GameManager extends GameCore {
     private void updateCreature(Creature creature,
         long elapsedTime)
     {
-
-    	/*
-        // apply gravity
-        if (!creature.isFlying()) {
-            creature.setVelocityY(creature.getVelocityY() +
-                GRAVITY * elapsedTime);
-        }*/
-    	
     	creature.updateRotation(elapsedTime);
 
         // change x
@@ -409,9 +490,6 @@ public class GameManager extends GameCore {
             }
             creature.collideHorizontal();
         }
-        if (creature instanceof Player) {
-            checkPlayerCollision((Player)creature, false);
-        }
 
         // change y
         float dy = creature.getVelocityY();
@@ -434,15 +512,73 @@ public class GameManager extends GameCore {
             }
             creature.collideVertical();
         }
-        if (creature instanceof Player) {
-            boolean canKill = (oldY < creature.getY());
-            checkPlayerCollision((Player)creature, canKill);
-        }
-        
-        
-       
-
     }
+    
+    /**
+    Updates the creature, applying gravity for creatures that
+    aren't flying, and checks collisions.
+*/
+private void updateShip(Ship creature,
+    long elapsedTime)
+{
+	creature.updateRotation(elapsedTime);
+
+    // change x
+    float dx = creature.getVelocityX();
+    float oldX = creature.getX();
+    float newX = oldX + dx * elapsedTime;
+    Point tile =
+        getTileCollision(creature, newX, creature.getY());
+    if (tile == null) {
+        creature.setX(newX);
+    }
+    else {
+        // line up with the tile boundary
+        if (dx > 0) {
+            creature.setX(
+                TileMapRenderer.tilesToPixels(tile.x) -
+                creature.getWidth());
+        }
+        else if (dx < 0) {
+            creature.setX(
+                TileMapRenderer.tilesToPixels(tile.x + 1));
+        }
+        creature.collideHorizontal();
+    }
+    if (creature instanceof Ship) {
+        checkPlayerCollision((Ship)creature, false);
+    }
+
+    // change y
+    float dy = creature.getVelocityY();
+    float oldY = creature.getY();
+    float newY = oldY + dy * elapsedTime;
+    tile = getTileCollision(creature, creature.getX(), newY);
+    if (tile == null) {
+        creature.setY(newY);
+    }
+    else {
+        // line up with the tile boundary
+        if (dy > 0) {
+            creature.setY(
+                TileMapRenderer.tilesToPixels(tile.y) -
+                creature.getHeight());
+        }
+        else if (dy < 0) {
+            creature.setY(
+                TileMapRenderer.tilesToPixels(tile.y + 1));
+        }
+        creature.collideVertical();
+    }
+    if (creature instanceof Ship) {
+        boolean canKill = (oldY < creature.getY());
+        checkPlayerCollision((Ship)creature, canKill);
+    }
+    
+    
+   
+
+}
 
 
     /**
@@ -450,7 +586,7 @@ public class GameManager extends GameCore {
         canKill is true, collisions with Creatures will kill
         them.
     */
-    public void checkPlayerCollision(Player player,
+    public void checkPlayerCollision(Ship player,
         boolean canKill)
     {
         if (!player.isAlive()) {
@@ -480,7 +616,6 @@ public class GameManager extends GameCore {
 	                soundManager.play(boopSound);
 	                badguy.setState(Creature.STATE_DYING);
 	                player.setY(badguy.getY() - player.getHeight());
-	                player.jump(true);
 	            }
 	            else {
 	                // player dies!
