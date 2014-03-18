@@ -313,8 +313,8 @@ public class Ship{
 		g.drawLine((int)p6.x+offsetX, (int)p6.y+offsetY, (int)p7.x+offsetX, (int)p7.y+offsetY);
 		g.drawLine((int)p7.x+offsetX, (int)p7.y+offsetY, (int)p8.x+offsetX, (int)p8.y+offsetY);
 		g.drawLine((int)p8.x+offsetX, (int)p8.y+offsetY, (int)p5.x+offsetX, (int)p5.y+offsetY);
-		System.out.println("current loc: " + this.getX() + " " + this.getY());
-		System.out.println("polygon loc: " + p1.x + " "	+ p1.y);
+		//System.out.println("current loc: " + this.getX() + " " + this.getY());
+		//System.out.println("polygon loc: " + p1.x + " "	+ p1.y);
 	}
 	
 	private void drawBody(Graphics2D g, int offsetX, int offsetY){

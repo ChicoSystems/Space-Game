@@ -4,6 +4,8 @@ import java.awt.*;
 import javax.swing.ImageIcon;
 
 import spacegame.graphics.ScreenManager;
+import spacegame.tilegame.GameManager;
+import spacegame.tilegame.SpaceMenu;
 
 
 /**
@@ -34,7 +36,8 @@ public abstract class GameCore {
     };
 
     private boolean isRunning;
-    protected ScreenManager screen;
+    public ScreenManager screen;
+    
 
 
     /**
@@ -98,7 +101,7 @@ public abstract class GameCore {
         window.setFont(new Font("Dialog", Font.PLAIN, FONT_SIZE));
         window.setBackground(Color.blue);
         window.setForeground(Color.white);
-
+        
         isRunning = true;
     }
 
