@@ -9,6 +9,7 @@ import java.util.Iterator;
 import spacegame.graphics.Sprite;
 import spacegame.tilegame.sprites.Laser;
 import spacegame.tilegame.sprites.Player;
+import spacegame.tilegame.sprites.Ship;
 
 
 /**
@@ -22,7 +23,7 @@ public class TileMap {
     private Image[][] tiles;
     private LinkedList sprites;
     private ArrayList <Laser> lasers;
-    private Sprite player;
+    private Ship player;
 
     /**
         Creates a new TileMap with the specified width and
@@ -79,7 +80,7 @@ public class TileMap {
     /**
         Gets the player Sprite.
     */
-    public Sprite getPlayer() {
+    public Ship getPlayer() {
         return player;
     }
 
@@ -87,7 +88,7 @@ public class TileMap {
     /**
         Sets the player Sprite.
     */
-    public void setPlayer(Sprite player) {
+    public void setPlayer(Ship player) {
         this.player = player;
     }
 
@@ -124,11 +125,28 @@ public class TileMap {
 	    return lasers.iterator();
 	}
     
-    public void addLaser(float f, float g, float h, float i, Player player){
+    public void addLaser(float f, float g, float h, float i, Ship player){
     	//Line2D laser = new Line2D.Double(f, g, h, i);
     	Laser laser = new Laser(f, g, h, i, player);
     	lasers.add(laser);
     }
     
+    public void removeLaser(Ship player){
+    	for(int i = 0; i < lasers.size(); i++){
+    		if(lasers.get(i).getParent() == player){
+    			lasers.remove(i);
+    		}
+    	}
+    } 
+    
+    public boolean laserExists(Ship player){
+    	boolean result = false;
+    	for(int i = 0; i < lasers.size(); i++){
+    		if(lasers.get(i).getParent() == player){
+    			result = true;
+    		}
+    	}
+    	return result;
+    }
 
 }
