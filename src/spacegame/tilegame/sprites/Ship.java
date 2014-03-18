@@ -212,6 +212,15 @@ public class Ship{
 			body.set(3, new Point2D.Double(xorigin-radius, yorigin+radius));
 		}
 	}
+	
+	public static final int POWER_MIN = 0;
+	public static final int POWER_MAX = 1000;
+	public static final int POWER_INIT = POWER_MIN;
+	
+	public static final int SPEED_MIN = 0;
+	public static final int SPEED_MAX = 1000;
+	public static final int SPEED_INIT = SPEED_MIN;
+	
 	protected float SPEED_ROTATION = .25f;
 	public static final int PIXEL_PER_UNIT = 5;
     private static final int DIE_TIME = 1000;
@@ -237,8 +246,8 @@ public class Ship{
     protected float futureRotation = 0;
     
 	protected float rotationSpeed = SPEED_ROTATION;
-	int power;
-	int speed;
+	public int power;
+	public int speed;
 
 	ShipBody body;
 	Engine engine1;

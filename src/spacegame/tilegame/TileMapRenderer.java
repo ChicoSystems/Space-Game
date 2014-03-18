@@ -174,7 +174,7 @@ public class TileMapRenderer {
         	int y1 = (int)Math.round(line.getY1())+offsetY;
         	int x2 = (int) line.getX2()+offsetX;
         	int y2 = (int) line.getY2()+offsetY;
-        	System.out.println("width: " + screenWidth + " height: "+ screenHeight);
+        	//System.out.println("width: " + screenWidth + " height: "+ screenHeight);
         	Color origColor = g.getColor();
         	g.setColor(Color.YELLOW);
         	g.drawLine(x1,  y1,  x2,  y2);

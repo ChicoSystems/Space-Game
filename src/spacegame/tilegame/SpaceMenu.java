@@ -44,7 +44,6 @@ public class SpaceMenu implements ActionListener{
 	
 	ScreenManager screen;
 	InputManager inputManager;
-	private JPanel menuSpace;
 	private JButton configButton;
 	
 	public JPanel dialog;
@@ -56,7 +55,6 @@ public class SpaceMenu implements ActionListener{
 		parent = gm;
 		this.screen = gm.screen;
 		this.inputManager = gm.inputManager;
-		menuSpace = new JPanel();
 		configButton = createButton("config", "Change Settings");
 		JFrame frame = screen.getFullScreenWindow();
 		
