@@ -44,8 +44,8 @@ public class GameManager extends GameCore {
     private Sound boopSound;
     public InputManager inputManager;
     private TileMapRenderer renderer;
-    protected SpaceMenu menu;
-    protected boolean displayMenu;
+    protected MainMenu menu;
+    
     
 
     public GameAction moveUp;
@@ -57,6 +57,7 @@ public class GameManager extends GameCore {
     private GameAction laser;
     private GameAction jump;
     public GameAction configAction;
+    public GameAction shipMenuAction;
     public GameAction menuAction;
     private GameAction exit;
     
@@ -92,8 +93,8 @@ public class GameManager extends GameCore {
         midiPlayer.play(sequence, true);
         toggleDrumPlayback();
         
-        menu = new SpaceMenu((GameManager) this);
-        displayMenu = false;
+        menu = new MainMenu((GameManager) this);
+        menu.displayMainMenu = false;
         
     }
 
@@ -120,6 +121,8 @@ public class GameManager extends GameCore {
             GameAction.DETECT_INITAL_PRESS_ONLY);
         menuAction = new GameAction("menuAction",
                 GameAction.DETECT_INITAL_PRESS_ONLY);
+        shipMenuAction = new GameAction("shipMenuAction",
+                GameAction.DETECT_INITAL_PRESS_ONLY);
         configAction = new GameAction("configAction",
                 GameAction.DETECT_INITAL_PRESS_ONLY);
         exit = new GameAction("exit",
@@ -140,6 +143,7 @@ public class GameManager extends GameCore {
         inputManager.mapToKey(speedBoost, KeyEvent.VK_SHIFT);
         inputManager.mapToKey(fire, KeyEvent.VK_SPACE);
         inputManager.mapToKey(menuAction, KeyEvent.VK_F1);
+        inputManager.mapToKey(shipMenuAction, KeyEvent.VK_M);
         inputManager.mapToKey(exit, KeyEvent.VK_ESCAPE);
         
         inputManager.mapToMouse(laser, InputManager.MOUSE_BUTTON_1);
@@ -153,12 +157,12 @@ public class GameManager extends GameCore {
         
         if (configAction.isPressed()) {
             // hide or show the config dialog
-            boolean show = !menu.dialog.isVisible();
-            menu.dialog.setVisible(show);
+            boolean show = !menu.tabbedMainMenu.isVisible();
+            menu.tabbedMainMenu.setVisible(show);
         }
         
         if(menuAction.isPressed()){
-        	displayMenu = !displayMenu;
+        	menu.displayMainMenu = !menu.displayMainMenu;
         }
 
         Ship player = (Ship)map.getPlayer();
@@ -194,6 +198,12 @@ public class GameManager extends GameCore {
                 createLaser(player, inputManager.getMouseX(), inputManager.getMouseY());
             }else{
             	destroyLaser(player); 
+            }
+            
+            if(shipMenuAction.isPressed()){
+            	System.out.println("shipMenuActipon pressed");
+            	menu.tabbedShipMenu.setVisible(!menu.tabbedShipMenu.isVisible());
+            	menu.setMenuLocation(menu.tabbedShipMenu, inputManager.getMouseX(), inputManager.getMouseY());
             }
              
             player.setVelocityX(velocityX);
@@ -258,7 +268,7 @@ public class GameManager extends GameCore {
 	
 	public void drawMenu(Graphics2D g, TileMap theMap, 
 						float screenWidth, float screenHeight){
-		if(displayMenu){
+		if(menu.displayMainMenu){
 			JFrame frame = super.screen.getFullScreenWindow();
 	        // the layered pane contains things like popups (tooltips,
 	        // popup menus) and the content pane.
