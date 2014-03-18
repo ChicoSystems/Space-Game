@@ -8,6 +8,7 @@ import java.util.Iterator;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.sampled.AudioFormat;
+import javax.swing.JFrame;
 
 import spacegame.graphics.*;
 import spacegame.input.*;
@@ -32,6 +33,7 @@ public class GameManager extends GameCore {
     private static final int DRUM_TRACK = 1;
 
     public static final float GRAVITY = 0.002f;
+    
 
     private Point pointCache = new Point();
     private TileMap map;
@@ -40,18 +42,24 @@ public class GameManager extends GameCore {
     private ResourceManager resourceManager;
     private Sound prizeSound;
     private Sound boopSound;
-    private InputManager inputManager;
+    public InputManager inputManager;
     private TileMapRenderer renderer;
+    protected SpaceMenu menu;
+    protected boolean displayMenu;
+    
 
-    private GameAction moveUp;
-    private GameAction moveDown;
-    private GameAction moveLeft;
-    private GameAction moveRight;
+    public GameAction moveUp;
+    public GameAction moveDown;
+    public GameAction moveLeft;
+    public GameAction moveRight;
     private GameAction speedBoost;
     private GameAction fire;
     private GameAction laser;
     private GameAction jump;
+    public GameAction configAction;
+    public GameAction menuAction;
     private GameAction exit;
+    
 
 
     public void init() {
@@ -83,6 +91,10 @@ public class GameManager extends GameCore {
             midiPlayer.getSequence("sounds/music.midi");
         midiPlayer.play(sequence, true);
         toggleDrumPlayback();
+        
+        menu = new SpaceMenu((GameManager) this);
+        displayMenu = false;
+        
     }
 
 
@@ -106,6 +118,10 @@ public class GameManager extends GameCore {
         laser = new GameAction("laser");
         jump = new GameAction("jump",
             GameAction.DETECT_INITAL_PRESS_ONLY);
+        menuAction = new GameAction("menuAction",
+                GameAction.DETECT_INITAL_PRESS_ONLY);
+        configAction = new GameAction("configAction",
+                GameAction.DETECT_INITAL_PRESS_ONLY);
         exit = new GameAction("exit",
             GameAction.DETECT_INITAL_PRESS_ONLY);
 
@@ -123,6 +139,7 @@ public class GameManager extends GameCore {
         inputManager.mapToKey(moveRight, KeyEvent.VK_D);
         inputManager.mapToKey(speedBoost, KeyEvent.VK_SHIFT);
         inputManager.mapToKey(fire, KeyEvent.VK_SPACE);
+        inputManager.mapToKey(menuAction, KeyEvent.VK_F1);
         inputManager.mapToKey(exit, KeyEvent.VK_ESCAPE);
         
         inputManager.mapToMouse(laser, InputManager.MOUSE_BUTTON_1);
@@ -130,9 +147,18 @@ public class GameManager extends GameCore {
 
 
     private void checkInput(long elapsedTime) {
-
         if (exit.isPressed()) {
             stop();
+        }
+        
+        if (configAction.isPressed()) {
+            // hide or show the config dialog
+            boolean show = !menu.dialog.isVisible();
+            menu.dialog.setVisible(show);
+        }
+        
+        if(menuAction.isPressed()){
+        	displayMenu = !displayMenu;
         }
 
         Ship player = (Ship)map.getPlayer();
@@ -226,9 +252,19 @@ public class GameManager extends GameCore {
 
 
 	public void draw(Graphics2D g) {
-        renderer.draw(g, map,
-            screen.getWidth(), screen.getHeight());
+        renderer.draw(g, map, screen.getWidth(), screen.getHeight());
+        drawMenu(g, map, screen.getWidth(), screen.getHeight());
     }
+	
+	public void drawMenu(Graphics2D g, TileMap theMap, 
+						float screenWidth, float screenHeight){
+		if(displayMenu){
+			JFrame frame = super.screen.getFullScreenWindow();
+	        // the layered pane contains things like popups (tooltips,
+	        // popup menus) and the content pane.
+	        frame.getLayeredPane().paintComponents(g);
+		}
+	}
 
 
     /**
