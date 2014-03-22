@@ -388,6 +388,18 @@ public class GameManager extends GameCore {
         if (s2 instanceof Creature && !((Creature)s2).isAlive()) {
             return false;
         }
+        
+        if(s1 instanceof Laser && s2 instanceof Planet){
+        	Laser l = (Laser)s1;
+        	Planet p = (Planet)s2;
+        	if(l.getLine().intersects(p.circle.getBounds2D())){
+        		System.out.println("laser hit");
+        		return true;
+        	}else{
+        		System.out.println("laser fail");
+        		return false;
+        	}
+        }
 
         // get the pixel location of the Sprites
         int s1x = Math.round(s1.getX());
@@ -508,7 +520,41 @@ public class GameManager extends GameCore {
     		//double x2 = (player.getX()+mouseX-screen.getWidth()/2)+player.getWidth();
     		//double y2 = (player.getY()+mouseY-screen.getHeight()/2)+player.getHeight();
     		laser.getLine().setLine(x1, y1, x2, y2);
+    		checkLaserCollisions(laser);
     	}
+    }
+    
+    private void checkLaserCollisions(Laser laser){
+    	checkLaserCollisionsWithPlanets(laser);
+    }
+    
+    private void checkLaserCollisionsWithPlanets(Laser laser){
+    	 // update other sprites
+        Iterator i = map.getSprites();
+        while (i.hasNext()) {
+            Sprite sprite = (Sprite)i.next();
+            if (sprite instanceof Planet) {
+            	Planet planet = (Planet)sprite;
+            	if(isCollision(laser, planet))
+               collideLaserWithPlanet(laser, planet);
+            }
+        }
+    }
+    
+    private void collideLaserWithPlanet(Laser laser, Planet planet){
+    	//System.out.println("Laser Colliding with Planet");
+    	long currentTime = System.currentTimeMillis();
+    	long lastCollideTime = planet.getLastCollideTime();
+    	long elapsedCollideTime = currentTime - lastCollideTime;
+    	
+    	if(elapsedCollideTime <= 1000){
+    		double powerDifference = laser.power *(elapsedCollideTime);
+    		System.out.println("power diff: " + powerDifference + " LaserP: " + laser.power + " time: " + elapsedCollideTime);
+    		planet.totalPower(planet.totalPower()-powerDifference);
+    		laser.parent.totalPower += powerDifference;
+    		
+    	}
+    	planet.setLastCollideTime(currentTime);
     }
 
     /**
@@ -567,70 +613,70 @@ public class GameManager extends GameCore {
     }
     
     /**
-    Updates the creature, applying gravity for creatures that
-    aren't flying, and checks collisions.
-*/
-private void updateShip(Ship creature,
-    long elapsedTime)
-{
-	creature.updateRotation(elapsedTime);
-
-    // change x
-    float dx = creature.getVelocityX();
-    float oldX = creature.getX();
-    float newX = oldX + dx * elapsedTime;
-    Point tile =
-        getTileCollision(creature, newX, creature.getY());
-    if (tile == null) {
-        creature.setX(newX);
-    }
-    else {
-        // line up with the tile boundary
-        if (dx > 0) {
-            creature.setX(
-                TileMapRenderer.tilesToPixels(tile.x) -
-                creature.getWidth());
-        }
-        else if (dx < 0) {
-            creature.setX(
-                TileMapRenderer.tilesToPixels(tile.x + 1));
-        }
-        creature.collideHorizontal();
-    }
-    if (creature instanceof Ship) {
-        checkPlayerCollision((Ship)creature, false);
-    }
-
-    // change y
-    float dy = creature.getVelocityY();
-    float oldY = creature.getY();
-    float newY = oldY + dy * elapsedTime;
-    tile = getTileCollision(creature, creature.getX(), newY);
-    if (tile == null) {
-        creature.setY(newY);
-    }
-    else {
-        // line up with the tile boundary
-        if (dy > 0) {
-            creature.setY(
-                TileMapRenderer.tilesToPixels(tile.y) -
-                creature.getHeight());
-        }
-        else if (dy < 0) {
-            creature.setY(
-                TileMapRenderer.tilesToPixels(tile.y + 1));
-        }
-        creature.collideVertical();
-    }
-    if (creature instanceof Ship) {
-        boolean canKill = (oldY < creature.getY());
-        checkPlayerCollision((Ship)creature, canKill);
-    }
-    
-    
-   
-
-}
+	    Updates the creature, applying gravity for creatures that
+	    aren't flying, and checks collisions.
+	*/
+	private void updateShip(Ship creature,
+	    long elapsedTime)
+	{
+		creature.updateRotation(elapsedTime);
+	
+	    // change x
+	    float dx = creature.getVelocityX();
+	    float oldX = creature.getX();
+	    float newX = oldX + dx * elapsedTime;
+	    Point tile =
+	        getTileCollision(creature, newX, creature.getY());
+	    if (tile == null) {
+	        creature.setX(newX);
+	    }
+	    else {
+	        // line up with the tile boundary
+	        if (dx > 0) {
+	            creature.setX(
+	                TileMapRenderer.tilesToPixels(tile.x) -
+	                creature.getWidth());
+	        }
+	        else if (dx < 0) {
+	            creature.setX(
+	                TileMapRenderer.tilesToPixels(tile.x + 1));
+	        }
+	        creature.collideHorizontal();
+	    }
+	    if (creature instanceof Ship) {
+	        checkPlayerCollision((Ship)creature, false);
+	    }
+	
+	    // change y
+	    float dy = creature.getVelocityY();
+	    float oldY = creature.getY();
+	    float newY = oldY + dy * elapsedTime;
+	    tile = getTileCollision(creature, creature.getX(), newY);
+	    if (tile == null) {
+	        creature.setY(newY);
+	    }
+	    else {
+	        // line up with the tile boundary
+	        if (dy > 0) {
+	            creature.setY(
+	                TileMapRenderer.tilesToPixels(tile.y) -
+	                creature.getHeight());
+	        }
+	        else if (dy < 0) {
+	            creature.setY(
+	                TileMapRenderer.tilesToPixels(tile.y + 1));
+	        }
+	        creature.collideVertical();
+	    }
+	    if (creature instanceof Ship) {
+	        boolean canKill = (oldY < creature.getY());
+	        checkPlayerCollision((Ship)creature, canKill);
+	    }
+	    
+	    
+	   
+	
+	}
 
 
     /**

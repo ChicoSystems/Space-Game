@@ -7,6 +7,7 @@ import java.util.Iterator;
 import spacegame.graphics.Sprite;
 import spacegame.tilegame.sprites.Creature;
 import spacegame.tilegame.sprites.Laser;
+import spacegame.tilegame.sprites.Planet;
 import spacegame.tilegame.sprites.Ship;
 
 
@@ -164,11 +165,19 @@ public class TileMapRenderer {
             g.drawImage(sprite.getImage(), x, y, null);
 
             // wake up the creature when it's on screen
-            if (sprite instanceof Creature &&
-                x >= 0 && x < screenWidth)
-            {
+            if (sprite instanceof Creature && x >= 0 && x < screenWidth){
                 ((Creature)sprite).wakeUp();
             }
+            
+            //if sprite is a planet, draw a string with the total power;
+            if(sprite instanceof Planet){
+            	Planet p = (Planet)sprite;
+            	int sx = Math.round(sprite.getX()) + offsetX;
+            	int sy = Math.round(sprite.getY()) + offsetY;
+            	g.drawString(String.valueOf(((Planet)sprite).totalPower()), sx-sprite.getWidth()/2, sy);
+            	g.drawArc(sx, sy, (int)p.circle.getWidth(), (int)p.circle.getHeight(), 0, 360);
+            }
+            
         }
     }
     

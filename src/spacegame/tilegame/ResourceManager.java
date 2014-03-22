@@ -25,7 +25,7 @@ public class ResourceManager {
     
     //Planet Images
     private ArrayList planetImages;
-    public ArrayList <Sprite> planetSprites;
+    public ArrayList <Planet> planetSprites;
     
     private ArrayList <ArrayList> rocketImages;
     public ArrayList rocketSprites;
@@ -339,6 +339,11 @@ public class ResourceManager {
                 TileMapRenderer.tilesToPixels(tileY + 1) -
                 sprite.getHeight());
 
+            //set planet total power if planet
+            if(sprite instanceof Planet){
+            	((Planet)sprite).setRandomTotalPower();
+            }
+            
             // add it to the map
             map.addSprite(sprite);
         }
@@ -441,7 +446,8 @@ public class ResourceManager {
     	for(int i = 0; i < planetImages.size(); i++){
     		Animation[] animation = new Animation[1];
     		animation[0] = (Animation) anims.get(i);
-    		Sprite s = new Planet(animation);
+    		Planet s = new Planet(animation);
+    		s.setPlanetType(i);
     		System.out.println(i);
     		planetSprites.add(s);
     	}
