@@ -150,40 +150,11 @@ public class TileMapRenderer {
                 }
             }
         }
-
-        // draw player
-        //g.drawImage(player.getImage(),
-         //   Math.round(player.getX()) + offsetX,
-         //   Math.round(player.getY()) + offsetY,
-         //   null);
+        
+        drawLasers(g, map, offsetX, offsetY);
         player.drawShip(g, offsetX, offsetY);
         
-        //draw ships
-        //Iterator s = map.getShips();
-       // while(s.hasNext()){
-        //	Ship ship = (Ship)s.next();
-        //	ship.drawShip(g);
-        //}
         
-        // draw lasers
-        Iterator l = map.getLasers();
-        while(l.hasNext()){
-        	Laser laser = (Laser)l.next();
-        	Line2D line = laser.getLine();
-        	int x1 = (int)Math.round(line.getX1())+offsetX;
-        	int y1 = (int)Math.round(line.getY1())+offsetY;
-        	int x2 = (int) line.getX2()+offsetX;
-        	int y2 = (int) line.getY2()+offsetY;
-        	//System.out.println("width: " + screenWidth + " height: "+ screenHeight);
-        	Color origColor = g.getColor();
-        	g.setColor(Color.YELLOW);
-        	g.drawLine(x1,  y1,  x2,  y2);
-        	g.setColor(origColor);
-        	
-        	
-        }
-        
-
         // draw sprites
         Iterator i = map.getSprites();
         while (i.hasNext()) {
@@ -198,6 +169,28 @@ public class TileMapRenderer {
             {
                 ((Creature)sprite).wakeUp();
             }
+        }
+    }
+    
+    private void drawLasers(Graphics2D g, TileMap map, int offsetX, int offsetY){
+    	 // draw lasers
+        Iterator l = map.getLasers();
+        while(l.hasNext()){
+        	Laser laser = (Laser)l.next();
+        	Line2D line = laser.getLine();
+        	int x1 = (int)Math.round(line.getX1())+offsetX;
+        	int y1 = (int)Math.round(line.getY1())+offsetY;
+        	int x2 = (int) Math.round(line.getX2())+offsetX;
+        	int y2 = (int) Math.round(line.getY2())+offsetY;
+        	//System.out.println("width: " + screenWidth + " height: "+ screenHeight);
+        	Color origColor = g.getColor();
+        	g.setColor(laser.color);
+        	Stroke stroke = g.getStroke();
+        	g.setStroke(new BasicStroke((float) laser.width));
+        	g.drawLine(x1,  y1,  x2,  y2);
+        	g.setStroke(stroke);
+        	g.setColor(origColor);
+        	
         }
     }
 
