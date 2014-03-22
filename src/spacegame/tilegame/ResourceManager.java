@@ -32,7 +32,7 @@ public class ResourceManager {
     
     
     private int currentMap;
-    private GraphicsConfiguration gc;
+    public GraphicsConfiguration gc;
 
     // host sprites used for cloning
     private Sprite playerSprite;
@@ -311,7 +311,7 @@ public class ResourceManager {
 
         // add the player to the map
         //Sprite player = (Sprite)playerSprite.clone();
-        Ship player = new Ship();
+        Ship player = new Ship(this);
         player.setX(TileMapRenderer.tilesToPixels(250));
         player.setY(TileMapRenderer.tilesToPixels(200));
         newMap.setPlayer(player);

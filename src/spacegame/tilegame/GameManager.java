@@ -52,14 +52,14 @@ public class GameManager extends GameCore {
     public GameAction moveDown;
     public GameAction moveLeft;
     public GameAction moveRight;
-    private GameAction speedBoost;
-    private GameAction fire;
-    private GameAction laser;
-    private GameAction jump;
+    public GameAction speedBoost;
+    public GameAction fire;
+    public GameAction laser;
+    public GameAction jump;
     public GameAction configAction;
     public GameAction shipMenuAction;
     public GameAction menuAction;
-    private GameAction exit;
+    public GameAction exit;
     
 
 
@@ -143,7 +143,7 @@ public class GameManager extends GameCore {
         inputManager.mapToKey(speedBoost, KeyEvent.VK_SHIFT);
         inputManager.mapToKey(fire, KeyEvent.VK_SPACE);
         inputManager.mapToKey(menuAction, KeyEvent.VK_F1);
-        inputManager.mapToKey(shipMenuAction, KeyEvent.VK_M);
+        inputManager.mapToMouse(shipMenuAction, InputManager.MOUSE_BUTTON_3);
         inputManager.mapToKey(exit, KeyEvent.VK_ESCAPE);
         
         inputManager.mapToMouse(laser, InputManager.MOUSE_BUTTON_1);
@@ -219,8 +219,10 @@ public class GameManager extends GameCore {
     		//this player does not already have a laser, it is being added.
     		map.addLaser((float)player.nose.noseX,
     					(float)player.nose.noseY, 
-   				 		 (player.getX()+xTarget-screen.getWidth()/2)+player.getWidth()/2, 
-   				 		 (player.getY()+yTarget-screen.getHeight()/2)+player.getHeight()/2, 
+   				 		// (player.getX()+xTarget-(screen.getWidth()/2))+player.getWidth(), 
+   				 		 //(player.getY()+yTarget-(screen.getHeight()/2))+player.getHeight(), 
+    					(float)((xTarget)+player.nose.noseX), 
+    					(float)((yTarget)+player.nose.noseY), 
    				player);
     	}
     }
@@ -499,8 +501,12 @@ public class GameManager extends GameCore {
     		double y1 = (float)player.nose.noseY;
     		double mouseX = inputManager.getMouseX();
     		double mouseY = inputManager.getMouseY();
-    		double x2 = (player.getX()+mouseX-screen.getWidth()/2)+player.getWidth();
-    		double y2 = (player.getY()+mouseY-screen.getHeight()/2)+player.getHeight();
+    		double x2 = player.getX()-(screen.getWidth()/2-mouseX)+(32);
+			double y2 = player.getY()-(screen.getHeight()/2-mouseY)+(32);
+			
+			
+    		//double x2 = (player.getX()+mouseX-screen.getWidth()/2)+player.getWidth();
+    		//double y2 = (player.getY()+mouseY-screen.getHeight()/2)+player.getHeight();
     		laser.getLine().setLine(x1, y1, x2, y2);
     	}
     }
