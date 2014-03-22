@@ -8,7 +8,7 @@ import java.awt.geom.Rectangle2D;
 import spacegame.graphics.Sprite;
 
 public class Laser extends Sprite{
-	Ship parent;
+	public Ship parent;
 	Line2D line;
 	//Rect2D	rect;
 	public double power;

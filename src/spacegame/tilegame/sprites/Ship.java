@@ -3,6 +3,7 @@ package spacegame.tilegame.sprites;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
@@ -178,6 +179,7 @@ public class Ship{
 		double xorigin;
 		double yorigin;
 		ArrayList<Point2D.Double> body;
+		//Rectangle body;// = new Rectangle(100, 100, 100, 100);
 		Point2D.Double e1Att;
 		Point2D.Double e2Att;
 		
@@ -186,6 +188,7 @@ public class Ship{
 			xorigin = parent.getX();
 			yorigin = parent.getY();
 			body = new ArrayList<Point2D.Double>();
+			
 			int widthPoints = parent.speed/4 + parent.power + parent.hitpoints;
 			int heightPoints = parent.speed/2 + parent.power/4 + parent.hitpoints;
 			//int totalPoints = 
@@ -207,6 +210,7 @@ public class Ship{
 			e1Att = new Point2D.Double(xorigin-width, yorigin+0);
 			e2Att = new Point2D.Double(xorigin+width, yorigin+0);
 			
+			//body = new Rectangle((int)(xorigin-width), (int)(yorigin-height), (int)width*2, (int)height*2);
 			body.add(new Point2D.Double(xorigin-width, yorigin-height));
 			body.add(new Point2D.Double(xorigin+width, yorigin-height));
 			body.add(new Point2D.Double(xorigin+width, yorigin+height));
@@ -238,6 +242,7 @@ public class Ship{
 			e1Att = new Point2D.Double(xorigin-width, yorigin+0);
 			e2Att = new Point2D.Double(xorigin+width, yorigin+0);
 			
+			//body.
 			body.set(0, new Point2D.Double(xorigin-width, yorigin-height));
 			body.set(1, new Point2D.Double(xorigin+width, yorigin-height));
 			body.set(2, new Point2D.Double(xorigin+width, yorigin+height));
@@ -285,6 +290,9 @@ public class Ship{
 	public int power;
 	public int speed;
 	public int hitpoints;
+	
+	//the power pool drawn from to run the ship
+	public double totalPower;
 
 	public ShipBody body;
 	Engine engine1;
@@ -294,7 +302,8 @@ public class Ship{
 	
 	public Ship(ResourceManager parent) {
 		this.parent = parent;
-		power = 0;
+		totalPower = 1;
+		power = 1;
 		speed = 1;
 		hitpoints = HITPOINT_INIT;
 		id = Math.random();
