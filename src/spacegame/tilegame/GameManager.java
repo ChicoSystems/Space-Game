@@ -9,6 +9,8 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.sampled.AudioFormat;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 
 import spacegame.graphics.*;
 import spacegame.input.*;
@@ -393,10 +395,10 @@ public class GameManager extends GameCore {
         	Laser l = (Laser)s1;
         	Planet p = (Planet)s2;
         	if(l.getLine().intersects(p.circle.getBounds2D())){
-        		System.out.println("laser hit");
+        		//System.out.println("laser hit");
         		return true;
         	}else{
-        		System.out.println("laser fail");
+        		//System.out.println("laser fail");
         		return false;
         	}
         }
@@ -465,6 +467,9 @@ public class GameManager extends GameCore {
     */
     public void update(long elapsedTime) {
         Ship player = (Ship)map.getPlayer();
+        JTabbedPane tabbelShipMenu = menu.tabbedShipMenu;
+        JPanel sliderMenu = ((JPanel)menu.tabbedShipMenu.getComponent(0));
+        menu.updateShipSliders(sliderMenu);
 
 
         // player is dead! start map over
@@ -547,14 +552,13 @@ public class GameManager extends GameCore {
     	long lastCollideTime = planet.getLastCollideTime();
     	long elapsedCollideTime = currentTime - lastCollideTime;
     	
-    	if(elapsedCollideTime <= 1000){
-    		double powerDifference = laser.power *(elapsedCollideTime);
-    		System.out.println("power diff: " + powerDifference + " LaserP: " + laser.power + " time: " + elapsedCollideTime);
+    	if(elapsedCollideTime <= 100){
+    		double powerDifference = (laser.power/500) *(elapsedCollideTime);
     		planet.totalPower(planet.totalPower()-powerDifference);
     		laser.parent.totalPower += powerDifference;
-    		
     	}
     	planet.setLastCollideTime(currentTime);
+    	
     }
 
     /**

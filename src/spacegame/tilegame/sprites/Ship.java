@@ -43,13 +43,13 @@ public class Ship{
 			
 			double lengthPoints = parent.speed;
 			double radiusPoints = (parent.speed/4)+parent.power;
-			if(lengthPoints == 0){
+			if(lengthPoints <=1 ){
 				noseLength = 1; //(lengthPoints - 1) / (1000 - 1) * (6-1) + 1;
 			}else{
 				noseLength = parent.map(lengthPoints, 1, 1000, 2, 6);
 			}
 			
-			if(radiusPoints == 0){
+			if(radiusPoints <=2){
 				noseRadius = 1;//(lengthPoints - 1) / (1000 - 1) * (6-1) + 1;
 			}else{
 				noseRadius = parent.map(radiusPoints, 1, 1000, 2, 12);
@@ -72,13 +72,13 @@ public class Ship{
 			engineTopY = parent.engine1.engine.get(0).y;
 			int lengthPoints = parent.speed+(parent.power/3)+parent.hitpoints/3;
 			int radiusPoints = (parent.speed/4)+parent.power+parent.hitpoints/4;
-			if(lengthPoints == 0){
+			if(lengthPoints <=3){
 				noseLength = 2; //(lengthPoints - 1) / (1000 - 1) * (6-1) + 1;
 			}else{
 				noseLength = parent.map(lengthPoints, 1, 1667, 2, 10);
 			}
 			
-			if(radiusPoints == 0){
+			if(radiusPoints <=3){
 				noseRadius = 4;//(lengthPoints - 1) / (1000 - 1) * (6-1) + 1;
 			}else{
 				noseRadius = parent.map(radiusPoints, 1, 1500, 2, 14);
@@ -113,7 +113,7 @@ public class Ship{
 			xorigin = parent.getX();
 			yorigin = parent.getY();
 			int totalPoints = parent.speed+(parent.power/4);
-			if(totalPoints == 0){
+			if(totalPoints <=2){
 				engineHeight = 2;//(totalPoints - 1) / (1250 - 1) * (24-1) + 1;
 				engineWidth = 1;//(totalPoints - 1) / (1250 - 1) * (6-1) + 1;
 			}else{
@@ -142,13 +142,13 @@ public class Ship{
 			double heightPoints = (parent.speed*1.5+(parent.power/4)+parent.hitpoints/2);
 			double widthPoints = parent.speed/8+(parent.power/2) + parent.hitpoints/2;
 			
-			if(heightPoints == 0){
+			if(heightPoints <= 3){
 				engineHeight = 2;
 			}else{
 				engineHeight = parent.map(heightPoints, 1, 2175, 2, 24);
 			}
 			
-			if(widthPoints == 0){
+			if(widthPoints <= 3){
 				engineWidth = 1;//(totalPoints - 1) / (1250 - 1) * (6-1) + 1;
 			}else{
 				engineWidth = parent.map(widthPoints, 1, 1250, 2, 6);
@@ -192,13 +192,13 @@ public class Ship{
 			int widthPoints = parent.speed/4 + parent.power + parent.hitpoints;
 			int heightPoints = parent.speed/2 + parent.power/4 + parent.hitpoints;
 			//int totalPoints = 
-			if(widthPoints == 0){
+			if(widthPoints <= 3){
 				width = .5;
 			}else{
 				width = parent.map(widthPoints, 1, 2250, 2, 6);
 			}
 			
-			if(heightPoints == 0){
+			if(heightPoints <=3){
 				height = .5;
 			}else{
 				height = parent.map(heightPoints, 1, 1750, 2, 6);
@@ -222,13 +222,13 @@ public class Ship{
 			int widthPoints = parent.speed/10 + parent.power/2 + parent.hitpoints;
 			int heightPoints = parent.speed/2 + parent.power/5 + parent.hitpoints;
 			//int totalPoints = 
-			if(widthPoints == 0){
+			if(widthPoints <=3){
 				width = .5;
 			}else{
 				width = parent.map(widthPoints, 1, 2100, 2, 6);
 			}
 			
-			if(heightPoints == 0){
+			if(heightPoints <=3){
 				height = .5;
 			}else{
 				height = parent.map(heightPoints, 1, 1700, 2, 6);
@@ -250,15 +250,15 @@ public class Ship{
 		}
 	}
 	
-	public static final int HITPOINT_MIN = 0;
+	public static final int HITPOINT_MIN = 1;
 	public static final int HITPOINT_MAX = 1000;
 	public static final int HITPOINT_INIT = HITPOINT_MIN;
 	
-	public static final int POWER_MIN = 0;
+	public static final int POWER_MIN = 1;
 	public static final int POWER_MAX = 1000;
 	public static final int POWER_INIT = POWER_MIN;
 	
-	public static final int SPEED_MIN = 0;
+	public static final int SPEED_MIN = 1;
 	public static final int SPEED_MAX = 1000;
 	public static final int SPEED_INIT = SPEED_MIN;
 	

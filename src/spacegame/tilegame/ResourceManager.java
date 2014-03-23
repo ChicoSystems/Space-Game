@@ -341,7 +341,10 @@ public class ResourceManager {
 
             //set planet total power if planet
             if(sprite instanceof Planet){
-            	((Planet)sprite).setRandomTotalPower();
+            	Planet p = (Planet)sprite;
+            	p.setRandomTotalPower();
+            	p.circle.setFrame(p.circle.getX(), p.circle.getY(), p.totalPower()/Planet.POWER_TO_SIZE, p.totalPower()/Planet.POWER_TO_SIZE);
+            	//((Planet)sprite).setWidth((int) (((Planet)sprite).totalPower()/Planet.POWER_TO_SIZE));
             }
             
             // add it to the map
