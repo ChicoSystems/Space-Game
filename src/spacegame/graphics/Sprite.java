@@ -71,6 +71,25 @@ public class Sprite {
     public int getWidth() {
         return anim.getImage().getWidth(null);
     }
+    
+    public void setWidth(int w){
+    	if(w == 0) w = 1;
+    	//System.out.println("Setting Width: " + w);
+    	for(int i = 0; i < anim.getFrames().size(); i ++){
+    		Image image = ((AnimFrame)anim.getFrames().get(i)).image;
+    		image = image.getScaledInstance(w, image.getHeight(null), 0);
+    		((AnimFrame)anim.getFrames().get(i)).image = image;
+    	}
+    	//anim.setImage(anim.getImage().getScaledInstance(w, anim.getImage().getHeight(null), 0));
+    }
+    
+    public void setHeight(int h){
+    	for(int i = 0; i < anim.getFrames().size(); i ++){
+    		Image image = ((AnimFrame)anim.getFrames().get(i)).image;
+    		image = image.getScaledInstance(image.getWidth(null), h, 0);
+    		((AnimFrame)anim.getFrames().get(i)).image = image;
+    	}
+    }
 
     /**
         Gets this Sprite's height, based on the size of the
@@ -124,7 +143,7 @@ public class Sprite {
         info.
     */
     public Object clone() {
-        return new Sprite(anim);
+        return new Sprite((Animation)anim.clone());
     }
 
 	public double getRotationSpeed() {

@@ -162,6 +162,27 @@ public class TileMapRenderer {
             Sprite sprite = (Sprite)i.next();
             int x = Math.round(sprite.getX()) + offsetX;
             int y = Math.round(sprite.getY()) + offsetY;
+            
+          //if sprite is a planet, draw a string with the total power;
+            if(sprite instanceof Planet){
+            	Planet p = (Planet)sprite;
+            	int sx = Math.round(sprite.getX()) + offsetX;
+            	int sy = Math.round(sprite.getY()) + offsetY;
+            	double newWidth = p.totalPower()/Planet.POWER_TO_SIZE+50;
+        		double newHeight = p.totalPower()/Planet.POWER_TO_SIZE+50;
+        		double centerX = p.circle.getBounds().x + offsetX;
+        		double centerY = p.circle.getBounds().y + offsetY;
+
+            	g.drawString(String.valueOf(((Planet)sprite).totalPower()), sx-sprite.getWidth()/2, sy);
+            	//g.drawArc((int)(centerX), (int)(centerY), (int)newWidth, (int)newHeight, 0, 360);
+            	
+            	Color saveColor = g.getColor();
+            	g.setColor(p.color);
+            	g.fillArc((int)(centerX), (int)(centerY), (int)newWidth, (int)newHeight, 0, 360);
+            	g.setColor(saveColor);
+            	
+            }
+            
             g.drawImage(sprite.getImage(), x, y, null);
 
             // wake up the creature when it's on screen
@@ -169,14 +190,7 @@ public class TileMapRenderer {
                 ((Creature)sprite).wakeUp();
             }
             
-            //if sprite is a planet, draw a string with the total power;
-            if(sprite instanceof Planet){
-            	Planet p = (Planet)sprite;
-            	int sx = Math.round(sprite.getX()) + offsetX;
-            	int sy = Math.round(sprite.getY()) + offsetY;
-            	g.drawString(String.valueOf(((Planet)sprite).totalPower()), sx-sprite.getWidth()/2, sy);
-            	g.drawArc(sx, sy, (int)p.circle.getWidth(), (int)p.circle.getHeight(), 0, 360);
-            }
+            
             
         }
     }

@@ -36,9 +36,13 @@ public class Animation {
         can be animated independently.
     */
     public Object clone() {
-        return new Animation(frames, totalDuration);
+        return new Animation(cloneFrames(frames), totalDuration);
     }
 
+    public ArrayList<AnimFrame> cloneFrames(ArrayList<AnimFrame>frame){
+    	ArrayList<AnimFrame>newFrames = (ArrayList<AnimFrame>) frame.clone();
+    	return newFrames;
+    }
 
     /**
         Adds an image to the animation with the specified
@@ -105,6 +109,20 @@ public class Animation {
             return getFrame(currFrameIndex).image;
         }
     }
+    
+    /**
+	    Gets this Animation's current image. Returns null if this
+	    animation has no images.
+	*/
+	public synchronized void setImage(Image i) {
+	    if (frames.size() == 0) {
+	        
+	    }
+	    else {
+	    	
+	        getFrame(currFrameIndex).image = i;
+	    }
+	}
 
 
     private AnimFrame getFrame(int i) {

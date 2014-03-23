@@ -214,6 +214,22 @@ private JTabbedPane createShipMenu(){
 		return sliderMenu;
 	}
 	
+	public void updateShipSliders(JPanel sliderMenu){
+		
+		JLabel label = ((JLabel)sliderMenu.getComponent(0));
+		double power = parent.getMap().getPlayer().power;
+		label.setText("Power: " + power);
+		
+		label = ((JLabel)sliderMenu.getComponent(2));
+		double speed = parent.getMap().getPlayer().speed;
+		label.setText("Speed: " + speed);
+		
+		label = ((JLabel)sliderMenu.getComponent(4));
+		double hitPoints = parent.getMap().getPlayer().hitpoints;
+		label.setText("Hit Points: " + hitPoints);
+		
+	}
+	
 	private JSlider createShipSlider(String s){
 		
 		if(s.equals("power")){
