@@ -3,6 +3,7 @@ package spacegame.tilegame;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.awt.geom.Ellipse2D;
 import java.util.Iterator;
 
 import javax.sound.midi.Sequence;
@@ -203,9 +204,18 @@ public class GameManager extends GameCore {
             }
             
             if(shipMenuAction.isPressed()){
-            	System.out.println("shipMenuActipon pressed");
-            	menu.tabbedShipMenu.setVisible(!menu.tabbedShipMenu.isVisible());
-            	menu.setMenuLocation(menu.tabbedShipMenu, inputManager.getMouseX(), inputManager.getMouseY());
+            	int mousex = inputManager.getMouseX()-renderer.offX;
+            	int mousey = inputManager.getMouseY()-renderer.offY;
+            	Ellipse2D saucer = map.getPlayer().nose.saucer;
+            	if(map.getPlayer().nose.saucer.contains(mousex, mousey)){
+            		System.out.println("shipMenuActipon pressed");
+                	menu.tabbedShipMenu.setVisible(!menu.tabbedShipMenu.isVisible());
+                	menu.setMenuLocation(menu.tabbedShipMenu, mousex+renderer.offX, mousey+renderer.offY);
+            	}else{
+            		if(menu.tabbedShipMenu.isVisible())menu.tabbedShipMenu.setVisible(false);
+            	}
+            	
+            	
             }
              
             player.setVelocityX(velocityX);

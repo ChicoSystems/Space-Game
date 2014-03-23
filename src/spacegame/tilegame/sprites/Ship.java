@@ -21,7 +21,7 @@ public class Ship{
 	public class Nose{
 		Line2D.Double noseLine1;
 		Line2D.Double noseLine2;
-		Ellipse2D.Double saucer;
+		public Ellipse2D.Double saucer;
 		Ship parent;
 		double xorigin;
 		double yorigin;

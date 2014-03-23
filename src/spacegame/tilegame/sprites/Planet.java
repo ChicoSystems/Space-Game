@@ -48,7 +48,6 @@ public class Planet extends Creature {
 	}
 
 
-
     public String getName() {
 		return name;
 	}

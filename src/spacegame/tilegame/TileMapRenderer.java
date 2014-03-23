@@ -31,6 +31,8 @@ public class TileMapRenderer {
     // the size in bits of the tile
     // Math.pow(2, TILE_SIZE_BITS) == TILE_SIZE
     private static final int TILE_SIZE_BITS = 5;
+    
+   public int offX = 0, offY = 0;
 
     private Image background;
 
@@ -100,6 +102,8 @@ public class TileMapRenderer {
             offsetY = Math.min(offsetY, 0);
             offsetY = Math.max(offsetY, screenHeight - mapHeight);
 
+            offX = offsetX;
+            offY = offsetY;
         // draw black background, if needed
         if (background == null ||
             screenHeight > background.getHeight(null))
