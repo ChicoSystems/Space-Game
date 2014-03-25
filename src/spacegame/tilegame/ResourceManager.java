@@ -21,10 +21,11 @@ import spacegame.tilegame.sprites.*;
 */
 public class ResourceManager {
 
+	public GameManager parent;
     private ArrayList tiles;
     
     //Planet Images
-    private ArrayList planetImages;
+    public ArrayList planetImages;
     public ArrayList <Planet> planetSprites;
     
     private ArrayList <ArrayList> rocketImages;
@@ -35,9 +36,9 @@ public class ResourceManager {
     public GraphicsConfiguration gc;
 
     // host sprites used for cloning
-    private Sprite playerSprite;
+    public Sprite playerSprite;
     private Sprite musicSprite;
-    private Sprite coinSprite;
+    public Sprite coinSprite;
     private Sprite goalSprite;
     private Sprite grubSprite;
     private Sprite flySprite;
@@ -55,7 +56,8 @@ public class ResourceManager {
         Creates a new ResourceManager with the specified
         GraphicsConfiguration.
     */
-    public ResourceManager(GraphicsConfiguration gc) {
+    public ResourceManager(GameManager p, GraphicsConfiguration gc) {
+    	parent = p;
         this.gc = gc;
         loadSprites();
         loadTileImages();
@@ -275,7 +277,7 @@ public class ResourceManager {
 
         // parse the lines to create a TileEngine
         height = lines.size();
-        TileMap newMap = new TileMap(width, height);
+        TileMap newMap = new TileMap(this, width, height);
         for (int y=0; y<height; y++) {
             String line = (String)lines.get(y);
             for (int x=0; x<line.length(); x++) {
@@ -304,7 +306,9 @@ public class ResourceManager {
                     addSprite(newMap, flySprite, x, y);
                 }
                 else if (ch == 'p') {
-                    addSprite(newMap, planetSprites.get(22), x, y);
+                   // addSprite(newMap, planetSprites.get(22), x, y);
+                	//ignore p for now. we are going to auto generate
+                	//our planets at the end of the timemap constructor
                 }
             }
         }
@@ -312,18 +316,18 @@ public class ResourceManager {
         // add the player to the map
         //Sprite player = (Sprite)playerSprite.clone();
         Ship player = new Ship(this);
-        player.setX(TileMapRenderer.tilesToPixels(250));
-        player.setY(TileMapRenderer.tilesToPixels(200));
+        player.setX(TileMapRenderer.tilesToPixels(newMap.getWidth()/2));
+        player.setY(TileMapRenderer.tilesToPixels(newMap.getHeight()/2));
         newMap.setPlayer(player);
         System.out.println("Add Player: " + player.toString() + " " + player.getWidth() + " " + player.getHeight());
 
+        addSprite(newMap, planetSprites.get(22), 0, 0);
         return newMap;
     }
 
 
     private void addSprite(TileMap map,
-        Sprite hostSprite, int tileX, int tileY)
-    {
+        Sprite hostSprite, int tileX, int tileY) {
         if (hostSprite != null) {
             // clone the sprite from the "host"
             Sprite sprite = (Sprite)hostSprite.clone();
@@ -340,15 +344,14 @@ public class ResourceManager {
                 sprite.getHeight());
 
             //set planet total power if planet
+            //if the sprite is an instance of Planet, we are going to use the TileMap
+            //function to create random planets
             if(sprite instanceof Planet){
-            	Planet p = (Planet)sprite;
-            	p.setRandomTotalPower();
-            	p.circle.setFrame(p.circle.getX(), p.circle.getY(), p.totalPower()/Planet.POWER_TO_SIZE, p.totalPower()/Planet.POWER_TO_SIZE);
-            	//((Planet)sprite).setWidth((int) (((Planet)sprite).totalPower()/Planet.POWER_TO_SIZE));
-            }
-            
-            // add it to the map
-            map.addSprite(sprite);
+            	TileMap.createRandomPlanets((Planet)sprite, map, (map.getWidth()+map.getHeight())/20);
+            }else{
+            	// add it to the map
+                map.addSprite(sprite);
+            } 
         }
     }
 
@@ -408,7 +411,7 @@ public class ResourceManager {
     
     public void loadPlanetImages(){
     	planetImages = new ArrayList();
-    	int i = 1;
+    	int i = 0;
     	while(true){
     		String name = "planets/p_" + i + ".png";
     		File file = new File("images/" + name);
@@ -522,7 +525,7 @@ public class ResourceManager {
         return anim;
     }
     
-    private Animation createPlanetAnim(Image planet)
+    public Animation createPlanetAnim(Image planet)
         {
             Animation anim = new Animation();
             anim.addFrame(planet, 250);

@@ -5,9 +5,11 @@ import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Iterator;
+import java.util.Random;
 
 import spacegame.graphics.Sprite;
 import spacegame.tilegame.sprites.Laser;
+import spacegame.tilegame.sprites.Planet;
 import spacegame.tilegame.sprites.Player;
 import spacegame.tilegame.sprites.Ship;
 
@@ -20,6 +22,7 @@ import spacegame.tilegame.sprites.Ship;
 */
 public class TileMap {
 
+	ResourceManager parent;
     private Image[][] tiles;
     private LinkedList sprites;
     private ArrayList <Laser> lasers;
@@ -29,10 +32,13 @@ public class TileMap {
         Creates a new TileMap with the specified width and
         height (in number of tiles) of the map.
     */
-    public TileMap(int width, int height) {
+    public TileMap(ResourceManager p, int width, int height) {
+    	parent = p;
         tiles = new Image[width][height];
         sprites = new LinkedList();
         lasers = new ArrayList<Laser>();
+        
+        //createRandomPlanets(sprites, 1000);
     }
 
 
@@ -96,7 +102,7 @@ public class TileMap {
     /**
         Adds a Sprite object to this map.
     */
-    public void addSprite(Sprite sprite) {
+    public synchronized void addSprite(Sprite sprite) {
         sprites.add(sprite);
     }
 
@@ -113,8 +119,12 @@ public class TileMap {
         Gets an Iterator of all the Sprites in this map,
         excluding the player Sprite.
     */
-    public Iterator getSprites() {
-        return sprites.iterator();
+    public synchronized LinkedList getSprites() {
+        return sprites;
+    }
+    
+    public synchronized Iterator getSpritesIterator(){
+    	return sprites.iterator();
     }
     
     /**
@@ -125,13 +135,17 @@ public class TileMap {
 	    return lasers.iterator();
 	}
     
-    public void addLaser(float f, float g, float h, float i, Ship player){
+    public void addLaser(float f, float g, float h, float i, Object player){
     	//Line2D laser = new Line2D.Double(f, g, h, i);
     	Laser laser = new Laser(f, g, h, i, player);
     	lasers.add(laser);
     }
     
-    public void removeLaser(Ship player){
+    public void addLaser(Laser l){
+    	lasers.add(l);
+    }
+    
+    public void removeLaser(Object player){
     	for(int i = 0; i < lasers.size(); i++){
     		if(lasers.get(i).getParent() == player){
     			lasers.remove(i);
@@ -139,7 +153,7 @@ public class TileMap {
     	}
     } 
     
-    public boolean laserExists(Ship player){
+    public boolean laserExists(Object player){
     	boolean result = false;
     	for(int i = 0; i < lasers.size(); i++){
     		if(lasers.get(i).getParent() == player){
@@ -147,6 +161,50 @@ public class TileMap {
     		}
     	}
     	return result;
+    }
+    
+    public static void createRandomPlanets(Planet p, TileMap t, int numPlanets){
+    	int mapWidth = t.getWidth();
+    	int mapHeight = t.getWidth();
+    	Random r = new Random();
+    	int tileFromEdge = 25;
+  
+    	for(int n = 0; n < numPlanets; n++){
+    		int newX = r.nextInt((mapWidth-tileFromEdge)-tileFromEdge)+tileFromEdge;
+    		int newY = r.nextInt((mapHeight-tileFromEdge)-tileFromEdge)+tileFromEdge;
+    		 // center the sprite
+    		
+    		Planet newP = (Planet)p.clone();
+    		
+            newP.setX(
+                TileMapRenderer.tilesToPixels(newX) +
+                (TileMapRenderer.tilesToPixels(1) -
+                		newP.getWidth()) / 2);
+            
+            newP.setY(
+                    TileMapRenderer.tilesToPixels(newY) +
+                    (TileMapRenderer.tilesToPixels(1) -
+                    		newP.getHeight()) / 2);
+            
+            newP.setRandomTotalPower();
+            newP.circle.setFrame(newP.circle.getX(), newP.circle.getY(), newP.totalPower()/Planet.POWER_TO_SIZE, p.totalPower()/Planet.POWER_TO_SIZE);
+            
+    		
+    		Iterator i = t.getSpritesIterator();
+    		
+    		if(canPlacePlanet(newP, i)){
+    			t.addSprite(newP);
+    		}else{
+    			createRandomPlanets(p, t, 1);
+    			//can't add this sprite at this location, so try again with only one sprite.
+    		}
+    	}
+    	//System.out.println("here");
+    }
+    
+    public static boolean canPlacePlanet(Planet p, Iterator i){
+    	
+    	return true;
     }
 
 }

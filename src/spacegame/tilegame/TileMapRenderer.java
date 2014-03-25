@@ -2,13 +2,18 @@ package spacegame.tilegame;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 import spacegame.graphics.Sprite;
 import spacegame.tilegame.sprites.Creature;
 import spacegame.tilegame.sprites.Laser;
 import spacegame.tilegame.sprites.Planet;
 import spacegame.tilegame.sprites.Ship;
+import spacegame.tilegame.sprites.Turret;
 
 
 /**
@@ -161,9 +166,10 @@ public class TileMapRenderer {
         
         
         // draw sprites
-        Iterator i = map.getSprites();
-        while (i.hasNext()) {
-            Sprite sprite = (Sprite)i.next();
+        LinkedList<Sprite>sprites = map.getSprites();
+        for(int i = 0; i < sprites.size(); i++){
+        	
+            Sprite sprite = (Sprite)sprites.get(i);
             int x = Math.round(sprite.getX()) + offsetX;
             int y = Math.round(sprite.getY()) + offsetY;
             
@@ -176,15 +182,30 @@ public class TileMapRenderer {
         		double newHeight = p.totalPower()/Planet.POWER_TO_SIZE+50;
         		double centerX = p.circle.getBounds().x + offsetX;
         		double centerY = p.circle.getBounds().y + offsetY;
-
-            	g.drawString(String.valueOf(((Planet)sprite).totalPower()), sx-sprite.getWidth()/2, sy);
+        		
+        		DecimalFormat df = new DecimalFormat("#");
+                String tPower = df.format(((Planet)sprite).totalPower());
+            	g.drawString(tPower, sx-sprite.getWidth()/2, sy);
             	//g.drawArc((int)(centerX), (int)(centerY), (int)newWidth, (int)newHeight, 0, 360);
             	
             	Color saveColor = g.getColor();
             	g.setColor(p.color);
             	g.fillArc((int)(centerX), (int)(centerY), (int)newWidth, (int)newHeight, 0, 360);
             	g.setColor(saveColor);
-            	
+            }
+            
+            if(sprite instanceof Turret){
+            	Turret t = (Turret)sprite;
+            	int sx = Math.round(sprite.getX()) + offsetX;
+            	int sy = Math.round(sprite.getY()) + offsetY;
+            	double newWidth = t.getHp()/t.LEVEL_TO_SIZE;
+        		double newHeight = t.getHp()/t.LEVEL_TO_SIZE;
+        		double centerX = t.getCircle().getBounds().x + offsetX;
+        		double centerY = t.getCircle().getBounds().y + offsetY;
+        		Color saveColor = g.getColor();
+            	g.setColor(t.bodyColor);
+            	g.fillArc((int)(centerX), (int)(centerY), (int)newWidth, (int)newHeight, 0, 360);
+            	g.setColor(saveColor);
             }
             
             g.drawImage(sprite.getImage(), x, y, null);
@@ -192,10 +213,7 @@ public class TileMapRenderer {
             // wake up the creature when it's on screen
             if (sprite instanceof Creature && x >= 0 && x < screenWidth){
                 ((Creature)sprite).wakeUp();
-            }
-            
-            
-            
+            } 
         }
     }
     
