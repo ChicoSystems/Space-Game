@@ -68,7 +68,7 @@ public class Sprite {
         Gets this Sprite's width, based on the size of the
         current image.
     */
-    public int getWidth() {
+    public float getWidth() {
         return anim.getImage().getWidth(null);
     }
     
@@ -95,7 +95,7 @@ public class Sprite {
         Gets this Sprite's height, based on the size of the
         current image.
     */
-    public int getHeight() {
+    public float getHeight() {
         return anim.getImage().getHeight(null);
     }
 

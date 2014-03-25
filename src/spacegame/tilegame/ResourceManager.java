@@ -314,8 +314,11 @@ public class ResourceManager {
         }
 
         // add the player to the map
-        //Sprite player = (Sprite)playerSprite.clone();
-        Ship player = new Ship(this);
+        Animation[] animation = new Animation[1];
+    	Animation a = parent.resourceManager.createPlanetAnim((Image)parent.resourceManager.planetImages.get(0));
+		animation[0] = (Animation) a;
+		
+        Ship player = new Ship(this, animation);
         player.setX(TileMapRenderer.tilesToPixels(newMap.getWidth()/2));
         player.setY(TileMapRenderer.tilesToPixels(newMap.getHeight()/2));
         newMap.setPlayer(player);

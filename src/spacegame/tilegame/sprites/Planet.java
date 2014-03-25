@@ -87,11 +87,12 @@ public class Planet extends Creature {
 		double newHeight = totalPower()/Planet.POWER_TO_SIZE+50;
 		
 		//circle.setFrame(this.getX()-(newWidth/2), this.getY()-(newHeight/2), newWidth, newHeight);
-		circle.setFrame(new Rectangle((int)(getX()-newWidth/2)+getWidth()/2, (int)(getY()-newHeight/2)+getHeight()/2, (int)newWidth, (int)newHeight));
+		circle.setFrame(new Rectangle((int)((getX()-newWidth/2)+getWidth()/2), 
+									  (int)((getY()-newHeight/2)+getHeight()/2), 
+									  (int)newWidth, 
+									  (int)newHeight));
 		
 	}
-
-	
 
     public void wakeUp() {
         // do nothing

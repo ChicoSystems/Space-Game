@@ -422,10 +422,11 @@ public class MainMenu implements ActionListener, ChangeListener{
     	Animation a = parent.resourceManager.createPlanetAnim((Image)parent.resourceManager.planetImages.get(0));
 		animation[0] = (Animation) a;
 		
-		Player s = (Player) parent.resourceManager.playerSprite.clone();
-    	s.setX(x);
-    	s.setY(y+20);
-    	parent.getMap().addSprite(s);
+		//target debugging, add a player near to see if target changes correctly.
+		//Player s = (Player) parent.resourceManager.playerSprite.clone();
+    	//s.setX(x);
+    	//s.setY(y+20);
+    	//parent.getMap().addSprite(s);
 		
     	Turret turret = new Turret(parent.getMap().getPlayer(), x, y, 1, animation);
     	parent.getMap().addSprite(turret);

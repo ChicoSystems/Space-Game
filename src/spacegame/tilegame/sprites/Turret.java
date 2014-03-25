@@ -12,7 +12,7 @@ import spacegame.tilegame.TileMap;
 
 public class Turret extends Creature{
 	public static float LEVEL_TO_SIZE = 5;
-	public static float TURRET_TO_LEVEL = 1000;
+	public static float TURRET_TO_LEVEL = 500;
 	private double TURRET_REACH;
 	private Ship parent;
 	private Ellipse2D circle;
@@ -83,41 +83,119 @@ public class Turret extends Creature{
 		}
 	}
 	
-	private Object aquireTarget(){
-		Object newTarget = null;
-		Object o = map.getPlayer();
-		LinkedList<Sprite>sprites = map.getSprites();
-		double distanceBetween = distanceBetween(this, o);
-		if(distanceBetween <= TURRET_REACH && o != parent){
-			newTarget = o;
-		}
-		for(int i = 0; i < sprites.size(); i++){
-			if(newTarget != null){
-				double newDistance = distanceBetween(this, sprites.get(i));
-				if( newDistance < distanceBetween){
-					o = sprites.get(i);
-					distanceBetween = newDistance;
-				}
-			}else{
-				if(target instanceof Turret){
-					//we don't want to target other turrets as of yet, maybe later
-				}else if(target instanceof Projectile){
-					//we don't want to target projectiles yet, maybe later
-				}else{
-					if(target instanceof Player){
-						System.err.println("target is player");
-					}
-					o = sprites.get(i);
-					distanceBetween = distanceBetween(this, o);
-					if(distanceBetween <= TURRET_REACH){
-						newTarget = o;
-						System.out.println("hello");
-					}
+	/**
+	 * Finds the closest valid target to this turret. Sets target time so we don't end
+	 * up targeting too often.
+	 * @return The newly aquired target, null if no target available.
+	 */
+	private Sprite aquireTarget(){
+		//add player to a new list of sprites so we can check for targets.
+		Sprite newTarget = null;
+		Sprite o = map.getPlayer();
+		LinkedList<Sprite>possibleTargets = (LinkedList<Sprite>) map.getSprites().clone();
+		possibleTargets.add(o);
+		
+		newTarget = getClosestValidTarget(possibleTargets);
+		
+		if(newTarget != null)targetTime = System.currentTimeMillis();
+		return newTarget;
+	}
+	
+	/**
+	 * Returns the Closes valid target for this turret.
+	 * @param possibleTargets The list of possible targets, 
+	 * right now this is all sprites except lasers
+	 * @return The closes valid target for this turret, Null if no target is found.
+	 */
+	private Sprite getClosestValidTarget(LinkedList<Sprite>possibleTargets){
+		Sprite target = null;
+		possibleTargets = getValidTargets(possibleTargets);
+		target = getClosestTarget(possibleTargets);
+		return target;
+	}
+	
+	/**
+	 * Gets the closest target to this turret from a list of targets.
+	 * @param targets The list to evaluate
+	 * @return The closest target in the list, 
+	 * NULL if the list was null and there is no target.
+	 */
+	private Sprite getClosestTarget(LinkedList<Sprite>targets){
+		Sprite closestTarget = null;
+		if(targets == null){
+			closestTarget = null;
+		}else{
+			closestTarget = targets.get(0);
+			for(int i = 0; i < targets.size(); i++){
+				if(distanceBetween(this, closestTarget) > distanceBetween(this, targets.get(i))){
+					closestTarget = targets.get(i);	
 				}
 			}
 		}
-		if(newTarget != null)targetTime = System.currentTimeMillis();
-		return newTarget;
+		return closestTarget;
+	}
+	
+	/**
+	 * Searches input LinkedList for a Sprite that can work as a valid target
+	 * for this Turret.
+	 * @param sprites The list to search for a valid target in
+	 * @return A list of valid targets
+	 */
+	private LinkedList<Sprite> getValidTargets(LinkedList<Sprite>sprites){
+		LinkedList<Sprite>possibleTargets = new LinkedList<Sprite>();
+		for(int i = 0; i < sprites.size(); i++){
+			Sprite s = sprites.get(i);
+			if(validTarget(s))possibleTargets.add(s);
+		}
+		//no targets were found make the list a null val
+		if(possibleTargets.size() == 0) possibleTargets = null;
+		return possibleTargets;
+	}
+	
+	
+	/**
+	 * Evaluates a sprite to see if it is a valid target for this turret
+	 *valid targets are closer then turret reach and are not
+	 *related to this turret, ie, isn't another turret owned by same player
+     *returns null if there is no valid target
+	 * @param s The sprite under evaluation
+	 * @return True if Valid, False if not.
+	 */
+	private boolean validTarget(Sprite s){
+		boolean returnVal = false;
+		if(validTargetDistance(s) && validTargetNotParent(s)) returnVal = true;
+		return returnVal;
+	}
+	
+	/**
+	 * Check if sprite is related to this turret. The sprite could be it's parent,
+	 * or it could be another turret that shares parents with ours.
+	 * @param s The Sprite under evaluation.
+	 * @return True if NOT Related, False if IS related
+	 */
+	private boolean validTargetNotParent(Sprite s){
+		boolean returnVal = true;
+		if(s instanceof Ship){
+			Ship ship = (Ship)s;
+			if(parent == ship) returnVal = false;
+		}else if(s instanceof Turret){
+			Turret turret = (Turret)s;
+			if(parent == turret.parent) returnVal = false;
+		}else{
+			//expand validtarget here
+		}
+		return returnVal;
+	}
+	
+	/**
+	 * Evaluates if a Sprite and this turret are within TURRET_REACH value
+	 * @param s The sprite under evaluation
+	 * @return True if distance is within TURRET_REACH, False if not.
+	 */
+	private boolean validTargetDistance(Sprite s){
+		boolean returnVal = false;
+		if(distanceBetween(this, s) < TURRET_REACH) returnVal = true;
+		return returnVal;
 	}
 	
 	public Object getTarget() {
@@ -128,6 +206,13 @@ public class Turret extends Creature{
 		this.target = target;
 	}
 	
+	/**
+	 * Finds the distance between a turret and another object.
+	 * May need to refactor this now that all object are sprites.
+	 * @param t
+	 * @param o2
+	 * @return
+	 */
 	public static float distanceBetween(Turret t, Object o2){
 		float x1, x2, y1, y2;
 		x1 = t.getX();
