@@ -39,11 +39,15 @@ import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import spacegame.graphics.Animation;
 import spacegame.graphics.ScreenManager;
+import spacegame.graphics.Sprite;
 import spacegame.input.GameAction;
 import spacegame.input.InputManager;
 import spacegame.tilegame.SpaceMenu.InputComponent;
+import spacegame.tilegame.sprites.Player;
 import spacegame.tilegame.sprites.Ship;
+import spacegame.tilegame.sprites.Turret;
 
 public class MainMenu implements ActionListener, ChangeListener{
 	
@@ -57,6 +61,10 @@ public class MainMenu implements ActionListener, ChangeListener{
 	
 	//ship menu
 	JTabbedPane tabbedShipMenu;
+	
+	//build menu
+	JTabbedPane tabbedBuildMenu;
+	JButton buildTurretButton;
 	
 	//main menu
 	public boolean displayMainMenu;
@@ -87,6 +95,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 		 inputs = new ArrayList();
 	     tabbedMainMenu = createMainMenu();
 	     tabbedShipMenu = createShipMenu();
+	     tabbedBuildMenu = createBuildMenu();
 	     displayMainMenu = false;
 	     
 	     Container contentPane = frame.getContentPane();
@@ -108,6 +117,9 @@ public class MainMenu implements ActionListener, ChangeListener{
 	         JLayeredPane.MODAL_LAYER);
 	     
 	     screen.getFullScreenWindow().getLayeredPane().add(tabbedShipMenu,
+		         JLayeredPane.MODAL_LAYER);
+	     
+	     screen.getFullScreenWindow().getLayeredPane().add(tabbedBuildMenu,
 		         JLayeredPane.MODAL_LAYER);
 	}
 	
@@ -156,7 +168,46 @@ public class MainMenu implements ActionListener, ChangeListener{
 		return menu;
 	}
 	
-private JTabbedPane createShipMenu(){
+	private JTabbedPane createBuildMenu(){
+		JTabbedPane menu = new JTabbedPane();
+		JComponent panel1 = makeBuildMenu();
+		menu.addTab("Build", null, panel1,
+		                  "Build Useful Tools");
+		menu.setMnemonicAt(0, KeyEvent.VK_1);
+
+		JComponent panel2 = makeTextPanel("Panel #2");
+		menu.addTab("Tab 2", null, panel2,
+		                  "Does twice as much nothing");
+		menu.setMnemonicAt(1, KeyEvent.VK_2);
+
+		JComponent panel3 = makeTextPanel("Panel #3");
+		menu.addTab("Tab 3", null, panel3,
+		                  "Still does nothing");
+		menu.setMnemonicAt(2, KeyEvent.VK_3);
+
+		JComponent panel4 = makeTextPanel(
+		        "Panel #4 (has a preferred size of 410 x 50).");
+		panel4.setPreferredSize(new Dimension(200, 100));
+		menu.addTab("Tab 4", null, panel4,
+		                      "Does nothing at all");
+		menu.setMnemonicAt(3, KeyEvent.VK_4);
+		
+		// create the dialog border
+        Border border =
+            BorderFactory.createLineBorder(Color.black);
+        
+		menu.setBorder(border);
+		menu.setVisible(false);
+		
+		menu.setSize(menu.getPreferredSize());
+
+		menu.setLocation(
+	            (screen.getWidth() - menu.getWidth()) / 2,
+	            (screen.getHeight() - menu.getHeight()) / 2);
+		return menu;
+	}
+	
+	private JTabbedPane createShipMenu(){
 		JTabbedPane menu = new JTabbedPane();
 		JComponent panel1 = makeShipSliderMenu();
 		menu.addTab("Ship Adjustments", null, panel1,
@@ -193,6 +244,14 @@ private JTabbedPane createShipMenu(){
 	            (screen.getWidth() - menu.getWidth()) / 2,
 	            (screen.getHeight() - menu.getHeight()) / 2);
 		return menu;
+	}
+	
+	private JPanel makeBuildMenu(){
+		JPanel buildMenu = new JPanel(new GridLayout(0,1));
+		buildTurretButton = new JButton("Build Turret");
+		buildTurretButton.addActionListener(this);
+		buildMenu.add(buildTurretButton);
+		return buildMenu;
 	}
 	
 	public JPanel makeShipSliderMenu(){
@@ -347,7 +406,32 @@ private JTabbedPane createShipMenu(){
 	            // hides the config dialog
 	            parent.configAction.tap();
 	        }
+	        
+	        if(e.getSource() == buildTurretButton){
+	        	addTurret();
+	        }
+	        
+	        parent.screen.getFullScreenWindow().requestFocus();
 		
+	}
+	
+	public void addTurret(){
+		float x = parent.getMap().getPlayer().getX();//-parent.renderer.offX;
+    	float y = parent.getMap().getPlayer().getY();//-parent.renderer.offY;
+    	Animation[] animation = new Animation[1];
+    	Animation a = parent.resourceManager.createPlanetAnim((Image)parent.resourceManager.planetImages.get(0));
+		animation[0] = (Animation) a;
+		
+		Player s = (Player) parent.resourceManager.playerSprite.clone();
+    	s.setX(x);
+    	s.setY(y+20);
+    	parent.getMap().addSprite(s);
+		
+    	Turret turret = new Turret(parent.getMap().getPlayer(), x, y, 1, animation);
+    	parent.getMap().addSprite(turret);
+    	
+    	
+    	//System.out.println(x + ":" +y);
 	}
 	
 	@Override

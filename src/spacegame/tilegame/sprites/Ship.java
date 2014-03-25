@@ -648,7 +648,7 @@ public class Ship{
 			}
 			//System.out.println("Set Rot: " + ((float)(getRotation() + getRotationSpeed() * elapsedTime)));
 			setRotation((float)(getRotation() + getRotationSpeed() * elapsedTime));
-			System.out.println("rotation: " + getRotation());
+			//System.out.println("rotation: " + getRotation());
 		}	
 	}
 }

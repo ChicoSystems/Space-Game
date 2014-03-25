@@ -13,7 +13,7 @@ import spacegame.graphics.Animation;
 public class Planet extends Creature {
 	
 	
-	public static final int POWER_TO_SIZE = 10000;
+	public static final int POWER_TO_SIZE = 1000;
 	String name;
 	double totalPower;
 	int planetType;
@@ -58,7 +58,7 @@ public class Planet extends Creature {
 	
 	public void setRandomTotalPower(){
 		Random random = new Random();
-		int randomNumber = random.nextInt(3000000 - 100000) + 100000;
+		int randomNumber = random.nextInt(1000000 - 10000) + 10000;
 		totalPower(randomNumber);
 	}
 
@@ -85,8 +85,6 @@ public class Planet extends Creature {
 		
 		double newWidth = totalPower()/Planet.POWER_TO_SIZE+50;
 		double newHeight = totalPower()/Planet.POWER_TO_SIZE+50;
-		double centerX = circle.getBounds().x;
-		double centerY = circle.getBounds().y;
 		
 		//circle.setFrame(this.getX()-(newWidth/2), this.getY()-(newHeight/2), newWidth, newHeight);
 		circle.setFrame(new Rectangle((int)(getX()-newWidth/2)+getWidth()/2, (int)(getY()-newHeight/2)+getHeight()/2, (int)newWidth, (int)newHeight));

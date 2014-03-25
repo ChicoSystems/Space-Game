@@ -5,6 +5,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
@@ -42,11 +44,11 @@ public class GameManager extends GameCore {
     private TileMap map;
     private MidiPlayer midiPlayer;
     private SoundManager soundManager;
-    private ResourceManager resourceManager;
+    public ResourceManager resourceManager;
     private Sound prizeSound;
     private Sound boopSound;
     public InputManager inputManager;
-    private TileMapRenderer renderer;
+    public TileMapRenderer renderer;
     protected MainMenu menu;
     
     
@@ -73,8 +75,7 @@ public class GameManager extends GameCore {
         initInput();
 
         // start resource manager
-        resourceManager = new ResourceManager(
-        screen.getFullScreenWindow().getGraphicsConfiguration());
+        resourceManager = new ResourceManager(this, screen.getFullScreenWindow().getGraphicsConfiguration());
 
         // load resources
         renderer = new TileMapRenderer();
@@ -210,9 +211,12 @@ public class GameManager extends GameCore {
             	if(map.getPlayer().nose.saucer.contains(mousex, mousey)){
             		System.out.println("shipMenuActipon pressed");
                 	menu.tabbedShipMenu.setVisible(!menu.tabbedShipMenu.isVisible());
+                	menu.tabbedBuildMenu.setVisible(false);
                 	menu.setMenuLocation(menu.tabbedShipMenu, mousex+renderer.offX, mousey+renderer.offY);
             	}else{
             		if(menu.tabbedShipMenu.isVisible())menu.tabbedShipMenu.setVisible(false);
+            		menu.tabbedBuildMenu.setVisible(!menu.tabbedBuildMenu.isVisible());
+                	menu.setMenuLocation(menu.tabbedBuildMenu, mousex+renderer.offX, mousey+renderer.offY);
             	}
             	
             	
@@ -236,6 +240,22 @@ public class GameManager extends GameCore {
     					(float)((xTarget)+player.nose.noseX), 
     					(float)((yTarget)+player.nose.noseY), 
    				player);
+    	}
+    }
+    
+    private void createLaser(Turret t) {
+    	Sprite target = (Sprite) t.getTarget();
+    	if(map.laserExists(t)){
+    		//do nothing there is already a laser for this player.
+    	}else{
+    		//this player does not already have a laser, it is being added.
+    		map.addLaser((float)t.getX(),
+    					(float)t.getY(), 
+   				 		// (player.getX()+xTarget-(screen.getWidth()/2))+player.getWidth(), 
+   				 		 //(player.getY()+yTarget-(screen.getHeight()/2))+player.getHeight(), 
+    					(float)(target.getX()), 
+    					(float)(target.getY()), 
+   				t);
     	}
     }
     
@@ -457,9 +477,9 @@ public class GameManager extends GameCore {
     public Sprite getSpriteCollision(Ship ship) {
 
         // run through the list of Sprites
-        Iterator i = map.getSprites();
-        while (i.hasNext()) {
-            Sprite otherSprite = (Sprite)i.next();
+        LinkedList <Sprite> sprites = map.getSprites();
+        for (int i = 0; i < sprites.size(); i++) {
+            Sprite otherSprite = (Sprite)sprites.get(i);
             if (isCollision(ship, otherSprite)) {
                 // collision found, return the Sprite
                 return otherSprite;
@@ -499,13 +519,14 @@ public class GameManager extends GameCore {
         updateLasers();
 
         // update other sprites
-        Iterator i = map.getSprites();
-        while (i.hasNext()) {
-            Sprite sprite = (Sprite)i.next();
+        //ListIterator i = (ListIterator) map.getSprites();
+        LinkedList<Sprite>sprites = map.getSprites();
+        for (int i = 0; i < sprites.size(); i++) {
+            Sprite sprite = (Sprite)sprites.get(i);
             if (sprite instanceof Creature) {
                 Creature creature = (Creature)sprite;
                 if (creature.getState() == Creature.STATE_DEAD) {
-                    i.remove();
+                    sprites.remove(i);
                 }
                 else {
                     updateCreature(creature, elapsedTime);
@@ -520,20 +541,32 @@ public class GameManager extends GameCore {
     private void updateLasers(){
     	Iterator l = map.getLasers();
     	Laser laser;
-    	Ship player;
+    	Object player;
+    	double x1, y1, x2, y2;
     	while(l.hasNext()){
     		laser = (Laser)l.next();
     		player = laser.getParent();
-    		double x1 = (float)player.nose.noseX;
-    		double y1 = (float)player.nose.noseY;
-    		double mouseX = inputManager.getMouseX();
-    		double mouseY = inputManager.getMouseY();
-    		double x2 = player.getX()-(screen.getWidth()/2-mouseX)+(32);
-			double y2 = player.getY()-(screen.getHeight()/2-mouseY)+(32);
-			
-			
-    		//double x2 = (player.getX()+mouseX-screen.getWidth()/2)+player.getWidth();
-    		//double y2 = (player.getY()+mouseY-screen.getHeight()/2)+player.getHeight();
+    		if(player instanceof Ship){
+    			x1 = (float)((Ship)player).nose.noseX;
+        		y1 = (float)((Ship)player).nose.noseY;
+        		double mouseX = inputManager.getMouseX();
+        		double mouseY = inputManager.getMouseY();
+        		x2 = ((Ship)player).getX()-(screen.getWidth()/2-mouseX)+(32);
+    			y2 = ((Ship)player).getY()-(screen.getHeight()/2-mouseY)+(32);
+    		}else{
+    			Object target = ((Turret)player).getTarget();
+    			if(target instanceof Ship){
+    				Ship s = (Ship)target;
+    				x2 = s.getX()+s.getWidth()/2;
+    				y2 = s.getY()+s.getHeight()/2;
+    			}else{
+    				Sprite p = (Sprite)target;
+    				x2 = p.getX()+p.getWidth()/2;
+    				y2 = p.getY()+p.getHeight()/2;
+    			}
+    			x1 = (float)((Turret)player).getX();
+    			y1 = (float)((Turret)player).getY();
+    		}
     		laser.getLine().setLine(x1, y1, x2, y2);
     		checkLaserCollisions(laser);
     	}
@@ -545,9 +578,10 @@ public class GameManager extends GameCore {
     
     private void checkLaserCollisionsWithPlanets(Laser laser){
     	 // update other sprites
-        Iterator i = map.getSprites();
-        while (i.hasNext()) {
-            Sprite sprite = (Sprite)i.next();
+        //Iterator i = map.getSprites();
+    	LinkedList <Sprite> sprites = map.getSprites();
+        for (int i = 0; i < sprites.size(); i++) {
+            Sprite sprite = (Sprite)sprites.get(i);
             if (sprite instanceof Planet) {
             	Planet planet = (Planet)sprite;
             	if(isCollision(laser, planet))
@@ -559,16 +593,23 @@ public class GameManager extends GameCore {
     private void collideLaserWithPlanet(Laser laser, Planet planet){
     	//System.out.println("Laser Colliding with Planet");
     	long currentTime = System.currentTimeMillis();
-    	long lastCollideTime = planet.getLastCollideTime();
-    	long elapsedCollideTime = currentTime - lastCollideTime;
+    	long lastCollideTime = laser.getLastCollideTime();
+    	laser.setLastCollideTime(lastCollideTime);
+    	long elapsedCollideTime = laser.getElapsedCollideTime();//currentTime - lastCollideTime;
     	
     	if(elapsedCollideTime <= 100){
-    		double powerDifference = (laser.power/500) *(elapsedCollideTime);
+    		double powerDifference = 0;
+    		
+    		if(laser.parent instanceof Ship){
+    			powerDifference = (laser.power/500) *(elapsedCollideTime);
+    			((Ship)laser.parent).totalPower += powerDifference;
+    		}else if(laser.parent instanceof Turret){
+    			powerDifference = (laser.power/500) *(elapsedCollideTime);
+    			((Turret)laser.parent).getParent().totalPower += powerDifference;
+    		}
     		planet.totalPower(planet.totalPower()-powerDifference);
-    		laser.parent.totalPower += powerDifference;
     	}
-    	planet.setLastCollideTime(currentTime);
-    	
+    	laser.setLastCollideTime(currentTime);
     }
 
     /**
@@ -731,7 +772,7 @@ public class GameManager extends GameCore {
 	            }
 	            else {
 	                // player dies!
-	                player.setState(Creature.STATE_DYING);
+	                //player.setState(Creature.STATE_DYING);
 	            }
         	}
         }
