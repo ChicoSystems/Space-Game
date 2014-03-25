@@ -16,7 +16,7 @@ import spacegame.graphics.Animation;
 import spacegame.graphics.Sprite;
 import spacegame.tilegame.ResourceManager;
 
-public class Ship{
+public class Ship extends Creature{
 	
 	public class Nose{
 		Line2D.Double noseLine1;
@@ -291,6 +291,8 @@ public class Ship{
 	public int speed;
 	public int hitpoints;
 	
+	private Animation[] anim;
+	
 	//the power pool drawn from to run the ship
 	public double totalPower;
 
@@ -300,7 +302,9 @@ public class Ship{
 	public Nose nose;
 	public ResourceManager parent;
 	
-	public Ship(ResourceManager parent) {
+	public Ship(ResourceManager parent, Animation[] anim) {
+		super(anim);
+		this.anim = anim;
 		this.parent = parent;
 		totalPower = 1;
 		power = 1;
@@ -347,7 +351,7 @@ public class Ship{
 		info.
 	*/
 	public Object clone() {
-		return new Ship(parent);
+		return new Ship(parent, anim);
 	}
 	
 	public void drawShip(Graphics2D g, int offsetX, int offsetY){
