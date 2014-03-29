@@ -18,6 +18,14 @@ public class Turret extends Creature  {
 	private Ellipse2D circle;
 	private Rectangle2D rect;
 	private double hp;
+	public int getPower() {
+		return power;
+	}
+
+	public void setPower(int power) {
+		this.power = power;
+	}
+
 	private int level;
 	public int power;
 	TileMap map;
@@ -28,7 +36,7 @@ public class Turret extends Creature  {
 	public Turret(Ship p, float x, float y, int level, Animation[] anim) {
 		super(anim);
 		parent = p;
-		map = parent.parent.parent.getMap();
+		map = parent.getParent().parent.getMap();
 		this.level = level;
 		setHp(level * 100);
 		power = level;
