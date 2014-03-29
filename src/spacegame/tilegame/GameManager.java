@@ -57,6 +57,10 @@ public class GameManager extends GameCore {
     public GameAction moveDown;
     public GameAction moveLeft;
     public GameAction moveRight;
+    public GameAction moveUp2;
+    public GameAction moveDown2;
+    public GameAction moveLeft2;
+    public GameAction moveRight2;
     public GameAction speedBoost;
     public GameAction fire;
     public GameAction laser;
@@ -118,6 +122,10 @@ public class GameManager extends GameCore {
         moveDown = new GameAction("moveDown");
         moveLeft = new GameAction("moveLeft");
         moveRight = new GameAction("moveRight");
+        moveUp2 = new GameAction("moveUp2");
+        moveDown2 = new GameAction("moveDown2");
+        moveLeft2 = new GameAction("moveLeft2");
+        moveRight2 = new GameAction("moveRight2");
         speedBoost = new GameAction("speedBoost");
         fire = new GameAction("fire");
         laser = new GameAction("laser");
@@ -136,10 +144,10 @@ public class GameManager extends GameCore {
             screen.getFullScreenWindow());
        // inputManager.setCursor(InputManager.INVISIBLE_CURSOR);
 
-        inputManager.mapToKey(moveUp, KeyEvent.VK_UP);
-        inputManager.mapToKey(moveDown, KeyEvent.VK_DOWN);
-        inputManager.mapToKey(moveLeft, KeyEvent.VK_LEFT);
-        inputManager.mapToKey(moveRight, KeyEvent.VK_RIGHT);
+        inputManager.mapToKey(moveUp2, KeyEvent.VK_UP);
+        inputManager.mapToKey(moveDown2, KeyEvent.VK_DOWN);
+        inputManager.mapToKey(moveLeft2, KeyEvent.VK_LEFT);
+        inputManager.mapToKey(moveRight2, KeyEvent.VK_RIGHT);
         inputManager.mapToKey(moveUp, KeyEvent.VK_W);
         inputManager.mapToKey(moveDown, KeyEvent.VK_S);
         inputManager.mapToKey(moveLeft, KeyEvent.VK_A);
@@ -170,6 +178,7 @@ public class GameManager extends GameCore {
         }
 
         Ship player = (Ship)map.getPlayer();
+        
         if (player.isAlive()) {
             float velocityX = 0;
             float velocityY = 0;
@@ -221,9 +230,29 @@ public class GameManager extends GameCore {
             	
             	
             }
-             
             player.setVelocityX(velocityX);
             player.setVelocityY(velocityY);
+        }
+        
+        Ship player2 = (Ship)map.getPlayer2();
+        if (player2 != null && player2.isAlive()) {
+            float velocityX = 0;
+            float velocityY = 0;
+            player2.setCurrentSpeed(player2.getMaxSpeed());
+            if (moveLeft2.isPressed()) {
+                velocityX-=player2.getCurrentSpeed();
+            }
+            if (moveRight2.isPressed()) {
+                velocityX+=player2.getCurrentSpeed();
+            }
+            if (moveUp2.isPressed()) {
+                velocityY-=player2.getCurrentSpeed();
+            }
+            if (moveDown2.isPressed()) {
+                velocityY+=player2.getCurrentSpeed();
+            }
+            player2.setVelocityX(velocityX);
+            player2.setVelocityY(velocityY);
         }
 
     }
@@ -497,6 +526,7 @@ public class GameManager extends GameCore {
     */
     public void update(long elapsedTime) {
         Ship player = (Ship)map.getPlayer();
+        Ship player2 = (Ship)map.getPlayer2();
         JTabbedPane tabbelShipMenu = menu.tabbedShipMenu;
         JPanel sliderMenu = ((JPanel)menu.tabbedShipMenu.getComponent(0));
         menu.updateShipSliders(sliderMenu);
@@ -513,8 +543,10 @@ public class GameManager extends GameCore {
 
         // update player
         updateShip(player, elapsedTime);
+        if(player2 != null)updateShip(player2, elapsedTime);
         
         player.update(elapsedTime);
+        if(player2 != null) player2.update(elapsedTime);
         
         updateLasers();
 
@@ -601,10 +633,10 @@ public class GameManager extends GameCore {
     		double powerDifference = 0;
     		
     		if(laser.parent instanceof Ship){
-    			powerDifference = (laser.power/500) *(elapsedCollideTime);
+    			powerDifference = (laser.power/1000) *(elapsedCollideTime);
     			((Ship)laser.parent).totalPower += powerDifference;
     		}else if(laser.parent instanceof Turret){
-    			powerDifference = (laser.power/500) *(elapsedCollideTime);
+    			powerDifference = (laser.power/1000) *(elapsedCollideTime);
     			((Turret)laser.parent).getParent().totalPower += powerDifference;
     		}
     		planet.totalPower(planet.totalPower()-powerDifference);
@@ -753,22 +785,22 @@ public class GameManager extends GameCore {
         }
         else if (collisionSprite instanceof Creature) {
         	if(collisionSprite instanceof Planet){
-        		player.setVelocityX(0);
+        		//player.setVelocityX(0);
         		//player.setVelocityY(0);
         	}else if(collisionSprite instanceof Projectile){
         		if(((Projectile)collisionSprite).parentId == player.id){
         			
         		}else{
-        			player.setState(Creature.STATE_DYING);
-        			((Creature) collisionSprite).setState(Creature.STATE_DYING);
+        			//player.setState(Creature.STATE_DYING);
+        			//((Creature) collisionSprite).setState(Creature.STATE_DYING);
         		}
         	}else{
 	            Creature badguy = (Creature)collisionSprite;
 	            if (canKill) {
 	                // kill the badguy and make player bounce
-	                soundManager.play(boopSound);
-	                badguy.setState(Creature.STATE_DYING);
-	                player.setY(badguy.getY() - player.getHeight());
+	               // soundManager.play(boopSound);
+	               // badguy.setState(Creature.STATE_DYING);
+	                //player.setY(badguy.getY() - player.getHeight());
 	            }
 	            else {
 	                // player dies!

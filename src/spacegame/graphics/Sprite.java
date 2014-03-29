@@ -8,8 +8,8 @@ public class Sprite {
 	protected float SPEED_ROTATION = .25f;
     protected Animation anim;
     // position (pixels)
-    private float x;
-    private float y;
+    protected float x;
+    protected float y;
     // velocity (pixels per millisecond)
     protected float dx;
     protected float dy;

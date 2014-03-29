@@ -322,9 +322,9 @@ public class ResourceManager {
         player.setX(TileMapRenderer.tilesToPixels(newMap.getWidth()/2));
         player.setY(TileMapRenderer.tilesToPixels(newMap.getHeight()/2));
         newMap.setPlayer(player);
-        System.out.println("Add Player: " + player.toString() + " " + player.getWidth() + " " + player.getHeight());
+       // System.out.println("Add Player: " + player.toString() + " " + player.getWidth() + " " + player.getHeight());
 
-        addSprite(newMap, planetSprites.get(22), 0, 0);
+        addSprite(newMap, planetSprites.get(1), 0, 0);
         return newMap;
     }
 
@@ -332,27 +332,26 @@ public class ResourceManager {
     private void addSprite(TileMap map,
         Sprite hostSprite, int tileX, int tileY) {
         if (hostSprite != null) {
-            // clone the sprite from the "host"
-            Sprite sprite = (Sprite)hostSprite.clone();
-
-            // center the sprite
-            sprite.setX(
-                TileMapRenderer.tilesToPixels(tileX) +
-                (TileMapRenderer.tilesToPixels(1) -
-                sprite.getWidth()) / 2);
-
-            // bottom-justify the sprite
-            sprite.setY(
-                TileMapRenderer.tilesToPixels(tileY + 1) -
-                sprite.getHeight());
-
+           
             //set planet total power if planet
             //if the sprite is an instance of Planet, we are going to use the TileMap
             //function to create random planets
-            if(sprite instanceof Planet){
-            	TileMap.createRandomPlanets((Planet)sprite, map, (map.getWidth()+map.getHeight())/20);
+            if(hostSprite instanceof Planet){
+            	TileMap.createRandomPlanets(this, map, (map.getWidth()+map.getHeight())/20);
             }else{
+            	Sprite sprite = (Sprite)hostSprite.clone();
             	// add it to the map
+            	// center the sprite
+                sprite.setX(
+                    TileMapRenderer.tilesToPixels(tileX) +
+                    (TileMapRenderer.tilesToPixels(1) -
+                    sprite.getWidth()) / 2);
+
+                // bottom-justify the sprite
+                sprite.setY(
+                    TileMapRenderer.tilesToPixels(tileY + 1) -
+                    sprite.getHeight());
+            	
                 map.addSprite(sprite);
             } 
         }

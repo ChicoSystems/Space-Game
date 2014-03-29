@@ -65,6 +65,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 	//build menu
 	JTabbedPane tabbedBuildMenu;
 	JButton buildTurretButton;
+	JButton sndPlayerButton;
 	
 	//main menu
 	public boolean displayMainMenu;
@@ -249,8 +250,11 @@ public class MainMenu implements ActionListener, ChangeListener{
 	private JPanel makeBuildMenu(){
 		JPanel buildMenu = new JPanel(new GridLayout(0,1));
 		buildTurretButton = new JButton("Build Turret");
+		sndPlayerButton = new JButton("2nd Player");
 		buildTurretButton.addActionListener(this);
+		sndPlayerButton.addActionListener(this);
 		buildMenu.add(buildTurretButton);
+		buildMenu.add(sndPlayerButton);
 		return buildMenu;
 	}
 	
@@ -284,7 +288,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 		label.setText("Speed: " + speed);
 		
 		label = ((JLabel)sliderMenu.getComponent(4));
-		double hitPoints = parent.getMap().getPlayer().hitpoints;
+		double hitPoints = parent.getMap().getPlayer().getHitpoints();
 		label.setText("Hit Points: " + hitPoints);
 		
 	}
@@ -324,7 +328,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 		}else{
 			ShipSlider hitpointSlider;
 			hitpointSlider = new ShipSlider("hitpoint", Ship.HITPOINT_MIN, 
-					Ship.HITPOINT_MAX, parent.getMap().getPlayer().hitpoints);
+					Ship.HITPOINT_MAX, parent.getMap().getPlayer().getHitpoints());
 			//Create the label table
 			Hashtable labelTable = new Hashtable();
 			labelTable.put( new Integer( Ship.HITPOINT_MAX ), new JLabel(String.valueOf(Ship.HITPOINT_MAX)) );
@@ -411,6 +415,17 @@ public class MainMenu implements ActionListener, ChangeListener{
 	        	addTurret();
 	        }
 	        
+	        if(e.getSource() == sndPlayerButton){
+	        	Animation[] animation = new Animation[1];
+	        	Animation a = parent.resourceManager.createPlanetAnim((Image)parent.resourceManager.planetImages.get(0));
+	    		animation[0] = (Animation) a;
+	    		
+	            Ship player2 = new Ship(parent.resourceManager, animation);
+	            player2.setX(parent.getMap().getPlayer().getX());
+	            player2.setY(parent.getMap().getPlayer().getY());
+	        	parent.getMap().setPlayer2(player2);
+	        }
+	        
 	        parent.screen.getFullScreenWindow().requestFocus();
 		
 	}
@@ -447,7 +462,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 				parent.getMap().getPlayer().speed = speed;
 			}else if(source.name.equals("hitpoint")){
 				int hitpoints = (int)source.getValue();
-				parent.getMap().getPlayer().hitpoints = hitpoints;
+				parent.getMap().getPlayer().setHitpoints(hitpoints);
 			}
 	    }
 		

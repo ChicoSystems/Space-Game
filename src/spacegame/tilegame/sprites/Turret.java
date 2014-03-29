@@ -31,7 +31,7 @@ public class Turret extends Creature{
 		map = parent.parent.parent.getMap();
 		this.level = level;
 		setHp(level * 100);
-		power = level*10;
+		power = level;
 		TURRET_REACH = level * TURRET_TO_LEVEL;
 		int width = (int)(getHp()/LEVEL_TO_SIZE);
 		int height = (int)(getHp()/LEVEL_TO_SIZE);
@@ -49,7 +49,9 @@ public class Turret extends Creature{
 		double newWidth = getHp()/LEVEL_TO_SIZE;
 		double newHeight = getHp()/LEVEL_TO_SIZE;
 		circle.setFrame(new Rectangle((int)(this.getX()-newWidth/2), (int)(this.getY()-newHeight/2), (int)newWidth, (int)(newHeight)));
-		if(targetTime == 0 || System.currentTimeMillis() - targetTime > 1000) aquireTarget();
+		if(targetTime == 0 || System.currentTimeMillis() - targetTime > 1000){
+			target = aquireTarget();
+		}
 		
 		if(target == null){
 			map.removeLaser(this);
@@ -61,15 +63,17 @@ public class Turret extends Creature{
 			if(target instanceof Ship){
 				bodyColor = Color.red;
 				Ship s = (Ship)target;
+				float xTarget = s.getX()-s.getWidth()/2;
+				float yTarget = s.getY()-s.getHeight()/2;
 				l = new Laser(this.getX(), this.getY(), 
-						s.getX()+s.getWidth()/2, s.getY()+s.getHeight()/2, this);
+						xTarget, yTarget, this);
 			}else if(target instanceof Turret){
 				//the target shouldn't ever be a turret. we may need to change targeting code.
 				System.err.println("target is a turret");
 			}else if(target instanceof Projectile){
 				//we arent implementing this yet.
 			}else{
-				if(target instanceof Player || target instanceof Ship){
+				if(target instanceof Player){
 					bodyColor = Color.red;
 				}else{
 					bodyColor = Color.green;
@@ -79,7 +83,10 @@ public class Turret extends Creature{
 				l = new Laser(this.getX(), this.getY(),
 						p.getX()+p.getWidth()/2, p.getY()+p.getHeight()/2, this);
 			}
-			if(l != null) map.addLaser(l);
+			if(l != null){
+				l.setPower(this.power);
+				map.addLaser(l);
+			}
 		}
 	}
 	
@@ -92,12 +99,30 @@ public class Turret extends Creature{
 		//add player to a new list of sprites so we can check for targets.
 		Sprite newTarget = null;
 		Sprite o = map.getPlayer();
+		Sprite o2 = map.getPlayer2();
 		LinkedList<Sprite>possibleTargets = (LinkedList<Sprite>) map.getSprites().clone();
 		possibleTargets.add(o);
+		possibleTargets.add(o2);
 		
 		newTarget = getClosestValidTarget(possibleTargets);
 		
-		if(newTarget != null)targetTime = System.currentTimeMillis();
+		if(newTarget != null){
+			targetTime = System.currentTimeMillis();
+			//set color based on target
+			if(newTarget instanceof Planet){
+				bodyColor = Color.green;
+				Laser l = map.getLaser(this);
+				if(l != null) l.color = Color.green;
+			}else if(newTarget instanceof Ship){
+				bodyColor = Color.red;
+				Laser l = map.getLaser(this);
+				if(l != null) l.color = Color.red;
+			}else{
+				bodyColor = Color.white;
+			}
+		}else if(newTarget == null){
+			bodyColor = Color.white;
+		}
 		return newTarget;
 	}
 	
@@ -194,7 +219,7 @@ public class Turret extends Creature{
 	 */
 	private boolean validTargetDistance(Sprite s){
 		boolean returnVal = false;
-		if(distanceBetween(this, s) < TURRET_REACH) returnVal = true;
+		if(s != null && distanceBetween(this, s) < TURRET_REACH) returnVal = true;
 		return returnVal;
 	}
 	
