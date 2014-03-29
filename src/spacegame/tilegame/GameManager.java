@@ -227,8 +227,6 @@ public class GameManager extends GameCore {
             		menu.tabbedBuildMenu.setVisible(!menu.tabbedBuildMenu.isVisible());
                 	menu.setMenuLocation(menu.tabbedBuildMenu, mousex+renderer.offX, mousey+renderer.offY);
             	}
-            	
-            	
             }
             player.setVelocityX(velocityX);
             player.setVelocityY(velocityY);
@@ -475,6 +473,29 @@ public class GameManager extends GameCore {
             s2y < s1y + s1.getHeight());
     }
     
+    /**
+	    Checks if two Sprites collide with one another. Returns
+	    false if the two Sprites are the same. Returns false if
+	    one of the Sprites is a Creature that is not alive.
+	*/
+	public boolean isCollision(Laser s1, Ship s2) {
+	    // if the Sprites are the same, return false
+		boolean returnVal = false;
+	    
+	    if(s1 instanceof Laser && s2 instanceof Ship){
+	    	Laser l = (Laser)s1;
+	    	Ship s = (Ship)s2;
+	    	if(l.getLine().intersects(s2.getX(), s2.getY(), s2.getX()+s2.getWidth(), s2.getY()+s2.getHeight())){
+	    		//System.out.println("laser hit");
+	    		return true;
+	    	}else{
+	    		//System.out.println("laser fail");
+	    		return false;
+	    	}
+	    }
+	    return returnVal;
+	}
+    
     public boolean isCollision(Ship s1, Sprite s2) {
 
         // if one of the Sprites is a dead Creature, return false
@@ -605,43 +626,61 @@ public class GameManager extends GameCore {
     }
     
     private void checkLaserCollisions(Laser laser){
-    	checkLaserCollisionsWithPlanets(laser);
+    	checkLaserCollisionsWithSprites(laser);
     }
     
-    private void checkLaserCollisionsWithPlanets(Laser laser){
+    private void checkLaserCollisionsWithSprites(Laser laser){
     	 // update other sprites
         //Iterator i = map.getSprites();
-    	LinkedList <Sprite> sprites = map.getSprites();
+    	LinkedList <Sprite> oldSprites = map.getSprites();
+    	LinkedList <Sprite> sprites = (LinkedList<Sprite>) oldSprites.clone();
+    	sprites.add(map.getPlayer());
+    	sprites.add(map.getPlayer2());
         for (int i = 0; i < sprites.size(); i++) {
             Sprite sprite = (Sprite)sprites.get(i);
             if (sprite instanceof Planet) {
             	Planet planet = (Planet)sprite;
-            	if(isCollision(laser, planet))
-               collideLaserWithPlanet(laser, planet);
+            	if(isCollision(laser, planet)) collideLaserWithSprite(laser, planet);
+            }else if(sprite instanceof Ship){
+            	Ship ship = (Ship)sprite;
+            	if(isCollision(laser, ship)) collideLaserWithSprite(laser, ship);
             }
         }
     }
     
-    private void collideLaserWithPlanet(Laser laser, Planet planet){
+    private void collideLaserWithSprite(Laser laser, Sprite sprite){
     	//System.out.println("Laser Colliding with Planet");
     	long currentTime = System.currentTimeMillis();
-    	long lastCollideTime = laser.getLastCollideTime();
-    	laser.setLastCollideTime(lastCollideTime);
-    	long elapsedCollideTime = laser.getElapsedCollideTime();//currentTime - lastCollideTime;
+    	long lastCollideTime = laser.getLastCollideTime(sprite);
+    	laser.setLastCollideTime(sprite, lastCollideTime);
+    	long elapsedCollideTime = laser.getElapsedCollideTime(sprite);//currentTime - lastCollideTime;
     	
     	if(elapsedCollideTime <= 100){
     		double powerDifference = 0;
     		
-    		if(laser.parent instanceof Ship){
-    			powerDifference = (laser.power/1000) *(elapsedCollideTime);
-    			((Ship)laser.parent).totalPower += powerDifference;
-    		}else if(laser.parent instanceof Turret){
-    			powerDifference = (laser.power/1000) *(elapsedCollideTime);
-    			((Turret)laser.parent).getParent().totalPower += powerDifference;
+    		if(sprite instanceof Planet){
+    			Planet planet = (Planet)sprite;
+    			if(laser.parent instanceof Ship){
+        			powerDifference = (laser.power/1000) *(elapsedCollideTime);
+        			((Ship)laser.parent).totalPower += powerDifference;
+        		}else if(laser.parent instanceof Turret){
+        			powerDifference = (laser.power/1000) *(elapsedCollideTime);
+        			((Turret)laser.parent).getParent().totalPower += powerDifference;
+        		}
+        		planet.totalPower(planet.totalPower()-powerDifference);
+    		}else if(sprite instanceof Ship){
+    			Ship ship = (Ship)sprite;
+    			//if(laser.parent == ship){
+    				//do nothing this laser cannot damage the ship it is from
+    			//}else{
+    				powerDifference = (laser.power/1000) *(elapsedCollideTime);
+    				ship.setHitpoints(ship.getHitpoints()-powerDifference);
+    				//planet.totalPower(planet.totalPower()-powerDifference);
+    			//}
     		}
-    		planet.totalPower(planet.totalPower()-powerDifference);
+    		
     	}
-    	laser.setLastCollideTime(currentTime);
+    	laser.setLastCollideTime(sprite, currentTime);
     }
 
     /**
