@@ -91,6 +91,8 @@ public class TileMapRenderer {
         int screenWidth, int screenHeight)
     {
         Ship player = map.getPlayer();
+        Ship player2 = map.getPlayer2();
+        
         int mapWidth = tilesToPixels(map.getWidth());
         int mapHeight = tilesToPixels(map.getHeight());
 
@@ -163,6 +165,9 @@ public class TileMapRenderer {
         
         drawLasers(g, map, offsetX, offsetY);
         player.drawShip(g, offsetX, offsetY);
+        if(player2 != null){
+        	player2.drawShip(g, offsetX, offsetY);
+        }
         
         
         // draw sprites
@@ -223,10 +228,20 @@ public class TileMapRenderer {
         while(l.hasNext()){
         	Laser laser = (Laser)l.next();
         	Line2D line = laser.getLine();
+        	
         	int x1 = (int)Math.round(line.getX1())+offsetX;
         	int y1 = (int)Math.round(line.getY1())+offsetY;
         	int x2 = (int) Math.round(line.getX2())+offsetX;
         	int y2 = (int) Math.round(line.getY2())+offsetY;
+        	if(laser.parent instanceof Turret){
+        		Turret turret = (Turret)laser.parent;
+        		Sprite target = (Sprite) turret.getTarget();
+        		if(target instanceof Ship){
+        			Ship s = (Ship)target;
+        			x2 = (int)Math.round(s.getX()-s.getWidth()/2)+offsetX;
+        	        y2 = (int)Math.round(s.getY()-s.getHeight()/2)+offsetY;
+        		}
+        	}
         	//System.out.println("width: " + screenWidth + " height: "+ screenHeight);
         	Color origColor = g.getColor();
         	g.setColor(laser.color);

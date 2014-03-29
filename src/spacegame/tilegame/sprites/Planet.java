@@ -33,7 +33,7 @@ public class Planet extends Creature {
 		int randomNumber1 = random.nextInt(255);
 		int randomNumber2 = random.nextInt(255);
 		int randomNumber3 = random.nextInt(255);
-		int randomNumber4 = random.nextInt(128-64)+64;
+		int randomNumber4 = random.nextInt(128-32)+32;
 		
     	color = new Color(randomNumber1, randomNumber2, randomNumber3, randomNumber4);
 	}

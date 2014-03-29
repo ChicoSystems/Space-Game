@@ -262,36 +262,23 @@ public class Ship extends Creature{
 	public static final int SPEED_MAX = 1000;
 	public static final int SPEED_INIT = SPEED_MIN;
 	
-	protected float SPEED_ROTATION = .25f;
 	public static final int PIXEL_PER_UNIT = 5;
-    private static final int DIE_TIME = 1000;
-    public static final int STATE_NORMAL = 0;
-    public static final int STATE_DYING = 1;
-    
-    public static final int STATE_DEAD = 2;
-    protected float maxSpeed = 0;
-    protected float currentSpeed = 0;
-    protected float boostSpeed = 0;
-    public double id;
-    private int state;
-    
-	private long stateTime;
-    // position (pixels)
-    private float x;
-    private float y;
     // velocity (pixels per millisecond)
-    protected float dx;
     
-    protected float dy;
-    protected float currentRotation = 0;
-    protected float futureRotation = 0;
     
-	protected float rotationSpeed = SPEED_ROTATION;
 	public int power;
 	public int speed;
-	public int hitpoints;
+	private int hitpoints;
 	
-	private Animation[] anim;
+	public int getHitpoints() {
+		return hitpoints;
+	}
+
+	public void setHitpoints(int hitpoints) {
+		this.hitpoints = hitpoints;
+	}
+
+	private Animation[] animArray;
 	
 	//the power pool drawn from to run the ship
 	public double totalPower;
@@ -302,24 +289,20 @@ public class Ship extends Creature{
 	public Nose nose;
 	public ResourceManager parent;
 	
-	public Ship(ResourceManager parent, Animation[] anim) {
-		super(anim);
-		this.anim = anim;
+	public Ship(ResourceManager parent, Animation[] animArray) {
+		super(animArray);
+		this.animArray = animArray;
 		this.parent = parent;
 		totalPower = 1;
 		power = 1;
 		speed = 1;
 		hitpoints = HITPOINT_INIT;
 		id = Math.random();
-        state = STATE_NORMAL;
 		body = new ShipBody(this);
 		engine1 = new Engine(this, 0);
 		engine2 = new Engine(this, 1);
 		nose = new Nose(this);
-		//float maxSpeed = .4f*(speed/1);
-		//System.out.println("MAX SPEED: " + maxSpeed);
 		this.setMaxSpeed(.4f);
-		//this.setMaxSpeed((float) (speed));
     	this.setBoostSpeed(this.getMaxSpeed()*2);
     	this.setCurrentSpeed(this.getMaxSpeed());
 	}
@@ -331,27 +314,12 @@ public class Ship extends Creature{
 	        return difference;
 	   }
 	
-    public void collide(){
-    	collideHorizontal();
-    	collideVertical();
-    }
-
-
-    public void collideHorizontal() {
-        setVelocityX(0);
-    }
-
-
-    public void collideVertical() {
-        setVelocityY(0);
-    }
-	
 	 /**	
 		Clones this Sprite. Does not clone position or velocity
 		info.
 	*/
 	public Object clone() {
-		return new Ship(parent, anim);
+		return new Ship(parent, animArray);
 	}
 	
 	public void drawShip(Graphics2D g, int offsetX, int offsetY){
@@ -413,23 +381,7 @@ public class Ship extends Creature{
 		g.fillArc((int)saucer.getX()+offsetX, (int)saucer.getY()+offsetY, (int)saucer.getWidth(), (int)saucer.getHeight(), 0, 360);
 	}
 
-	/**
-	Gets the maximum speed of this Creature.
-	*/
-	public float getBoostSpeed() {
-	   return boostSpeed;
-	}
 	
-	/**
-	Gets the maximum speed of this Creature.
-	*/
-	public float getCurrentSpeed() {
-	   return currentSpeed;
-	}
-
-	public float getFutureRotation() {
-		return futureRotation;
-	}
 
 	/**
 	    Gets this Sprite's height, based on the size of the
@@ -440,47 +392,10 @@ public class Ship extends Creature{
 	}
 
 	/**
-		   Gets the maximum speed of this Creature.
-		*/
-		public float getMaxSpeed() {
-		   return maxSpeed;
-		}
-
-	public float getRotation() {
-		if(currentRotation < 0){
-			currentRotation = 360 - currentRotation;
-		}
-		
-		currentRotation %= 360;
-		return currentRotation;
-	}
-
-	public double getRotationSpeed() {
-		return rotationSpeed;
-	}
-
-	/**
-	    Gets the state of this Creature. The state is either
-	    STATE_NORMAL, STATE_DYING, or STATE_DEAD.
-	*/
-	public int getState() {
-	    return state;
-	}
-
-	/**
-	    Gets the horizontal velocity of this Sprite in pixels
-	    per millisecond.
-	*/
-	public float getVelocityX() {
-	    return dx;
-	}
-	
-	/**
-	    Gets the vertical velocity of this Sprite in pixels
-	    per millisecond.
-	*/
-	public float getVelocityY() {
-	    return dy;
+		Gets the maximum speed of this Creature.
+	 */
+	public float getMaxSpeed() {
+	   return maxSpeed;
 	}
 
 	/**
@@ -491,115 +406,10 @@ public class Ship extends Creature{
 		return (float) ((body.width*2)+ (engine1.engineWidth*2));
 	}
 
-	/**
-	    Gets this Sprite's current x position.
-	*/
-	public float getX() {
-	    return x;
-	}
-
-	/**
-    	Gets this Sprite's current y position.
-	*/
-	public float getY() {
-	    return y;
-	}
-
-	/**
-	    Checks if this creature is alive.
-	*/
-	public boolean isAlive() {
-	    return (state == STATE_NORMAL);
-	}
 	
 	public static double map(double heightPoints, double d, double e, double f, double g)
 	{
 	  return (heightPoints - d) * (g - f) / (e - d) + f;
-	}
-
-	/**
-	Gets the maximum speed of this Creature.
-	*/
-	public void setBoostSpeed(Float speed) {
-	   boostSpeed = speed;
-	}
-	
-	/**
-	Gets the maximum speed of this Creature.
-	*/
-	public void setCurrentSpeed(Float speed) {
-	   currentSpeed = speed;
-	}
-   
-   public void setFutureRotation(float toRotation) {
-		if(toRotation < 0){
-			toRotation = 360 + toRotation;
-		}
-		//System.out.println("Set to Rotation: " + toRotation);
-		this.futureRotation = toRotation;
-   }
-   
-   /**
-	Gets the maximum speed of this Creature.
-	*/
-	public void setMaxSpeed(Float speed) {
-	   maxSpeed = speed;
-	}
-	
-	public void setRotation(float rotation) {
-		if(rotation < 0){
-			rotation = 360 + rotation;
-		}
-		//System.out.println("Set Rot: " + rotation);
-		this.currentRotation = rotation;
-	}
-	public void setRotationSpeed(float rotationSpeed) {
-		this.rotationSpeed = rotationSpeed;
-	}
-	
-	/**
-	    Sets the state of this Creature to STATE_NORMAL,
-	    STATE_DYING, or STATE_DEAD.
-	*/
-	public void setState(int state) {
-	    if (this.state != state) {
-	        this.state = state;
-	        stateTime = 0;
-	        if (state == STATE_DYING) {
-	            setVelocityX(0);
-	            setVelocityY(0);
-	        }
-	    }
-	}
-	
-	/**
-	    Sets the horizontal velocity of this Sprite in pixels
-	    per millisecond.
-	*/
-	public void setVelocityX(float dx) {
-	    this.dx = dx;
-	}
-	
-	/**
-	    Sets the vertical velocity of this Sprite in pixels
-	    per millisecond.
-	*/
-	public void setVelocityY(float dy) {
-	    this.dy = dy;
-	}
-	
-	/**
-	    Sets this Sprite's current x position.
-	*/
-	public void setX(float x) {
-	    this.x = x;
-	}
-	
-	/**
-	    Sets this Sprite's current y position.
-	*/
-	public void setY(float y) {
-	    this.y = y;
 	}
 	
 	/**
@@ -626,33 +436,5 @@ public class Ship extends Creature{
         float maxSpeed = (float) map(speed, 1, 1000, .05, .6);
         setMaxSpeed(maxSpeed);
        // setCurrentSpeed(maxSpeed);
-	}
-	
-	public void updateRotation(long elapsedTime){
-   	 float rotation = (float) Math.atan2(this.dy, this.dx);
-        rotation = (float) Math.toDegrees(rotation);
-        rotation = rotation + 90;
-        
-        if((this.dx == 0) && (this.dy == 0)){
-        	rotation = this.getRotation(); // keeps from reseting rotation when velocity is 0
-        }
-        	this.setFutureRotation(rotation);
-		
-		//System.out.println("Current: " + currentRotation + " Future: " + futureRotation);
-		if(Math.abs(getRotation() - getFutureRotation()) < 3){//don't rotate if change is less then 2 degrees
-			rotationSpeed = 0;
-			return;
-		}else{
-			float rotationChange = calculateDifferenceBetweenAngles(getRotation(), getFutureRotation());
-			//System.out.println("Rot Change: " + getFutureRotation() + " : " + getRotation() + " : " +rotationChange + " : " + rotationSpeed);
-			if(rotationChange <= 0){
-				setRotationSpeed(-SPEED_ROTATION);
-			}else{
-				setRotationSpeed(SPEED_ROTATION);
-			}
-			//System.out.println("Set Rot: " + ((float)(getRotation() + getRotationSpeed() * elapsedTime)));
-			setRotation((float)(getRotation() + getRotationSpeed() * elapsedTime));
-			//System.out.println("rotation: " + getRotation());
-		}	
 	}
 }
