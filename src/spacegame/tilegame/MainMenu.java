@@ -328,7 +328,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 		}else{
 			ShipSlider hitpointSlider;
 			hitpointSlider = new ShipSlider("hitpoint", Ship.HITPOINT_MIN, 
-					Ship.HITPOINT_MAX, parent.getMap().getPlayer().getHitpoints());
+					Ship.HITPOINT_MAX, (int) parent.getMap().getPlayer().getHitpoints());
 			//Create the label table
 			Hashtable labelTable = new Hashtable();
 			labelTable.put( new Integer( Ship.HITPOINT_MAX ), new JLabel(String.valueOf(Ship.HITPOINT_MAX)) );

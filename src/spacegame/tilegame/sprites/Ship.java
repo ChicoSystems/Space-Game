@@ -1,5 +1,6 @@
 package spacegame.tilegame.sprites;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Polygon;
@@ -9,6 +10,7 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -16,242 +18,9 @@ import spacegame.graphics.Animation;
 import spacegame.graphics.Sprite;
 import spacegame.tilegame.ResourceManager;
 
-public class Ship extends Creature{
-	
-	public class Nose{
-		Line2D.Double noseLine1;
-		Line2D.Double noseLine2;
-		public Ellipse2D.Double saucer;
-		Ship parent;
-		double xorigin;
-		double yorigin;
-		double engine1X;
-		double engine2X;
-		double engineTopY;
-		public double noseLength;
-		public double noseRadius;
-		public double noseX;
-		public double noseY;
-		
-		public Nose(Ship parent){
-			this.parent = parent;
-			xorigin = parent.getX();
-			yorigin = parent.getY();
-			engine1X = parent.engine1.engine.get(0).x;
-			engine2X = parent.engine2.engine.get(0).x;
-			engineTopY = parent.engine1.engine.get(0).y;
-			
-			double lengthPoints = parent.speed;
-			double radiusPoints = (parent.speed/4)+parent.power;
-			if(lengthPoints <=1 ){
-				noseLength = 1; //(lengthPoints - 1) / (1000 - 1) * (6-1) + 1;
-			}else{
-				noseLength = parent.map(lengthPoints, 1, 1000, 2, 6);
-			}
-			
-			if(radiusPoints <=2){
-				noseRadius = 1;//(lengthPoints - 1) / (1000 - 1) * (6-1) + 1;
-			}else{
-				noseRadius = parent.map(radiusPoints, 1, 1000, 2, 12);
-			}
-			noseLength *= Ship.PIXEL_PER_UNIT;
-			noseRadius *= Ship.PIXEL_PER_UNIT;
-			
-			noseX = xorigin;
-			noseY = engineTopY - noseLength;
-			noseLine1 = new Line2D.Double(engine1X, engineTopY, noseX, noseY);
-			noseLine2 = new Line2D.Double(engine2X, engineTopY, noseX, noseY);
-			saucer = new Ellipse2D.Double(noseX-(noseRadius/2), noseY-(noseRadius/2), noseRadius, noseRadius);
-		}
-		
-		public void update(){
-			xorigin = parent.getX();
-			yorigin = parent.getY();
-			engine1X = parent.engine1.engine.get(1).x;
-			engine2X = parent.engine2.engine.get(1).x;
-			engineTopY = parent.engine1.engine.get(0).y;
-			int lengthPoints = parent.speed+(parent.power/3)+parent.hitpoints/3;
-			int radiusPoints = (parent.speed/4)+parent.power+parent.hitpoints/4;
-			if(lengthPoints <=3){
-				noseLength = 2; //(lengthPoints - 1) / (1000 - 1) * (6-1) + 1;
-			}else{
-				noseLength = parent.map(lengthPoints, 1, 1667, 2, 10);
-			}
-			
-			if(radiusPoints <=3){
-				noseRadius = 4;//(lengthPoints - 1) / (1000 - 1) * (6-1) + 1;
-			}else{
-				noseRadius = parent.map(radiusPoints, 1, 1500, 2, 14);
-			}
-			noseLength *= Ship.PIXEL_PER_UNIT;
-			noseRadius *= Ship.PIXEL_PER_UNIT;
-			noseX = xorigin;
-			noseY = engineTopY - noseLength;
-			noseLine1.setLine(engine1X, engineTopY, noseX, noseY);
-			noseLine2.setLine(engine2X, engineTopY, noseX, noseY);
-			saucer.x = noseX-noseRadius/2;
-			saucer.y = noseY-noseRadius/2;
-			saucer.width = noseRadius;
-			saucer.height = noseRadius;
-		}
-	}
-	
-	private class Engine{
-		int engineNum;
-		Ship parent;
-		double xorigin;
-		double yorigin;
-		
-		Point2D.Double eAtt;
-		double engineHeight;
-		double engineWidth;
-		ArrayList<Point2D.Double>engine;
-		
-		public Engine(Ship parent, int engineNum){
-			this.parent = parent;
-			this.engineNum = engineNum;
-			xorigin = parent.getX();
-			yorigin = parent.getY();
-			int totalPoints = parent.speed+(parent.power/4);
-			if(totalPoints <=2){
-				engineHeight = 2;//(totalPoints - 1) / (1250 - 1) * (24-1) + 1;
-				engineWidth = 1;//(totalPoints - 1) / (1250 - 1) * (6-1) + 1;
-			}else{
-				engineHeight = parent.map(totalPoints, 1, 1250, 2, 24);
-				engineWidth = parent.map(totalPoints, 1, 1250, 2, 6);
-			}
-			engineHeight *= Ship.PIXEL_PER_UNIT;
-			engineWidth *= Ship.PIXEL_PER_UNIT;
-			
-			
-			if(engineNum == 0){
-				eAtt=parent.body.e1Att;
-			}else{
-				eAtt=parent.body.e2Att;
-			}
-			
-			engine = new ArrayList<Point2D.Double>();
-			engine.add(new Point2D.Double(0, 0));
-			engine.add(new Point2D.Double(0, 0));
-			engine.add(new Point2D.Double(0, 0));
-			engine.add(new Point2D.Double(0, 0));	
-		}
-		
-		public void update(){
-			//int totalPoints = parent.speed+(parent.power/4);
-			double heightPoints = (parent.speed*1.5+(parent.power/4)+parent.hitpoints/2);
-			double widthPoints = parent.speed/8+(parent.power/2) + parent.hitpoints/2;
-			
-			if(heightPoints <= 3){
-				engineHeight = 2;
-			}else{
-				engineHeight = parent.map(heightPoints, 1, 2175, 2, 24);
-			}
-			
-			if(widthPoints <= 3){
-				engineWidth = 1;//(totalPoints - 1) / (1250 - 1) * (6-1) + 1;
-			}else{
-				engineWidth = parent.map(widthPoints, 1, 1250, 2, 6);
-			}
-			engineHeight *= Ship.PIXEL_PER_UNIT;
-			engineWidth *= Ship.PIXEL_PER_UNIT;
-			
-			if(engineNum == 0){
-				eAtt=parent.body.e1Att;
-				engine.set(0, new Point2D.Double(eAtt.x-engineWidth, eAtt.y-engineHeight/2));
-				engine.set(1, new Point2D.Double(eAtt.x, eAtt.y-engineHeight/2));
-				engine.set(2, new Point2D.Double(eAtt.x, eAtt.y+engineHeight/2));
-				engine.set(3, new Point2D.Double(eAtt.x-engineWidth, eAtt.y+engineHeight/2));
-			}else{
-				eAtt=parent.body.e2Att;
-				engine.set(0, new Point2D.Double(eAtt.x+engineWidth, eAtt.y-engineHeight/2));
-				engine.set(1, new Point2D.Double(eAtt.x, eAtt.y-engineHeight/2));
-				engine.set(2, new Point2D.Double(eAtt.x, eAtt.y+engineHeight/2));
-				engine.set(3, new Point2D.Double(eAtt.x+engineWidth, eAtt.y+engineHeight/2));
-			}
-		}
-	}
-	
-	public class ShipBody{
-		Ship parent;
-		public double width;
-		public double height;
-		double xorigin;
-		double yorigin;
-		ArrayList<Point2D.Double> body;
-		//Rectangle body;// = new Rectangle(100, 100, 100, 100);
-		Point2D.Double e1Att;
-		Point2D.Double e2Att;
-		
-		public ShipBody(Ship parent){
-			this.parent = parent;
-			xorigin = parent.getX();
-			yorigin = parent.getY();
-			body = new ArrayList<Point2D.Double>();
-			
-			int widthPoints = parent.speed/4 + parent.power + parent.hitpoints;
-			int heightPoints = parent.speed/2 + parent.power/4 + parent.hitpoints;
-			//int totalPoints = 
-			if(widthPoints <= 3){
-				width = .5;
-			}else{
-				width = parent.map(widthPoints, 1, 2250, 2, 6);
-			}
-			
-			if(heightPoints <=3){
-				height = .5;
-			}else{
-				height = parent.map(heightPoints, 1, 1750, 2, 6);
-			}
-			
-			width = width * Ship.PIXEL_PER_UNIT;
-			height = height * Ship.PIXEL_PER_UNIT;
-			
-			e1Att = new Point2D.Double(xorigin-width, yorigin+0);
-			e2Att = new Point2D.Double(xorigin+width, yorigin+0);
-			
-			//body = new Rectangle((int)(xorigin-width), (int)(yorigin-height), (int)width*2, (int)height*2);
-			body.add(new Point2D.Double(xorigin-width, yorigin-height));
-			body.add(new Point2D.Double(xorigin+width, yorigin-height));
-			body.add(new Point2D.Double(xorigin+width, yorigin+height));
-			body.add(new Point2D.Double(xorigin-width, yorigin+height));
-			//Y = (X-A)/(B-A) * (D-C) + C	
-		}
-		
-		public void update(){
-			int widthPoints = parent.speed/10 + parent.power/2 + parent.hitpoints;
-			int heightPoints = parent.speed/2 + parent.power/5 + parent.hitpoints;
-			//int totalPoints = 
-			if(widthPoints <=3){
-				width = .5;
-			}else{
-				width = parent.map(widthPoints, 1, 2100, 2, 6);
-			}
-			
-			if(heightPoints <=3){
-				height = .5;
-			}else{
-				height = parent.map(heightPoints, 1, 1700, 2, 6);
-			}
-			
-			width = width * Ship.PIXEL_PER_UNIT;
-			height = height * Ship.PIXEL_PER_UNIT;
-			
-			xorigin = parent.getX();
-			yorigin = parent.getY();
-			e1Att = new Point2D.Double(xorigin-width, yorigin+0);
-			e2Att = new Point2D.Double(xorigin+width, yorigin+0);
-			
-			//body.
-			body.set(0, new Point2D.Double(xorigin-width, yorigin-height));
-			body.set(1, new Point2D.Double(xorigin+width, yorigin-height));
-			body.set(2, new Point2D.Double(xorigin+width, yorigin+height));
-			body.set(3, new Point2D.Double(xorigin-width, yorigin+height));
-		}
-	}
-	
+public class Ship extends Creature  {
 	public static final int HITPOINT_MIN = 1;
-	public static final int HITPOINT_MAX = 1000;
+	public static final int HITPOINT_MAX = 100000;
 	public static final int HITPOINT_INIT = HITPOINT_MIN;
 	
 	public static final int POWER_MIN = 1;
@@ -268,13 +37,13 @@ public class Ship extends Creature{
     
 	public int power;
 	public int speed;
-	private int hitpoints;
+	private double hitpoints;
 	
-	public int getHitpoints() {
+	public double getHitpoints() {
 		return hitpoints;
 	}
 
-	public void setHitpoints(int hitpoints) {
+	public void setHitpoints(double hitpoints) {
 		this.hitpoints = hitpoints;
 	}
 
@@ -335,8 +104,17 @@ public class Ship extends Creature{
 		drawBody(g, offsetX, offsetY);
 		drawEngines(g, offsetX, offsetY);
 		drawNose(g, offsetX, offsetY);
+		int sx = Math.round(getX()) + offsetX;
+    	int sy = Math.round(getY()) + offsetY;
+		DecimalFormat df = new DecimalFormat("#");
+        String hp = df.format(this.hitpoints);
+        
 		//g.fillArc((int)this.x+offsetX, (int)this.y+offsetY, 5, 5, 0, 360);
 		g.setTransform(saveTransform);
+		Color saveColor = g.getColor();
+        g.setColor(Color.red);
+    	g.drawString(hp, sx, (float) (sy-this.getHeight()/2));
+    	 g.setColor(saveColor);
 	}
 	
 	private void drawEngines(Graphics2D g, int offsetX, int offsetY){
@@ -436,5 +214,237 @@ public class Ship extends Creature{
         float maxSpeed = (float) map(speed, 1, 1000, .05, .6);
         setMaxSpeed(maxSpeed);
        // setCurrentSpeed(maxSpeed);
+	}
+	
+	public class Nose{
+		Line2D.Double noseLine1;
+		Line2D.Double noseLine2;
+		public Ellipse2D.Double saucer;
+		Ship parent;
+		double xorigin;
+		double yorigin;
+		double engine1X;
+		double engine2X;
+		double engineTopY;
+		public double noseLength;
+		public double noseRadius;
+		public double noseX;
+		public double noseY;
+		
+		public Nose(Ship parent){
+			this.parent = parent;
+			xorigin = parent.getX();
+			yorigin = parent.getY();
+			engine1X = parent.engine1.engine.get(0).x;
+			engine2X = parent.engine2.engine.get(0).x;
+			engineTopY = parent.engine1.engine.get(0).y;
+			
+			double lengthPoints = parent.speed;
+			double radiusPoints = (parent.speed/4)+parent.power;
+			if(lengthPoints <=1 ){
+				noseLength = 1; //(lengthPoints - 1) / (1000 - 1) * (6-1) + 1;
+			}else{
+				noseLength = parent.map(lengthPoints, 1, 1000, 2, 6);
+			}
+			
+			if(radiusPoints <=2){
+				noseRadius = 1;//(lengthPoints - 1) / (1000 - 1) * (6-1) + 1;
+			}else{
+				noseRadius = parent.map(radiusPoints, 1, 1000, 2, 12);
+			}
+			noseLength *= Ship.PIXEL_PER_UNIT;
+			noseRadius *= Ship.PIXEL_PER_UNIT;
+			
+			noseX = xorigin;
+			noseY = engineTopY - noseLength;
+			noseLine1 = new Line2D.Double(engine1X, engineTopY, noseX, noseY);
+			noseLine2 = new Line2D.Double(engine2X, engineTopY, noseX, noseY);
+			saucer = new Ellipse2D.Double(noseX-(noseRadius/2), noseY-(noseRadius/2), noseRadius, noseRadius);
+		}
+		
+		public void update(){
+			xorigin = parent.getX();
+			yorigin = parent.getY();
+			engine1X = parent.engine1.engine.get(1).x;
+			engine2X = parent.engine2.engine.get(1).x;
+			engineTopY = parent.engine1.engine.get(0).y;
+			int lengthPoints = (int) (parent.speed+(parent.power/3)+parent.hitpoints/300);
+			int radiusPoints = (int) ((parent.speed/4)+parent.power+parent.hitpoints/400);
+			if(lengthPoints <=3){
+				noseLength = 2; //(lengthPoints - 1) / (1000 - 1) * (6-1) + 1;
+			}else{
+				noseLength = parent.map(lengthPoints, 1, 1667, 2, 10);
+			}
+			
+			if(radiusPoints <=3){
+				noseRadius = 4;//(lengthPoints - 1) / (1000 - 1) * (6-1) + 1;
+			}else{
+				noseRadius = parent.map(radiusPoints, 1, 1500, 2, 14);
+			}
+			noseLength *= Ship.PIXEL_PER_UNIT;
+			noseRadius *= Ship.PIXEL_PER_UNIT;
+			noseX = xorigin;
+			noseY = engineTopY - noseLength;
+			noseLine1.setLine(engine1X, engineTopY, noseX, noseY);
+			noseLine2.setLine(engine2X, engineTopY, noseX, noseY);
+			saucer.x = noseX-noseRadius/2;
+			saucer.y = noseY-noseRadius/2;
+			saucer.width = noseRadius;
+			saucer.height = noseRadius;
+		}
+	}
+	
+	private class Engine{
+		int engineNum;
+		Ship parent;
+		double xorigin;
+		double yorigin;
+		
+		Point2D.Double eAtt;
+		double engineHeight;
+		double engineWidth;
+		ArrayList<Point2D.Double>engine;
+		
+		public Engine(Ship parent, int engineNum){
+			this.parent = parent;
+			this.engineNum = engineNum;
+			xorigin = parent.getX();
+			yorigin = parent.getY();
+			int totalPoints = parent.speed+(parent.power/4);
+			if(totalPoints <=2){
+				engineHeight = 2;//(totalPoints - 1) / (1250 - 1) * (24-1) + 1;
+				engineWidth = 1;//(totalPoints - 1) / (1250 - 1) * (6-1) + 1;
+			}else{
+				engineHeight = parent.map(totalPoints, 1, 1250, 2, 24);
+				engineWidth = parent.map(totalPoints, 1, 1250, 2, 6);
+			}
+			engineHeight *= Ship.PIXEL_PER_UNIT;
+			engineWidth *= Ship.PIXEL_PER_UNIT;
+			
+			
+			if(engineNum == 0){
+				eAtt=parent.body.e1Att;
+			}else{
+				eAtt=parent.body.e2Att;
+			}
+			
+			engine = new ArrayList<Point2D.Double>();
+			engine.add(new Point2D.Double(0, 0));
+			engine.add(new Point2D.Double(0, 0));
+			engine.add(new Point2D.Double(0, 0));
+			engine.add(new Point2D.Double(0, 0));	
+		}
+		
+		public void update(){
+			//int totalPoints = parent.speed+(parent.power/4);
+			double heightPoints = (parent.speed*1.5+(parent.power/4)+parent.hitpoints/200);
+			double widthPoints = parent.speed/8+(parent.power/2) + parent.hitpoints/200;
+			
+			if(heightPoints <= 3){
+				engineHeight = 2;
+			}else{
+				engineHeight = parent.map(heightPoints, 1, 2175, 2, 24);
+			}
+			
+			if(widthPoints <= 3){
+				engineWidth = 1;//(totalPoints - 1) / (1250 - 1) * (6-1) + 1;
+			}else{
+				engineWidth = parent.map(widthPoints, 1, 1250, 2, 6);
+			}
+			engineHeight *= Ship.PIXEL_PER_UNIT;
+			engineWidth *= Ship.PIXEL_PER_UNIT;
+			
+			if(engineNum == 0){
+				eAtt=parent.body.e1Att;
+				engine.set(0, new Point2D.Double(eAtt.x-engineWidth, eAtt.y-engineHeight/2));
+				engine.set(1, new Point2D.Double(eAtt.x, eAtt.y-engineHeight/2));
+				engine.set(2, new Point2D.Double(eAtt.x, eAtt.y+engineHeight/2));
+				engine.set(3, new Point2D.Double(eAtt.x-engineWidth, eAtt.y+engineHeight/2));
+			}else{
+				eAtt=parent.body.e2Att;
+				engine.set(0, new Point2D.Double(eAtt.x+engineWidth, eAtt.y-engineHeight/2));
+				engine.set(1, new Point2D.Double(eAtt.x, eAtt.y-engineHeight/2));
+				engine.set(2, new Point2D.Double(eAtt.x, eAtt.y+engineHeight/2));
+				engine.set(3, new Point2D.Double(eAtt.x+engineWidth, eAtt.y+engineHeight/2));
+			}
+		}
+	}
+	
+	public class ShipBody{
+		Ship parent;
+		public double width;
+		public double height;
+		double xorigin;
+		double yorigin;
+		ArrayList<Point2D.Double> body;
+		//Rectangle body;// = new Rectangle(100, 100, 100, 100);
+		Point2D.Double e1Att;
+		Point2D.Double e2Att;
+		
+		public ShipBody(Ship parent){
+			this.parent = parent;
+			xorigin = parent.getX();
+			yorigin = parent.getY();
+			body = new ArrayList<Point2D.Double>();
+			
+			int widthPoints = (int) (parent.speed/4 + parent.power + parent.hitpoints/100);
+			int heightPoints = (int) (parent.speed/2 + parent.power/4 + parent.hitpoints/100);
+			//int totalPoints = 
+			if(widthPoints <= 3){
+				width = .5;
+			}else{
+				width = parent.map(widthPoints, 1, 2250, 2, 6);
+			}
+			
+			if(heightPoints <=3){
+				height = .5;
+			}else{
+				height = parent.map(heightPoints, 1, 1750, 2, 6);
+			}
+			
+			width = width * Ship.PIXEL_PER_UNIT;
+			height = height * Ship.PIXEL_PER_UNIT;
+			
+			e1Att = new Point2D.Double(xorigin-width, yorigin+0);
+			e2Att = new Point2D.Double(xorigin+width, yorigin+0);
+			
+			//body = new Rectangle((int)(xorigin-width), (int)(yorigin-height), (int)width*2, (int)height*2);
+			body.add(new Point2D.Double(xorigin-width, yorigin-height));
+			body.add(new Point2D.Double(xorigin+width, yorigin-height));
+			body.add(new Point2D.Double(xorigin+width, yorigin+height));
+			body.add(new Point2D.Double(xorigin-width, yorigin+height));
+			//Y = (X-A)/(B-A) * (D-C) + C	
+		}
+		
+		public void update(){
+			int widthPoints = (int) (parent.speed/10 + parent.power/2 + parent.hitpoints/100);
+			int heightPoints = (int) (parent.speed/2 + parent.power/5 + parent.hitpoints/100);
+			//int totalPoints = 
+			if(widthPoints <=3){
+				width = .5;
+			}else{
+				width = parent.map(widthPoints, 1, 2100, 2, 6);
+			}
+			
+			if(heightPoints <=3){
+				height = .5;
+			}else{
+				height = parent.map(heightPoints, 1, 1700, 2, 6);
+			}
+			
+			width = width * Ship.PIXEL_PER_UNIT;
+			height = height * Ship.PIXEL_PER_UNIT;
+			
+			xorigin = parent.getX();
+			yorigin = parent.getY();
+			e1Att = new Point2D.Double(xorigin-width, yorigin+0);
+			e2Att = new Point2D.Double(xorigin+width, yorigin+0);
+			
+			//body.
+			body.set(0, new Point2D.Double(xorigin-width, yorigin-height));
+			body.set(1, new Point2D.Double(xorigin+width, yorigin-height));
+			body.set(2, new Point2D.Double(xorigin+width, yorigin+height));
+			body.set(3, new Point2D.Double(xorigin-width, yorigin+height));
+		}
 	}
 }

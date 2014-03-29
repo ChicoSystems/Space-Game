@@ -10,7 +10,7 @@ import spacegame.graphics.Animation;
 import spacegame.graphics.Sprite;
 import spacegame.tilegame.TileMap;
 
-public class Turret extends Creature{
+public class Turret extends Creature  {
 	public static float LEVEL_TO_SIZE = 5;
 	public static float TURRET_TO_LEVEL = 500;
 	private double TURRET_REACH;
@@ -301,5 +301,13 @@ public class Turret extends Creature{
 
 	public void setHp(double hp) {
 		this.hp = hp;
+	}
+	
+	public float getWidth(){
+		return (float) circle.getWidth();
+	}
+	
+	public float getHeight(){
+		return (float) circle.getHeight();
 	}
 }

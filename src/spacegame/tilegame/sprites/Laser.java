@@ -4,6 +4,9 @@ import java.awt.Color;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 
 import spacegame.graphics.Sprite;
 
@@ -14,11 +17,11 @@ public class Laser extends Sprite{
 	public double power;
 	public double width;
 	public Color color;
-	private long lastCollideTime;
+	private HashMap<Sprite, Long>collisionSpriteTimes;
 	
 	public Laser(double x1, double y1, double x2, double y2, Object player){
 		super(null);
-		lastCollideTime = 0;
+		collisionSpriteTimes = new HashMap<Sprite, Long>();
 		line = new Line2D.Double(x1, y1, x2, y2);
 		parent = player;
 		if(parent instanceof Ship){
@@ -64,16 +67,20 @@ public class Laser extends Sprite{
 		return parent;
 	}
 
-	public void setLastCollideTime(long lastCollideTime) {
-		this.lastCollideTime = lastCollideTime;
+	public void setLastCollideTime(Sprite s, long lastCollideTime) {
+		collisionSpriteTimes.put(s, lastCollideTime);
 	}
 
-	public long getElapsedCollideTime() {
-		return (long) (System.currentTimeMillis() - lastCollideTime);
+	public long getElapsedCollideTime(Sprite s) {
+		return (long) (System.currentTimeMillis() - getLastCollideTime(s));
 	}
 
-	public long getLastCollideTime() {
-		return (long) lastCollideTime;
+	public long getLastCollideTime(Sprite s) {
+		long lastCollideTime = 0;
+		if(collisionSpriteTimes.containsKey(s)){
+			lastCollideTime = collisionSpriteTimes.get(s);
+		}
+		return lastCollideTime;
 	}
 
 }
