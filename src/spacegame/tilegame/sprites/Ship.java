@@ -18,46 +18,108 @@ import spacegame.graphics.Animation;
 import spacegame.graphics.Sprite;
 import spacegame.tilegame.ResourceManager;
 
+/**
+ * The Ship is the main player vehicle. It automatically grows and changes size 
+ * based on hitpoints, power and speed.
+ * @author admin Isaac Assegai
+ *
+ */
 public class Ship extends Creature  {
+
+	/**
+	 * The Minimum amount of hitpoints a ship can have.
+	 */
 	public static final int HITPOINT_MIN = 1;
+	/**
+	 * The Maximum amount of hitpoints a ship can have.
+	 */
 	public static final int HITPOINT_MAX = 100000;
+	/**
+	 * The initial number of hitpoints a new ship starts with.
+	 */
 	public static final int HITPOINT_INIT = HITPOINT_MIN;
-	
+	/**
+	 * The Minimum amount of power a ship can have.
+	 */
 	public static final int POWER_MIN = 1;
+	/**
+	 * The Maximum amount of power a ship can have.
+	 */
 	public static final int POWER_MAX = 1000;
+	/**
+	 * The initial amount of power a new ship is started with.
+	 */
 	public static final int POWER_INIT = POWER_MIN;
-	
+	/**
+	 * The Minimum amount of speed a ship can have.
+	 */
 	public static final int SPEED_MIN = 1;
+	/**
+	 * The Maximum amount of speed a ship can have.
+	 */
 	public static final int SPEED_MAX = 1000;
+	/**
+	 * The initial amount of speed that a new ship starts with.
+	 */
 	public static final int SPEED_INIT = SPEED_MIN;
-	
+	/**
+	 * The number of pixels each ship unit is worth.
+	 */
 	public static final int PIXEL_PER_UNIT = 5;
-    // velocity (pixels per millisecond)
     
-    
-	public int power;
-	public int speed;
+    /**
+     * The Current power of the ship. This is passed down to the ships weapons
+     * to decide exactly how much damage/mining a ship can do. Size of the ship
+     * also depends on power.
+     */
+	private int power;
+	/**
+	 * The Current speed points that the ship has. The ships maximum velocity increases with larger
+	 * number of speed points. Size of the ship also changes depending on speed.
+	 */
+	private int speed;
+	/**
+	 * The current number of hitpoints that this ship has.
+	 */
 	private double hitpoints;
-	
-	public double getHitpoints() {
-		return hitpoints;
-	}
-
-	public void setHitpoints(double hitpoints) {
-		this.hitpoints = hitpoints;
-	}
-
+	/**
+	 * The animation array sprites use. The Ships animation array will me animations
+	 * made of blank pictures, as ships are sprites with no animations.
+	 */
 	private Animation[] animArray;
+	/**
+	 * The pool of total power the ship has saved up, movement, weapons, and hp will
+	 * be regenerated from this pool.
+	 */
+	private double totalPower;
+	/**
+	 * The body of the ship.
+	 */
+	private ShipBody body;
+	/**
+	 * The left engine of the ship.
+	 */
+	private Engine engine1;
+	/**
+	 * The right engine of the ship.
+	 */
+	private Engine engine2;
+	/**
+	 * The Nose of the ship.
+	 */
+	private Nose nose;
+	/**
+	 * The parent of the ship. The games resource manager. Gives the ship access
+	 * to the rest of the game.
+	 */
+	private ResourceManager parent;
 	
-	//the power pool drawn from to run the ship
-	public double totalPower;
-
-	public ShipBody body;
-	Engine engine1;
-	Engine engine2;
-	public Nose nose;
-	public ResourceManager parent;
-	
+	/**
+	 * Construct a new ship.
+	 * @param parent - The Parent of the ship. The games resource Manager. Gives
+	 * the ship access to the rest of the game.
+	 * @param animArray - An array of blank animations.
+	 */
 	public Ship(ResourceManager parent, Animation[] animArray) {
 		super(animArray);
 		this.animArray = animArray;
@@ -76,47 +138,50 @@ public class Ship extends Creature  {
     	this.setCurrentSpeed(this.getMaxSpeed());
 	}
 	
-	private float calculateDifferenceBetweenAngles(float firstAngle, float secondAngle){
-		   	float difference = secondAngle - firstAngle;
-	        while (difference < -180) difference += 360;
-	        while (difference > 180) difference -= 360;
-	        return difference;
-	   }
-	
 	 /**	
-		Clones this Sprite. Does not clone position or velocity
-		info.
-	*/
+		In this case this creates a new ship with the same parent and animArray.
+	 */
 	public Object clone() {
 		return new Ship(parent, animArray);
 	}
 	
+	/**
+	 * Draws the ship to the graphics context
+	 * @param g - The graphics context the ship is drawn to.
+	 * @param offsetX - The offset of the clients main player to the game world. X Axis.
+	 * @param offsetY - The offset of the clients main player to the game world. Y Axis.
+	 */
 	public void drawShip(Graphics2D g, int offsetX, int offsetY){
-		 // Save the current transform of the graphics contexts.
-	      AffineTransform saveTransform = g.getTransform();
-	      // Create a identity affine transform, and apply to the Graphics2D context
-	      AffineTransform identity = new AffineTransform();
-	      g.setTransform(identity);
-	      
+		// Save the current transform of the graphics contexts.
+	    AffineTransform saveTransform = g.getTransform();
+	    // Create a identity affine transform, and apply to the Graphics2D context
+	    AffineTransform identity = new AffineTransform();
+	    g.setTransform(identity);
+	    
 	    //rotate ship at the middle of it's saucer
 		g.rotate((Math.toRadians(this.getRotation())), this.x+offsetX, this.y+offsetY-engine1.engineHeight/2-nose.noseLength);
-		//g.rotate((Math.toRadians(this.getRotation())));
 		drawBody(g, offsetX, offsetY);
 		drawEngines(g, offsetX, offsetY);
 		drawNose(g, offsetX, offsetY);
 		int sx = Math.round(getX()) + offsetX;
     	int sy = Math.round(getY()) + offsetY;
-		DecimalFormat df = new DecimalFormat("#");
-        String hp = df.format(this.hitpoints);
-        
-		//g.fillArc((int)this.x+offsetX, (int)this.y+offsetY, 5, 5, 0, 360);
-		g.setTransform(saveTransform);
+		g.setTransform(saveTransform); //unrotate
+		
+		//draw ships hp above ship.
 		Color saveColor = g.getColor();
         g.setColor(Color.red);
+        DecimalFormat df = new DecimalFormat("#");
+        String hp = df.format(this.hitpoints);
     	g.drawString(hp, sx, (float) (sy-this.getHeight()/2));
-    	 g.setColor(saveColor);
+    	g.setColor(saveColor);
 	}
 	
+	/**
+	 * Draws the ships engines to the Graphics Context.
+	 * @param g - The Graphics Context to draw the engine to.
+	 * @param offsetX - The X offset of the main ship in the world.
+	 * @param offsetY - The Y offset of the main ship in the world.
+	 */
 	private void drawEngines(Graphics2D g, int offsetX, int offsetY){
 		Point2D.Double p1 = engine1.engine.get(0);
 		Point2D.Double p2 = engine1.engine.get(1);
@@ -135,10 +200,14 @@ public class Ship extends Creature  {
 		g.drawLine((int)p6.x+offsetX, (int)p6.y+offsetY, (int)p7.x+offsetX, (int)p7.y+offsetY);
 		g.drawLine((int)p7.x+offsetX, (int)p7.y+offsetY, (int)p8.x+offsetX, (int)p8.y+offsetY);
 		g.drawLine((int)p8.x+offsetX, (int)p8.y+offsetY, (int)p5.x+offsetX, (int)p5.y+offsetY);
-		//System.out.println("current loc: " + this.getX() + " " + this.getY());
-		//System.out.println("polygon loc: " + p1.x + " "	+ p1.y);
 	}
 	
+	/**
+	 * Draws the Body of the Ship to the Graphics Context.
+	 * @param g - The Graphics Context we are drawing the ship body to.
+	 * @param offsetX - The offset of the main ship in the x axis.
+	 * @param offsetY - The offset of the main ship in the y axis.
+	 */
 	private void drawBody(Graphics2D g, int offsetX, int offsetY){
 		Point2D.Double p1 = body.body.get(0);
 		Point2D.Double p2 = body.body.get(1);
@@ -150,6 +219,12 @@ public class Ship extends Creature  {
 		g.drawLine((int)p4.x+offsetX, (int)p4.y+offsetY, (int)p1.x+offsetX, (int)p1.y+offsetY);
 	}
 	
+	/**
+	 * Draws the nose of the ship to the Graphics Context.
+	 * @param g - The Graphics Context we are drawing the ship nose to.
+	 * @param offsetX - The x offset of the main player in the game world.
+	 * @param offsetY - The y offset of the main player in the game world.
+	 */
 	private void drawNose(Graphics2D g, int offsetX, int offsetY){
 		Line2D noseLine1 = nose.noseLine1;
 		Line2D noseLine2 = nose.noseLine2;
@@ -158,8 +233,6 @@ public class Ship extends Creature  {
 		g.drawLine((int)noseLine2.getX1()+offsetX, (int)noseLine2.getY1()+offsetY, (int)noseLine2.getX2()+offsetX, (int)noseLine2.getY2()+offsetY);
 		g.fillArc((int)saucer.getX()+offsetX, (int)saucer.getY()+offsetY, (int)saucer.getWidth(), (int)saucer.getHeight(), 0, 360);
 	}
-
-	
 
 	/**
 	    Gets this Sprite's height, based on the size of the
@@ -171,9 +244,25 @@ public class Ship extends Creature  {
 
 	/**
 		Gets the maximum speed of this Creature.
-	 */
+	*/
 	public float getMaxSpeed() {
 	   return maxSpeed;
+	}
+	
+	/**
+	 * Returns the current number of hitpoints the ship has.
+	 * @return - The Hitpoints
+	 */
+	public double getHitpoints() {
+		return hitpoints;
+	}
+
+	/**
+	 * Sets the current number of hitpoints for this ship.
+	 * @param hitpoints - Hitpoints to set.
+	 */
+	public void setHitpoints(double hitpoints) {
+		this.hitpoints = hitpoints;
 	}
 
 	/**
@@ -183,23 +272,174 @@ public class Ship extends Creature  {
 	public float getWidth() {
 		return (float) ((body.width*2)+ (engine1.engineWidth*2));
 	}
-
 	
-	public static double map(double heightPoints, double d, double e, double f, double g)
-	{
-	  return (heightPoints - d) * (g - f) / (e - d) + f;
+	/**
+	 * Returns the current power of the ship.
+	 * @return - Current power of the ship.
+	 */
+	public int getPower() {
+		return power;
+	}
+
+	/**
+	 * Sets the current power of the ship.
+	 * @param power - The power to set.
+	 */
+	public void setPower(int power) {
+		this.power = power;
+	}
+
+	/**
+	 * Gets the current number of speed points the ship is operating with.
+	 * This is not the actual velocity of the ship.
+	 * @return
+	 */
+	public int getSpeed() {
+		return speed;
+	}
+
+	/**
+	 * Sets the current number of speed points fot the ship.
+	 * This is not the velocity of the ship. But the points that decide the velocity.
+	 * @param speed - The speed points to set.
+	 */
+	public void setSpeed(int speed) {
+		this.speed = speed;
+	}
+
+	/**
+	 * Returns the current total power. The pool of power the ship is powered by.
+	 * @return - The current total power of the ship.
+	 */
+	public double getTotalPower() {
+		return totalPower;
+	}
+
+	/**
+	 * Sets the pool of total power.
+	 * @param totalPower - The pool to set.
+	 */
+	public void setTotalPower(double totalPower) {
+		this.totalPower = totalPower;
+	}
+
+	/**
+	 * Maps points from the d-e range to the f-g range.
+	 * @param points - The number we are mapping.
+	 * @param d - The start of the initial range.
+	 * @param e - The end of the initial range.
+	 * @param f - The start of the return range.
+	 * @param g - The end of the return range.
+	 * @return - The points value mapped to the f-g range.
+	 */
+	public static double map(double points, double d, double e, double f, double g){
+	  return (points - d) * (g - f) / (e - d) + f;
 	}
 	
 	/**
-	    Updates this Sprite's Animation and its position based
-	    on the velocity.
+	 * Returns the current animation array, should be an array of empty animations.
+	 * @return - The animArray
+	 */
+	public Animation[] getAnimArray() {
+		return animArray;
+	}
+
+	/**
+	 * Sets the anim array for this ship. Should be an array of blank animations.
+	 * @param animArray
+	 */
+	public void setAnimArray(Animation[] animArray) {
+		this.animArray = animArray;
+	}
+
+	/**
+	 * Returns the body of the ship
+	 * @return - The ship body.
+	 */
+	public ShipBody getBody() {
+		return body;
+	}
+
+	/**
+	 * Sets the body of the ship
+	 * @param body - The body to set.
+	 */
+	public void setBody(ShipBody body) {
+		this.body = body;
+	}
+
+	/**
+	 * Returns the left engine of the ship.
+	 * @return - The left engine of the ship.
+	 */
+	public Engine getEngine1() {
+		return engine1;
+	}
+
+	/**
+	 * Sets the left engine of the ship.
+	 * @param engine1 - The engine to set.
+	 */
+	public void setEngine1(Engine engine1) {
+		this.engine1 = engine1;
+	}
+
+	/**
+	 * Returns the right engine of the ship.
+	 * @return - The right engine.
+	 */
+	public Engine getEngine2() {
+		return engine2;
+	}
+
+	/**
+	 * Sets the right engine of the ship.
+	 * @param engine2
+	 */
+	public void setEngine2(Engine engine2) {
+		this.engine2 = engine2;
+	}
+
+	/**
+	 * Returns the nose of the ship.
+	 * @return - The ship nose.
+	 */
+	public Nose getNose() {
+		return nose;
+	}
+
+	/**
+	 * Sets the nose of the ship.
+	 * @param nose - The ship to set.
+	 */
+	public void setNose(Nose nose) {
+		this.nose = nose;
+	}
+
+	/**
+	 * Returns the parent of the ship. Should be the games main resourcemanager.
+	 * @return - The resource manager of the game.
+	 */
+	public ResourceManager getParent() {
+		return parent;
+	}
+
+	/**
+	 * Sets the parent of the Ship. The games resourceManager
+	 * @param parent - The resource manager to keep track of.
+	 */
+	public void setParent(ResourceManager parent) {
+		this.parent = parent;
+	}
+	
+	/**
+	    Updates the ships state, body, engines, nose and max speed.
 	*/
 	public void update(long elapsedTime) {
 	    x += dx * elapsedTime;
 	    y += dy * elapsedTime;
-	    //anim.update(elapsedTime);
 	    
-	 // update to "dead" state
+	    // update to "dead" state
         stateTime += elapsedTime;
         if (state == STATE_DYING && stateTime >= DIE_TIME) {
             setState(STATE_DEAD);
@@ -213,9 +453,13 @@ public class Ship extends Creature  {
         //update max speed based on speed points.
         float maxSpeed = (float) map(speed, 1, 1000, .05, .6);
         setMaxSpeed(maxSpeed);
-       // setCurrentSpeed(maxSpeed);
 	}
 	
+	/**
+	 * The Nose of the Ship.
+	 * @author Isaac Assegai
+	 *
+	 */
 	public class Nose{
 		Line2D.Double noseLine1;
 		Line2D.Double noseLine2;

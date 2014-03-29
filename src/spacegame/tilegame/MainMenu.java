@@ -280,11 +280,11 @@ public class MainMenu implements ActionListener, ChangeListener{
 	public void updateShipSliders(JPanel sliderMenu){
 		
 		JLabel label = ((JLabel)sliderMenu.getComponent(0));
-		double power = parent.getMap().getPlayer().power;
+		double power = parent.getMap().getPlayer().getPower();
 		label.setText("Power: " + power);
 		
 		label = ((JLabel)sliderMenu.getComponent(2));
-		double speed = parent.getMap().getPlayer().speed;
+		double speed = parent.getMap().getPlayer().getSpeed();
 		label.setText("Speed: " + speed);
 		
 		label = ((JLabel)sliderMenu.getComponent(4));
@@ -298,7 +298,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 		if(s.equals("power")){
 			ShipSlider powerSlider;
 			powerSlider = new ShipSlider("power", Ship.POWER_MIN, 
-					Ship.POWER_MAX, parent.getMap().getPlayer().power);
+					Ship.POWER_MAX, parent.getMap().getPlayer().getPower());
 			//Create the label table
 			Hashtable labelTable = new Hashtable();
 			labelTable.put( new Integer( Ship.POWER_MIN ), new JLabel(String.valueOf(Ship.POWER_MIN)) );
@@ -313,7 +313,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 		}else if(s.equals("speed")){
 			ShipSlider speedSlider;
 			speedSlider = new ShipSlider("speed", Ship.SPEED_MIN, 
-					Ship.SPEED_MAX, parent.getMap().getPlayer().speed);
+					Ship.SPEED_MAX, parent.getMap().getPlayer().getSpeed());
 			//Create the label table
 			Hashtable labelTable = new Hashtable();
 			labelTable.put( new Integer( Ship.SPEED_MAX ), new JLabel(String.valueOf(Ship.SPEED_MAX)) );
@@ -456,10 +456,12 @@ public class MainMenu implements ActionListener, ChangeListener{
 		if (!source.getValueIsAdjusting()) {
 			if(source.name.equals("power")){
 				int power = (int)source.getValue();
-		        parent.getMap().getPlayer().power = power;
+		       // parent.getMap().getPlayer().power = power;
+		        parent.getMap().getPlayer().setPower(power);
 			}else if(source.name.equals("speed")){
 				int speed = (int)source.getValue();
-				parent.getMap().getPlayer().speed = speed;
+				//parent.getMap().getPlayer().speed = speed;
+				parent.getMap().getPlayer().setSpeed(speed);
 			}else if(source.name.equals("hitpoint")){
 				int hitpoints = (int)source.getValue();
 				parent.getMap().getPlayer().setHitpoints(hitpoints);

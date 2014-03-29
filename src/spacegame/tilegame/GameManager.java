@@ -216,8 +216,8 @@ public class GameManager extends GameCore {
             if(shipMenuAction.isPressed()){
             	int mousex = inputManager.getMouseX()-renderer.offX;
             	int mousey = inputManager.getMouseY()-renderer.offY;
-            	Ellipse2D saucer = map.getPlayer().nose.saucer;
-            	if(map.getPlayer().nose.saucer.contains(mousex, mousey)){
+            	Ellipse2D saucer = map.getPlayer().getNose().saucer;
+            	if(map.getPlayer().getNose().saucer.contains(mousex, mousey)){
             		System.out.println("shipMenuActipon pressed");
                 	menu.tabbedShipMenu.setVisible(!menu.tabbedShipMenu.isVisible());
                 	menu.tabbedBuildMenu.setVisible(false);
@@ -260,12 +260,12 @@ public class GameManager extends GameCore {
     		//do nothing there is already a laser for this player.
     	}else{
     		//this player does not already have a laser, it is being added.
-    		map.addLaser((float)player.nose.noseX,
-    					(float)player.nose.noseY, 
+    		map.addLaser((float)player.getNose().noseX,
+    					(float)player.getNose().noseY, 
    				 		// (player.getX()+xTarget-(screen.getWidth()/2))+player.getWidth(), 
    				 		 //(player.getY()+yTarget-(screen.getHeight()/2))+player.getHeight(), 
-    					(float)((xTarget)+player.nose.noseX), 
-    					(float)((yTarget)+player.nose.noseY), 
+    					(float)((xTarget)+player.getNose().noseX), 
+    					(float)((yTarget)+player.getNose().noseY), 
    				player);
     	}
     }
@@ -600,8 +600,8 @@ public class GameManager extends GameCore {
     		laser = (Laser)l.next();
     		player = laser.getParent();
     		if(player instanceof Ship){
-    			x1 = (float)((Ship)player).nose.noseX;
-        		y1 = (float)((Ship)player).nose.noseY;
+    			x1 = (float)((Ship)player).getNose().noseX;
+        		y1 = (float)((Ship)player).getNose().noseY;
         		double mouseX = inputManager.getMouseX();
         		double mouseY = inputManager.getMouseY();
         		x2 = ((Ship)player).getX()-(screen.getWidth()/2-mouseX)+(32);
@@ -662,10 +662,12 @@ public class GameManager extends GameCore {
     			Planet planet = (Planet)sprite;
     			if(laser.parent instanceof Ship){
         			powerDifference = (laser.power/1000) *(elapsedCollideTime);
-        			((Ship)laser.parent).totalPower += powerDifference;
+        			((Ship)laser.parent).setTotalPower(((Ship)laser.parent).getTotalPower() + powerDifference);
+        			//((Ship)laser.parent).totalPower += powerDifference;
         		}else if(laser.parent instanceof Turret){
         			powerDifference = (laser.power/1000) *(elapsedCollideTime);
-        			((Turret)laser.parent).getParent().totalPower += powerDifference;
+        			//((Turret)laser.parent).getParent().totalPower += powerDifference;
+        			((Turret)laser.parent).setPower((int) (((Turret)laser.parent).getPower() + powerDifference));
         		}
         		planet.totalPower(planet.totalPower()-powerDifference);
     		}else if(sprite instanceof Ship){
