@@ -456,7 +456,7 @@ public class ResourceManager {
     		animation[0] = (Animation) anims.get(i);
     		Planet s = new Planet(animation);
     		s.setPlanetType(i);
-    		System.out.println(i);
+    		//System.out.println(i);
     		planetSprites.add(s);
     	}
     }

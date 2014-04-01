@@ -203,8 +203,8 @@ public class TileMapRenderer {
             	Turret t = (Turret)sprite;
             	int sx = Math.round(sprite.getX()) + offsetX;
             	int sy = Math.round(sprite.getY()) + offsetY;
-            	double newWidth = t.getHp()/t.LEVEL_TO_SIZE;
-        		double newHeight = t.getHp()/t.LEVEL_TO_SIZE;
+            	double newWidth = t.getHitpoints()/t.LEVEL_TO_SIZE;
+        		double newHeight = t.getHitpoints()/t.LEVEL_TO_SIZE;
         		double centerX = t.getCircle().getBounds().x + offsetX;
         		double centerY = t.getCircle().getBounds().y + offsetY;
         		Color saveColor = g.getColor();

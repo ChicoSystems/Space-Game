@@ -43,6 +43,13 @@ public class Laser extends Sprite{
 	private HashMap<Sprite, Long>collisionSpriteTimes;
 	
 	/**
+	 * The time this laser was last updated. Will be used to subtract total power from ships.
+	 */
+	private double lastUpdate;
+	
+	
+
+	/**
 	 * Construct the Laser
 	 * @param x1 - X1 Location of Laser in World Space
 	 * @param y1 - Y1 Location of Laser in World Space
@@ -52,6 +59,7 @@ public class Laser extends Sprite{
 	 */
 	public Laser(double x1, double y1, double x2, double y2, Object p){
 		super(null);
+		lastUpdate = System.currentTimeMillis();
 		collisionSpriteTimes = new HashMap<Sprite, Long>();
 		line = new Line2D.Double(x1, y1, x2, y2);
 		parent = p;
@@ -154,6 +162,68 @@ public class Laser extends Sprite{
 			lastCollideTime = collisionSpriteTimes.get(s);
 		}
 		return lastCollideTime;
+	}
+	
+	public float getWidth() {
+		return (float) width;
+	}
+
+	public void setWidth(double width) {
+		this.width = width;
+	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
+	public HashMap<Sprite, Long> getCollisionSpriteTimes() {
+		return collisionSpriteTimes;
+	}
+
+	public void setCollisionSpriteTimes(HashMap<Sprite, Long> collisionSpriteTimes) {
+		this.collisionSpriteTimes = collisionSpriteTimes;
+	}
+
+	public double getLastUpdate() {
+		return lastUpdate;
+	}
+
+	public void setLastUpdate(double lastUpdate) {
+		this.lastUpdate = lastUpdate;
+	}
+	
+	/**
+	 * Used in laser collision calculations to let us know how much
+	 * damage etc to apply and how much energy to harvest
+	 * @param l - The laser we are getting a power difference number for.
+	 * @param elapsedTime - The amount of time to base our diff on.
+	 * @return - The power diff for this laser over a specified time.
+	 */
+	public static double getPowerDifference(Laser l, double elapsedTime){
+		double diff = 0;
+		double totalPower = 0;
+		double power = 0;
+		if(l.parent instanceof Ship){
+			totalPower = ((Ship)l.parent).getTotalPower();
+			power = ((Ship)l.parent).getPower();
+		}else if(l.parent instanceof Turret){
+			totalPower = ((Ship)((Turret)l.parent).getParent()).getTotalPower();
+			power = ((Turret)l.parent).power;
+		}
+		
+		//makes sure that the spawning device has enough total power to power
+		//this laser, if it doesn't, then the lasers power will only register as a 1.
+		if(totalPower <= 3){
+			power = 1;
+		}else{
+			power = l.power;
+		}
+		diff = (power/1000) * elapsedTime;
+		return diff;
 	}
 
 }

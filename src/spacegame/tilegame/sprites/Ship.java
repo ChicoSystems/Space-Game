@@ -26,6 +26,8 @@ import spacegame.tilegame.ResourceManager;
  */
 public class Ship extends Creature  {
 
+	public static final int LEVEL_MIN = 1;
+	public static final int LEVEL_MAX = 1000;
 	/**
 	 * The Minimum amount of hitpoints a ship can have.
 	 */
@@ -66,8 +68,15 @@ public class Ship extends Creature  {
 	 * The number of pixels each ship unit is worth.
 	 */
 	public static final int PIXEL_PER_UNIT = 5;
+	
+	/**
+	 * The ships level, decides the upgrade points of totalPower;
+	 */
+	private int level;
     
-    /**
+    
+
+	/**
      * The Current power of the ship. This is passed down to the ships weapons
      * to decide exactly how much damage/mining a ship can do. Size of the ship
      * also depends on power.
@@ -87,6 +96,11 @@ public class Ship extends Creature  {
 	 * made of blank pictures, as ships are sprites with no animations.
 	 */
 	private Animation[] animArray;
+	
+	/**
+	 * The upper limit of the totalPower field. Based on level.
+	 */
+	private int totalPowerLimit;
 	/**
 	 * The pool of total power the ship has saved up, movement, weapons, and hp will
 	 * be regenerated from this pool.
@@ -124,7 +138,9 @@ public class Ship extends Creature  {
 		super(animArray);
 		this.animArray = animArray;
 		this.parent = parent;
-		totalPower = 1;
+		level = 1;
+		totalPowerLimit = level*3;
+		totalPower = 3;
 		power = 1;
 		speed = 1;
 		hitpoints = HITPOINT_INIT;
@@ -306,6 +322,38 @@ public class Ship extends Creature  {
 	public void setSpeed(int speed) {
 		this.speed = speed;
 	}
+	
+	/**
+	 * Returns the Ships current level
+	 * @return - The current Level of the ship
+	 */
+	public int getLevel() {
+		return level;
+	}
+
+	/**
+	 * Sets the current level of the ship.
+	 * @param level - The level to set.
+	 */
+	public void setLevel(int level) {
+		this.level = level;
+	}
+
+	/**
+	 * Returns the total power limit of the ship
+	 * @return - The total power limit of the ship.
+	 */
+	public int getTotalPowerLimit() {
+		return totalPowerLimit;
+	}
+
+	/**
+	 * Sets the total power limit of the ship.
+	 * @param totalPowerLimit - The power limit to set.
+	 */
+	public void setTotalPowerLimit(int totalPowerLimit) {
+		this.totalPowerLimit = totalPowerLimit;
+	}
 
 	/**
 	 * Returns the current total power. The pool of power the ship is powered by.
@@ -436,13 +484,27 @@ public class Ship extends Creature  {
 	    Updates the ships state, body, engines, nose and max speed.
 	*/
 	public void update(long elapsedTime) {
+		//make sure totalpower pool is under the power limit.
+		totalPowerLimit = level*3;
+		if(totalPower >= totalPowerLimit){
+			totalPower = totalPowerLimit;
+		}else if(totalPower <= 2){
+			totalPower = 3;
+		}
+		
+		if(state == STATE_DEAD){
+			parent.parent.getMap().setPlayer2(null);
+		}
 	    x += dx * elapsedTime;
 	    y += dy * elapsedTime;
 	    
-	    // update to "dead" state
+	    //check hp, if less than or = to 0 we will set state
+        state = getStateFromHP(hitpoints);
+	    
+	    // update to "dead" state if dying.
         stateTime += elapsedTime;
         if (state == STATE_DYING && stateTime >= DIE_TIME) {
-            setState(STATE_DEAD);
+           state = STATE_DEAD; //setState(STATE_DEAD);
         }
         
         body.update();
@@ -453,6 +515,16 @@ public class Ship extends Creature  {
         //update max speed based on speed points.
         float maxSpeed = (float) map(speed, 1, 1000, .05, .6);
         setMaxSpeed(maxSpeed);
+	}
+	
+	private int getStateFromHP(double hp){
+		int state = 0;
+		if(hp <= 0){
+			state=STATE_DYING;
+		}else{
+			state=STATE_NORMAL;
+		}
+		return state;
 	}
 	
 	/**

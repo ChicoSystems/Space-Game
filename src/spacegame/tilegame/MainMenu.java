@@ -129,7 +129,9 @@ public class MainMenu implements ActionListener, ChangeListener{
         
 		JTabbedPane menu = new JTabbedPane();
 		menu.setOpaque(false);
-		menu.setBackground(new Color(0,0,0,5));
+		//menu.setBackground(new Color(0,0,0,5));
+
+		
 
 		inputMapMenu = createInputMapMenu();
 		menu.addTab("Input Map", null, inputMapMenu,
@@ -166,6 +168,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 		menu.setLocation(
 	            (screen.getWidth() - menu.getWidth()) / 2,
 	            (screen.getHeight() - menu.getHeight()) / 2);
+		menu.setDoubleBuffered(true);
 		return menu;
 	}
 	
@@ -205,6 +208,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 		menu.setLocation(
 	            (screen.getWidth() - menu.getWidth()) / 2,
 	            (screen.getHeight() - menu.getHeight()) / 2);
+		menu.setDoubleBuffered(true);
 		return menu;
 	}
 	
@@ -241,9 +245,10 @@ public class MainMenu implements ActionListener, ChangeListener{
 		
 		menu.setSize(menu.getPreferredSize());
 
-		menu.setLocation(
-	            (screen.getWidth() - menu.getWidth()) / 2,
-	            (screen.getHeight() - menu.getHeight()) / 2);
+		//menu.setLocation(
+	    //        (screen.getWidth() - menu.getWidth()) / 2,
+	    //        (screen.getHeight() - menu.getHeight()) / 2);
+		menu.setDoubleBuffered(true);
 		return menu;
 	}
 	
@@ -255,41 +260,74 @@ public class MainMenu implements ActionListener, ChangeListener{
 		sndPlayerButton.addActionListener(this);
 		buildMenu.add(buildTurretButton);
 		buildMenu.add(sndPlayerButton);
+		buildMenu.setDoubleBuffered(true);
 		return buildMenu;
 	}
 	
 	public JPanel makeShipSliderMenu(){
 		JPanel sliderMenu = new JPanel(new GridLayout(0,1));
+		JSlider levelSlider = createShipSlider("level");
+		JSlider totalPowerSlider = createShipSlider("totalPower");
 		JSlider powerSlider = createShipSlider("power");
 		JSlider speedSlider = createShipSlider("speed");
 		JSlider hitpointSlider = createShipSlider("hitpoint");
 		
+		JLabel levelLabel = new JLabel("Level");
+		JLabel totalPointsLabel = new JLabel("Total Power");
 		JLabel powerLabel = new JLabel("Power");
 		JLabel speedLabel = new JLabel("Speed");
 		JLabel hitpointLabel = new JLabel("Hit Points");
+		levelLabel.setDoubleBuffered(true);
+		totalPointsLabel.setDoubleBuffered(true);
+		powerLabel.setDoubleBuffered(true);
+		speedLabel.setDoubleBuffered(true);
+		hitpointLabel.setDoubleBuffered(true);
+		sliderMenu.setDoubleBuffered(true);
 				
+		sliderMenu.add(levelLabel);
+		sliderMenu.add(levelSlider);
+		sliderMenu.add(totalPointsLabel);
+		sliderMenu.add(totalPowerSlider);
 		sliderMenu.add(powerLabel);
 		sliderMenu.add(powerSlider);
 		sliderMenu.add(speedLabel);
 		sliderMenu.add(speedSlider);
 		sliderMenu.add(hitpointLabel);
 		sliderMenu.add(hitpointSlider);
+		sliderMenu.setDoubleBuffered(true);
 		return sliderMenu;
 	}
 	
 	public void updateShipSliders(JPanel sliderMenu){
 		
 		JLabel label = ((JLabel)sliderMenu.getComponent(0));
+		double level = parent.getMap().getPlayer().getLevel();
+		label.setText("Level: " + level);
+		
+		label = ((JLabel)sliderMenu.getComponent(2));
+		ShipSlider slider = (ShipSlider)sliderMenu.getComponent(3);
+		slider.setMaximum(parent.getMap().getPlayer().getTotalPowerLimit());
+		//update totalPowerSlider labels
+		Hashtable labelTable = new Hashtable();
+		labelTable.put( new Integer( parent.getMap().getPlayer().getTotalPowerLimit() ), new JLabel(String.valueOf(parent.getMap().getPlayer().getTotalPowerLimit())) );
+		labelTable.put( new Integer( parent.getMap().getPlayer().getTotalPowerLimit()/2 ), new JLabel(String.valueOf(parent.getMap().getPlayer().getTotalPowerLimit()/2)));
+		labelTable.put( new Integer( parent.getMap().getPlayer().getTotalPowerLimit() ), new JLabel(String.valueOf(parent.getMap().getPlayer().getTotalPowerLimit())) );
+		slider.setLabelTable( labelTable );
+		double totalPower = parent.getMap().getPlayer().getTotalPower();
+		label.setText("Total Power: " + totalPower);
+		
+		label = ((JLabel)sliderMenu.getComponent(4));
 		double power = parent.getMap().getPlayer().getPower();
 		label.setText("Power: " + power);
 		
-		label = ((JLabel)sliderMenu.getComponent(2));
+		label = ((JLabel)sliderMenu.getComponent(6));
 		double speed = parent.getMap().getPlayer().getSpeed();
 		label.setText("Speed: " + speed);
 		
-		label = ((JLabel)sliderMenu.getComponent(4));
+		label = ((JLabel)sliderMenu.getComponent(8));
 		double hitPoints = parent.getMap().getPlayer().getHitpoints();
 		label.setText("Hit Points: " + hitPoints);
+		
 		
 	}
 	
@@ -309,6 +347,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 			powerSlider.addChangeListener(this);
 			powerSlider.setMajorTickSpacing(100);
 			powerSlider.setPaintTicks(true);
+			powerSlider.setDoubleBuffered(true);
 			return powerSlider;
 		}else if(s.equals("speed")){
 			ShipSlider speedSlider;
@@ -324,8 +363,9 @@ public class MainMenu implements ActionListener, ChangeListener{
 			speedSlider.addChangeListener(this);
 			speedSlider.setMajorTickSpacing(100);
 			speedSlider.setPaintTicks(true);
+			speedSlider.setDoubleBuffered(true);
 			return speedSlider;
-		}else{
+		}else if(s.equals("hitpoint")){
 			ShipSlider hitpointSlider;
 			hitpointSlider = new ShipSlider("hitpoint", Ship.HITPOINT_MIN, 
 					Ship.HITPOINT_MAX, (int) parent.getMap().getPlayer().getHitpoints());
@@ -337,9 +377,42 @@ public class MainMenu implements ActionListener, ChangeListener{
 			hitpointSlider.setLabelTable( labelTable );
 			hitpointSlider.setPaintLabels(true);
 			hitpointSlider.addChangeListener(this);
-			hitpointSlider.setMajorTickSpacing(100);
+			hitpointSlider.setMajorTickSpacing(1000);
 			hitpointSlider.setPaintTicks(true);
+			hitpointSlider.setDoubleBuffered(true);
 			return hitpointSlider;
+		}else if(s.equals("level")){
+			ShipSlider levelSlider;
+			levelSlider = new ShipSlider("level", Ship.LEVEL_MIN, 
+					Ship.LEVEL_MAX, (int) parent.getMap().getPlayer().getLevel());
+			//Create the label table
+			Hashtable labelTable = new Hashtable();
+			labelTable.put( new Integer( Ship.LEVEL_MAX ), new JLabel(String.valueOf(Ship.LEVEL_MAX)) );
+			labelTable.put( new Integer( Ship.LEVEL_MAX/2 ), new JLabel(String.valueOf(Ship.LEVEL_MAX/2)));
+			labelTable.put( new Integer( Ship.LEVEL_MAX ), new JLabel(String.valueOf(Ship.LEVEL_MAX)) );
+			levelSlider.setLabelTable( labelTable );
+			levelSlider.setPaintLabels(true);
+			levelSlider.addChangeListener(this);
+			levelSlider.setMajorTickSpacing(100);
+			levelSlider.setPaintTicks(true);
+			levelSlider.setDoubleBuffered(true);
+			return levelSlider;
+		}else{
+			ShipSlider totalPowerSlider;
+			totalPowerSlider = new ShipSlider("totalPower", 3, 
+					parent.getMap().getPlayer().getTotalPowerLimit(), (int) parent.getMap().getPlayer().getTotalPower());
+			//Create the label table
+			Hashtable labelTable = new Hashtable();
+			labelTable.put( new Integer( parent.getMap().getPlayer().getTotalPowerLimit() ), new JLabel(String.valueOf(parent.getMap().getPlayer().getTotalPowerLimit())) );
+			labelTable.put( new Integer( parent.getMap().getPlayer().getTotalPowerLimit()/2 ), new JLabel(String.valueOf(parent.getMap().getPlayer().getTotalPowerLimit()/2)));
+			labelTable.put( new Integer( parent.getMap().getPlayer().getTotalPowerLimit() ), new JLabel(String.valueOf(parent.getMap().getPlayer().getTotalPowerLimit())) );
+			totalPowerSlider.setLabelTable( labelTable );
+			totalPowerSlider.setPaintLabels(true);
+			totalPowerSlider.addChangeListener(this);
+			totalPowerSlider.setMajorTickSpacing(100);
+			totalPowerSlider.setPaintTicks(true);
+			totalPowerSlider.setDoubleBuffered(true);
+			return totalPowerSlider;
 		}
 	}
 
@@ -354,6 +427,7 @@ public class MainMenu implements ActionListener, ChangeListener{
         filler.setHorizontalAlignment(JLabel.CENTER);
         panel.setLayout(new GridLayout(1, 1));
         panel.add(filler);
+        panel.setDoubleBuffered(true);
         return panel;
     }
 	
@@ -400,7 +474,7 @@ public class MainMenu implements ActionListener, ChangeListener{
         inputMapMenu.setLocation(
             (screen.getWidth() - inputMapMenu.getWidth()) / 2,
             (screen.getHeight() - inputMapMenu.getHeight()) / 2);
-
+        inputMapMenu.setDoubleBuffered(true);
         return inputMapMenu;
 	}
 	
@@ -421,6 +495,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 	    		animation[0] = (Animation) a;
 	    		
 	            Ship player2 = new Ship(parent.resourceManager, animation);
+	            player2.setHitpoints(500);
 	            player2.setX(parent.getMap().getPlayer().getX());
 	            player2.setY(parent.getMap().getPlayer().getY());
 	        	parent.getMap().setPlayer2(player2);
@@ -465,6 +540,12 @@ public class MainMenu implements ActionListener, ChangeListener{
 			}else if(source.name.equals("hitpoint")){
 				int hitpoints = (int)source.getValue();
 				parent.getMap().getPlayer().setHitpoints(hitpoints);
+			}else if(source.name.equals("level")){
+				int level = (int)source.getValue();
+				parent.getMap().getPlayer().setLevel(level);
+			}else if(source.name.equals("totalPower")){
+				int totalPower = (int)source.getValue();
+				parent.getMap().getPlayer().setTotalPower(totalPower);
 			}
 	    }
 		
@@ -524,7 +605,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 	    button.setIcon(iconDefault);
 	    button.setRolloverIcon(iconRollover);
 	    button.setPressedIcon(iconPressed);
-	
+	    button.setDoubleBuffered(true);
 	    return button;
 	}
 	
@@ -543,6 +624,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 	    InputComponent input = new InputComponent(action);
 	    configPanel.add(label);
 	    configPanel.add(input);
+	    label.setDoubleBuffered(true);
 	    inputs.add(input);
 	}
 	
@@ -575,6 +657,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 	    */
 	    public InputComponent(GameAction action) {
 	        this.action = action;
+	        this.setDoubleBuffered(true);
 	        setText();
 	        enableEvents(KeyEvent.KEY_EVENT_MASK |
 	            MouseEvent.MOUSE_EVENT_MASK |
@@ -683,6 +766,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 		
 		public ShipSlider(String name, int min, int max, int current){
 			super(JSlider.HORIZONTAL, min, max, current);	
+			this.setDoubleBuffered(true);
 			this.name = name;
 		}
 	}
@@ -693,14 +777,17 @@ public class MainMenu implements ActionListener, ChangeListener{
 	    }
 	    public TransparentPanel(GridLayout gridLayout) {
 	    	super(gridLayout);
+	    	this.setDoubleBuffered(true);
 			// TODO Auto-generated constructor stub
 		}
 		public TransparentPanel(FlowLayout flowLayout) {
 			super(flowLayout);
+			this.setDoubleBuffered(true);
 			// TODO Auto-generated constructor stub
 		}
 		public TransparentPanel(BorderLayout borderLayout) {
 			super(borderLayout);
+			this.setDoubleBuffered(true);
 			// TODO Auto-generated constructor stub
 		}
 		public void paintComponent(Graphics2D g) {
