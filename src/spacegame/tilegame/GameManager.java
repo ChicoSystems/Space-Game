@@ -69,6 +69,7 @@ public class GameManager extends GameCore {
     public GameAction shipMenuAction;
     public GameAction menuAction;
     public GameAction exit;
+    public GameAction sndPlayerTurret;
     
 
 
@@ -139,6 +140,8 @@ public class GameManager extends GameCore {
                 GameAction.DETECT_INITAL_PRESS_ONLY);
         exit = new GameAction("exit",
             GameAction.DETECT_INITAL_PRESS_ONLY);
+        sndPlayerTurret = new GameAction("sndPlayerTurret",
+                GameAction.DETECT_INITAL_PRESS_ONLY);
 
         inputManager = new InputManager(
             screen.getFullScreenWindow());
@@ -153,10 +156,11 @@ public class GameManager extends GameCore {
         inputManager.mapToKey(moveLeft, KeyEvent.VK_A);
         inputManager.mapToKey(moveRight, KeyEvent.VK_D);
         inputManager.mapToKey(speedBoost, KeyEvent.VK_SHIFT);
-        inputManager.mapToKey(fire, KeyEvent.VK_SPACE);
+        inputManager.mapToKey(fire, KeyEvent.VK_F);
         inputManager.mapToKey(menuAction, KeyEvent.VK_F1);
         inputManager.mapToMouse(shipMenuAction, InputManager.MOUSE_BUTTON_3);
         inputManager.mapToKey(exit, KeyEvent.VK_ESCAPE);
+        inputManager.mapToKey(sndPlayerTurret, KeyEvent.VK_SPACE);
         
         inputManager.mapToMouse(laser, InputManager.MOUSE_BUTTON_1);
     }
@@ -165,6 +169,18 @@ public class GameManager extends GameCore {
     private void checkInput(long elapsedTime) {
         if (exit.isPressed()) {
             stop();
+        }
+        
+        if(sndPlayerTurret.isPressed()){
+        	Ship player2 = map.getPlayer2();
+        	if(player2 != null){
+        		Animation[] animation = new Animation[1];
+            	Animation a = resourceManager.createPlanetAnim((Image)resourceManager.planetImages.get(0));
+        		animation[0] = (Animation) a;
+        		Turret t = new Turret(player2, player2.getX(), player2.getY(), 1, animation);
+        		getMap().addSprite(t);
+        	}
+        	
         }
         
         if (configAction.isPressed()) {
@@ -495,6 +511,29 @@ public class GameManager extends GameCore {
 	    }
 	    return returnVal;
 	}
+	
+	/**
+    Checks if two Sprites collide with one another. Returns
+    false if the two Sprites are the same. Returns false if
+    one of the Sprites is a Creature that is not alive.
+*/
+public boolean isCollision(Laser s1, Turret s2) {
+    // if the Sprites are the same, return false
+	boolean returnVal = false;
+    
+    if(s1 instanceof Laser && s2 instanceof Turret){
+    	Laser l = (Laser)s1;
+    	Turret t = (Turret)s2;
+    	if(l.getLine().intersects(s2.getX(), s2.getY(), s2.getX()+s2.getWidth(), s2.getY()+s2.getHeight())){
+    		//System.out.println("laser hit");
+    		return true;
+    	}else{
+    		//System.out.println("laser fail");
+    		return false;
+    	}
+    }
+    return returnVal;
+}
     
     public boolean isCollision(Ship s1, Sprite s2) {
 
@@ -600,12 +639,20 @@ public class GameManager extends GameCore {
     		laser = (Laser)l.next();
     		player = laser.getParent();
     		if(player instanceof Ship){
+    			//moves the players laser with reguards to his/her mouse.
     			x1 = (float)((Ship)player).getNose().noseX;
         		y1 = (float)((Ship)player).getNose().noseY;
         		double mouseX = inputManager.getMouseX();
         		double mouseY = inputManager.getMouseY();
         		x2 = ((Ship)player).getX()-(screen.getWidth()/2-mouseX)+(32);
     			y2 = ((Ship)player).getY()-(screen.getHeight()/2-mouseY)+(32);
+    			
+    			//remove x totalPower from parent ship for each second
+    			//the laser has been going, where x is the current power of the laser.
+    			double elapsedLaserTime = System.currentTimeMillis() - laser.getLastUpdate();
+    			double powerDiff = Laser.getPowerDifference(laser, elapsedLaserTime);
+    			((Ship)player).setTotalPower(((Ship)player).getTotalPower()-powerDiff);
+    					
     		}else{
     			Object target = ((Turret)player).getTarget();
     			if(target instanceof Ship){
@@ -620,8 +667,10 @@ public class GameManager extends GameCore {
     			x1 = (float)((Turret)player).getX();
     			y1 = (float)((Turret)player).getY();
     		}
+    		laser.setLastUpdate(System.currentTimeMillis());
     		laser.getLine().setLine(x1, y1, x2, y2);
     		checkLaserCollisions(laser);
+    		
     	}
     }
     
@@ -644,6 +693,9 @@ public class GameManager extends GameCore {
             }else if(sprite instanceof Ship){
             	Ship ship = (Ship)sprite;
             	if(isCollision(laser, ship)) collideLaserWithSprite(laser, ship);
+            }else if(sprite instanceof Turret){
+            	Turret t = (Turret)sprite;
+            	if(isCollision(laser, t)) collideLaserWithSprite(laser, t);
             }
         }
     }
@@ -658,27 +710,49 @@ public class GameManager extends GameCore {
     	if(elapsedCollideTime <= 100){
     		double powerDifference = 0;
     		
+    		//laser collides with planet
     		if(sprite instanceof Planet){
     			Planet planet = (Planet)sprite;
+    			//laser comes from a ship
     			if(laser.parent instanceof Ship){
-        			powerDifference = (laser.power/1000) *(elapsedCollideTime);
-        			((Ship)laser.parent).setTotalPower(((Ship)laser.parent).getTotalPower() + powerDifference);
-        			//((Ship)laser.parent).totalPower += powerDifference;
-        		}else if(laser.parent instanceof Turret){
-        			powerDifference = (laser.power/1000) *(elapsedCollideTime);
-        			//((Turret)laser.parent).getParent().totalPower += powerDifference;
-        			((Turret)laser.parent).setPower((int) (((Turret)laser.parent).getPower() + powerDifference));
+        			//powerDifference = (laser.power/1000) *(elapsedCollideTime);
+        			powerDifference = Laser.getPowerDifference(laser, elapsedCollideTime);
+        			((Ship)laser.parent).setTotalPower(((Ship)laser.parent).getTotalPower() + powerDifference*2);
+        		//laser comes from a turret
+    			}else if(laser.parent instanceof Turret){
+        			//powerDifference = (laser.power/1000) *(elapsedCollideTime);
+        			powerDifference = Laser.getPowerDifference(laser, elapsedCollideTime);
+        			Ship s = ((Turret)laser.parent).getParent();
+        			s.setTotalPower(s.getTotalPower()+powerDifference);
         		}
         		planet.totalPower(planet.totalPower()-powerDifference);
+        	//laser collides with a ship
     		}else if(sprite instanceof Ship){
     			Ship ship = (Ship)sprite;
-    			//if(laser.parent == ship){
+    			if(laser.parent == ship){
     				//do nothing this laser cannot damage the ship it is from
-    			//}else{
-    				powerDifference = (laser.power/1000) *(elapsedCollideTime);
+    			}else if(laser.parent instanceof Turret){
+    				Turret t = (Turret)laser.parent;
+    				if(t.getParent() == ship){
+    					/*do nothing if this lasers parent is a turret who's parent
+        				is the ship being collided with. This will cause a turret 
+        				to not do any damage to the ship that spawned it.*/
+    				}else{
+    					powerDifference = Laser.getPowerDifference(laser, elapsedCollideTime);
+        				ship.setHitpoints(ship.getHitpoints()-powerDifference);
+    				}
+    			}else{
+    				powerDifference = Laser.getPowerDifference(laser, elapsedCollideTime);
     				ship.setHitpoints(ship.getHitpoints()-powerDifference);
-    				//planet.totalPower(planet.totalPower()-powerDifference);
-    			//}
+    			}
+    		}else if(sprite instanceof Turret){
+    			Turret turret = (Turret)sprite;
+    			if(laser.parent == turret){
+    				//do nothing this laser cannot damage it's own turret.
+    			}else{
+    				powerDifference = Laser.getPowerDifference(laser, elapsedCollideTime);
+    				turret.setHitpoints(turret.getHitpoints()-powerDifference);
+    			}
     		}
     		
     	}

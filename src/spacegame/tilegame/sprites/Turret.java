@@ -17,7 +17,7 @@ public class Turret extends Creature  {
 	private Ship parent;
 	private Ellipse2D circle;
 	private Rectangle2D rect;
-	private double hp;
+	private double hitPoints;
 	public int getPower() {
 		return power;
 	}
@@ -38,11 +38,11 @@ public class Turret extends Creature  {
 		parent = p;
 		map = parent.getParent().parent.getMap();
 		this.level = level;
-		setHp(level * 100);
+		setHitpoints(level * 100);
 		power = level;
 		TURRET_REACH = level * TURRET_TO_LEVEL;
-		int width = (int)(getHp()/LEVEL_TO_SIZE);
-		int height = (int)(getHp()/LEVEL_TO_SIZE);
+		int width = (int)(getHitpoints()/LEVEL_TO_SIZE)+10;
+		int height = (int)(getHitpoints()/LEVEL_TO_SIZE)+10;
 		this.setX(x);
 		this.setY(y);
 		circle = new Ellipse2D.Double(this.getX()-width/2, (double)(this.getY()-height/2), (double)(width), (double)(height));
@@ -52,10 +52,15 @@ public class Turret extends Creature  {
 	
 	public void update(long elapsedTime){
 		super.update(elapsedTime);
-		if(this.getHp() <= 0)this.setState(Creature.STATE_DEAD);
+		if(this.state == STATE_DEAD){
+			parent.getParent().parent.getMap().removeLaser(this);
+			parent.getParent().parent.getMap().removeSprite(this);
+			return;
+		}
+		if(this.getHitpoints() <= 0)this.setState(Creature.STATE_DEAD);
 		TURRET_REACH = level * TURRET_TO_LEVEL;
-		double newWidth = getHp()/LEVEL_TO_SIZE;
-		double newHeight = getHp()/LEVEL_TO_SIZE;
+		double newWidth = (getHitpoints()/LEVEL_TO_SIZE)+10;
+		double newHeight = (getHitpoints()/LEVEL_TO_SIZE)+10;
 		circle.setFrame(new Rectangle((int)(this.getX()-newWidth/2), (int)(this.getY()-newHeight/2), (int)newWidth, (int)(newHeight)));
 		if(targetTime == 0 || System.currentTimeMillis() - targetTime > 1000){
 			target = aquireTarget();
@@ -77,7 +82,7 @@ public class Turret extends Creature  {
 						xTarget, yTarget, this);
 			}else if(target instanceof Turret){
 				//the target shouldn't ever be a turret. we may need to change targeting code.
-				System.err.println("target is a turret");
+				//System.err.println("target is a turret");
 			}else if(target instanceof Projectile){
 				//we arent implementing this yet.
 			}else{
@@ -125,6 +130,8 @@ public class Turret extends Creature  {
 				bodyColor = Color.red;
 				Laser l = map.getLaser(this);
 				if(l != null) l.color = Color.red;
+			}else if(newTarget instanceof Turret){
+				bodyColor = Color.red;
 			}else{
 				bodyColor = Color.white;
 			}
@@ -303,12 +310,12 @@ public class Turret extends Creature  {
 		this.level = level;
 	}
 
-	public double getHp() {
-		return hp;
+	public double getHitpoints() {
+		return hitPoints;
 	}
 
-	public void setHp(double hp) {
-		this.hp = hp;
+	public void setHitpoints(double hp) {
+		this.hitPoints = hp;
 	}
 	
 	public float getWidth(){
