@@ -488,9 +488,9 @@ public class Ship extends Creature  {
 		totalPowerLimit = level*3;
 		if(totalPower >= totalPowerLimit){
 			totalPower = totalPowerLimit;
-		}else if(totalPower <= 2){
-			totalPower = 3;
-		}
+		}//else if(totalPower < 3){
+		//	totalPower = 3;
+		//}
 		
 		if(state == STATE_DEAD){
 			parent.parent.getMap().setPlayer2(null);

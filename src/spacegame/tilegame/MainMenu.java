@@ -305,11 +305,13 @@ public class MainMenu implements ActionListener, ChangeListener{
 	public void updateShipSliders(JPanel sliderMenu){
 		
 		JLabel label = ((JLabel)sliderMenu.getComponent(0));
+		ShipSlider slider = ((ShipSlider)sliderMenu.getComponent(1));
 		double level = parent.getMap().getPlayer().getLevel();
+		//slider.setValue((int) level);
 		label.setText("Level: " + level);
 		
 		label = ((JLabel)sliderMenu.getComponent(2));
-		ShipSlider slider = (ShipSlider)sliderMenu.getComponent(3);
+		slider = (ShipSlider)sliderMenu.getComponent(3);
 		slider.setMaximum(parent.getMap().getPlayer().getTotalPowerLimit());
 		//update totalPowerSlider labels
 		Hashtable labelTable = new Hashtable();
@@ -318,6 +320,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 		labelTable.put( new Integer( parent.getMap().getPlayer().getTotalPowerLimit() ), new JLabel(String.valueOf(parent.getMap().getPlayer().getTotalPowerLimit())) );
 		slider.setLabelTable( labelTable );
 		double totalPower = parent.getMap().getPlayer().getTotalPower();
+		slider.setValue((int) totalPower);
 		label.setText("Total Power: " + totalPower);
 		
 		label = ((JLabel)sliderMenu.getComponent(4));
