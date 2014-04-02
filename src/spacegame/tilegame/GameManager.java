@@ -657,7 +657,10 @@ public boolean isCollision(Laser s1, Turret s2) {
     			//the laser has been going, where x is the current power of the laser.
     			double elapsedLaserTime = System.currentTimeMillis() - laser.getLastUpdate();
     			double powerDiff = Laser.getPowerDifference(laser, elapsedLaserTime);
-    			((Ship)player).setTotalPower(((Ship)player).getTotalPower()-powerDiff);
+    			
+    			double newTotalPower = ((Ship)player).getTotalPower()-powerDiff;
+    			if(newTotalPower <3 )newTotalPower = 3;
+    			((Ship)player).setTotalPower(newTotalPower);
     					
     		}else{
     			Object target = ((Turret)player).getTarget();
@@ -723,7 +726,10 @@ public boolean isCollision(Laser s1, Turret s2) {
     			if(laser.parent instanceof Ship){
         			//powerDifference = (laser.power/1000) *(elapsedCollideTime);
         			powerDifference = Laser.getPowerDifference(laser, elapsedCollideTime);
-        			((Ship)laser.parent).setTotalPower(((Ship)laser.parent).getTotalPower() + powerDifference*2);
+        			double newTotalPower = ((Ship)laser.parent).getTotalPower() + powerDifference*2;
+        			if(newTotalPower < 3)newTotalPower = 3;
+        			
+        			((Ship)laser.parent).setTotalPower(newTotalPower);
         		//laser comes from a turret
     			}else if(laser.parent instanceof Turret){
         			//powerDifference = (laser.power/1000) *(elapsedCollideTime);
@@ -737,6 +743,7 @@ public boolean isCollision(Laser s1, Turret s2) {
     			Ship ship = (Ship)sprite;
     			if(laser.parent == ship){
     				//do nothing this laser cannot damage the ship it is from
+    				
     			}else if(laser.parent instanceof Turret){
     				Turret t = (Turret)laser.parent;
     				if(t.getParent() == ship){
@@ -744,11 +751,21 @@ public boolean isCollision(Laser s1, Turret s2) {
         				is the ship being collided with. This will cause a turret 
         				to not do any damage to the ship that spawned it.*/
     				}else{
-    					powerDifference = Laser.getPowerDifference(laser, elapsedCollideTime);
+    					double totalPower = ((Ship)((Turret)laser.parent).getParent()).getTotalPower();
+    					if(totalPower <= 3){
+    						powerDifference = (double)elapsedCollideTime/1000;
+        				}else{
+        					powerDifference = Laser.getPowerDifference(laser, elapsedCollideTime);	
+        				}
         				ship.setHitpoints(ship.getHitpoints()-powerDifference);
     				}
     			}else{
-    				powerDifference = Laser.getPowerDifference(laser, elapsedCollideTime);
+    				double totalPower = ((Ship)laser.parent).getTotalPower();
+					if(totalPower <= 3){
+						powerDifference = (double)elapsedCollideTime/1000;
+    				}else{
+    					powerDifference = Laser.getPowerDifference(laser, elapsedCollideTime);	
+    				}
     				ship.setHitpoints(ship.getHitpoints()-powerDifference);
     			}
     		}else if(sprite instanceof Turret){

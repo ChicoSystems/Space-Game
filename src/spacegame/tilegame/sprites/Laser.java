@@ -217,7 +217,7 @@ public class Laser extends Sprite{
 		
 		//makes sure that the spawning device has enough total power to power
 		//this laser, if it doesn't, then the lasers power will only register as a 1.
-		if(totalPower <= 3){
+		if(totalPower < 3){
 			power = 1;
 		}else{
 			power = l.power;
