@@ -40,6 +40,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import spacegame.graphics.Animation;
+import spacegame.graphics.NullRepaintManager;
 import spacegame.graphics.ScreenManager;
 import spacegame.graphics.Sprite;
 import spacegame.input.GameAction;
@@ -98,6 +99,8 @@ public class MainMenu implements ActionListener, ChangeListener{
 	     tabbedShipMenu = createShipMenu();
 	     tabbedBuildMenu = createBuildMenu();
 	     displayMainMenu = false;
+	     //keep menus from flickering
+	     NullRepaintManager.install();
 	     
 	     Container contentPane = frame.getContentPane();
 	     // make sure the content pane is transparent
@@ -108,6 +111,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 	     // add components to the screen's content pane
 	     contentPane.setLayout(new FlowLayout(FlowLayout.LEFT));
 	     contentPane.add(configButton);
+	     
 
 	     // explicitly layout components (needed on some systems)
 	     frame.validate();

@@ -349,7 +349,13 @@ public class GameManager extends GameCore {
 			JFrame frame = super.screen.getFullScreenWindow();
 	        // the layered pane contains things like popups (tooltips,
 	        // popup menus) and the content pane.
+			//frame.getLayeredPane().setDoubleBuffered(true);
+			//frame.getLayeredPane().setBackground(Color.red);
+			frame.setBackground(Color.red);
+			//frame.setOpacity(1);
+			
 	        frame.getLayeredPane().paintComponents(g);
+	        //frame.getLayeredPane().repaint();
 		}
 	}
 
