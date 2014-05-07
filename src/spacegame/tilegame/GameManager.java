@@ -230,6 +230,7 @@ public class GameManager extends GameCore {
             }
             
             if(shipMenuAction.isPressed()){
+            	//menu.displayMainMenu = !menu.displayMainMenu;
             	int mousex = inputManager.getMouseX()-renderer.offX;
             	int mousey = inputManager.getMouseY()-renderer.offY;
             	Ellipse2D saucer = map.getPlayer().getNose().saucer;
