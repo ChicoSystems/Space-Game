@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import spacegame.graphics.Animation;
@@ -112,10 +113,13 @@ public class Turret extends Creature  {
 		//add player to a new list of sprites so we can check for targets.
 		Sprite newTarget = null;
 		Sprite o = map.getPlayer();
-		Sprite o2 = map.getPlayer2();
+		ArrayList <Ship>aiShips = map.getAIShips();
 		LinkedList<Sprite>possibleTargets = (LinkedList<Sprite>) map.getSprites().clone();
 		possibleTargets.add(o);
-		possibleTargets.add(o2);
+		for(int i = 0; i < aiShips.size(); i++){
+			possibleTargets.add(aiShips.get(i));
+		}
+		
 		
 		newTarget = getClosestValidTarget(possibleTargets);
 		

@@ -172,15 +172,16 @@ public class GameManager extends GameCore {
         }
         
         if(sndPlayerTurret.isPressed()){
-        	Ship player2 = map.getPlayer2();
-        	if(player2 != null){
-        		Animation[] animation = new Animation[1];
-            	Animation a = resourceManager.createPlanetAnim((Image)resourceManager.planetImages.get(0));
-        		animation[0] = (Animation) a;
-        		Turret t = new Turret(player2, player2.getX(), player2.getY(), 1, animation);
-        		getMap().addSprite(t);
+        	if(!map.getAIShips().isEmpty()){
+        		Ship player2 = map.getAIShips().get(0);
+            	if(player2 != null){
+            		Animation[] animation = new Animation[1];
+                	Animation a = resourceManager.createPlanetAnim((Image)resourceManager.planetImages.get(0));
+            		animation[0] = (Animation) a;
+            		Turret t = new Turret(player2, player2.getX(), player2.getY(), 1, animation);
+            		getMap().addSprite(t);
+            	}
         	}
-        	
         }
         
         if (configAction.isPressed()) {
@@ -214,9 +215,11 @@ public class GameManager extends GameCore {
                // player.jump(false);
             }
             if (speedBoost.isPressed()) {
-                player.setCurrentSpeed(player.getBoostSpeed()*4);
+            	player.setMaxSpeed(player.getBoostSpeed()*4);
+               // player.setCurrentSpeed(player.getBoostSpeed()*4);
             }else if (!speedBoost.isPressed()) {
-                player.setCurrentSpeed(player.getMaxSpeed());
+               // player.setCurrentSpeed(player.getMaxSpeed());
+            	player.setMaxSpeed(player.getBoostSpeed());
             }
             if (fire.isPressed()) {
             	player.setX(100);
@@ -245,11 +248,23 @@ public class GameManager extends GameCore {
                 	menu.setMenuLocation(menu.tabbedBuildMenu, mousex+renderer.offX, mousey+renderer.offY);
             	}
             }
-            player.setVelocityX(velocityX);
-            player.setVelocityY(velocityY);
+            double totalVel =  Math.sqrt((velocityX * velocityX)+(velocityY * velocityY));
+            totalVel = (totalVel / .05);
+            if(totalVel !=0){
+            	player.setVelocityX((float) (velocityX/totalVel));
+                player.setVelocityY((float) (velocityY/totalVel));
+                System.out.println("vx: " + velocityX/totalVel);
+                System.out.println("vy: " + velocityY/totalVel);
+            }else{
+            	player.setVelocityX(0);
+                player.setVelocityY(0);
+            }
+            
+            
+           
         }
         
-        Ship player2 = (Ship)map.getPlayer2();
+       /* Ship player2 = (Ship)map.getPlayer2();
         if (player2 != null && player2.isAlive()) {
             float velocityX = 0;
             float velocityY = 0;
@@ -268,7 +283,8 @@ public class GameManager extends GameCore {
             }
             player2.setVelocityX(velocityX);
             player2.setVelocityY(velocityY);
-        }
+            */
+       // }
 
     }
     
@@ -306,7 +322,6 @@ public class GameManager extends GameCore {
     private void destroyLaser(Ship player){
     	map.removeLaser(player);
     }
-    
     
 
     private void createProjectile(Ship player) {
@@ -533,12 +548,13 @@ public boolean isCollision(Laser s1, Turret s2) {
     	Turret t = (Turret)s2;
     	if(l.getLine().intersects(s2.getX(), s2.getY(), s2.getX()+s2.getWidth(), s2.getY()+s2.getHeight())){
     		//System.out.println("laser hit");
-    		return true;
+    		returnVal = true;
     	}else{
     		//System.out.println("laser fail");
-    		return false;
+    		returnVal = false;
     	}
     }
+    if(s1.parent == s2)returnVal = false;
     return returnVal;
 }
     
@@ -592,8 +608,8 @@ public boolean isCollision(Laser s1, Turret s2) {
         in the current map.
     */
     public void update(long elapsedTime) {
+    	
         Ship player = (Ship)map.getPlayer();
-        Ship player2 = (Ship)map.getPlayer2();
         JTabbedPane tabbelShipMenu = menu.tabbedShipMenu;
         JPanel sliderMenu = ((JPanel)menu.tabbedShipMenu.getComponent(0));
         menu.updateShipSliders(sliderMenu);
@@ -610,10 +626,14 @@ public boolean isCollision(Laser s1, Turret s2) {
 
         // update player
         updateShip(player, elapsedTime);
-        if(player2 != null)updateShip(player2, elapsedTime);
-        
         player.update(elapsedTime);
-        if(player2 != null) player2.update(elapsedTime);
+        for(int i = 0; i < map.getAIShips().size(); i++){
+        	Ship player2 = null;
+        	player2 = map.getAIShips().get(i);
+        	if(player2 != null)updateShip(player2, elapsedTime);
+            if(player2 != null) player2.update(elapsedTime);
+        }
+        
         
         updateLasers();
 
@@ -694,7 +714,10 @@ public boolean isCollision(Laser s1, Turret s2) {
     	LinkedList <Sprite> oldSprites = map.getSprites();
     	LinkedList <Sprite> sprites = (LinkedList<Sprite>) oldSprites.clone();
     	sprites.add(map.getPlayer());
-    	sprites.add(map.getPlayer2());
+    	for(int i = 0; i < map.getAIShips().size(); i++){
+    		sprites.add(map.getAIShips().get(i));
+    	}
+    	
         for (int i = 0; i < sprites.size(); i++) {
             Sprite sprite = (Sprite)sprites.get(i);
             if (sprite instanceof Planet) {
@@ -705,7 +728,8 @@ public boolean isCollision(Laser s1, Turret s2) {
             	if(isCollision(laser, ship)) collideLaserWithSprite(laser, ship);
             }else if(sprite instanceof Turret){
             	Turret t = (Turret)sprite;
-            	if(isCollision(laser, t)) collideLaserWithSprite(laser, t);
+            	//if(isCollision(laser, t)) collideLaserWithSprite(laser, t);
+            	//lasers shoujldn't collide with turrets should they? maybe later
             }
         }
     }

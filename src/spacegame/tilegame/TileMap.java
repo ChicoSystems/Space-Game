@@ -28,7 +28,7 @@ public class TileMap {
     private LinkedList sprites;
     private ArrayList <Laser> lasers;
     private Ship player;
-    private Ship player2;
+    private ArrayList <Ship> aiShips;
 
     /**
         Creates a new TileMap with the specified width and
@@ -39,6 +39,7 @@ public class TileMap {
         tiles = new Image[width][height];
         sprites = new LinkedList();
         lasers = new ArrayList<Laser>();
+        aiShips = new ArrayList<Ship>();
         
         //createRandomPlanets(sprites, 1000);
     }
@@ -103,16 +104,16 @@ public class TileMap {
     /**
 	    Gets the player2 Sprite.
 	*/
-	public Ship getPlayer2() {
-	    return player2;
+	public ArrayList<Ship> getAIShips() {
+	    return aiShips;
 	}
 	
 	
 	/**
 	    Sets the player Sprite.
 	*/
-	public void setPlayer2(Ship player2) {
-	    this.player2 = player2;
+	public void setAIShips(ArrayList<Ship>newList) {
+	    aiShips = newList;
 	}
 
 
