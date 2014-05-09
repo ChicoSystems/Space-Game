@@ -19,5 +19,13 @@ public class AIShip extends Ship {
 		AIManager aiManager = new AIManager(this);
 		this.aiManager = aiManager;
 	}
+	
+	public void update(long elapsedTime){
+		super.update(elapsedTime);
+		aiManager.updateAI(elapsedTime);
+		if(state == STATE_DEAD){
+			getParent().parent.getMap().getAIShips().remove(this);
+		}
+	}
 
 }

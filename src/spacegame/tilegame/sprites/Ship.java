@@ -492,9 +492,9 @@ public class Ship extends Creature  {
 		//	totalPower = 3;
 		//}
 		
-		if(state == STATE_DEAD){
-			parent.parent.getMap().setPlayer2(null);
-		}
+		//if(state == STATE_DEAD){
+			//parent.parent.getMap().setPlayer2(null);
+		//}
 	    x += dx * elapsedTime;
 	    y += dy * elapsedTime;
 	    

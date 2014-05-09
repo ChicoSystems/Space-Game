@@ -91,7 +91,7 @@ public class TileMapRenderer {
         int screenWidth, int screenHeight)
     {
         Ship player = map.getPlayer();
-        Ship player2 = map.getPlayer2();
+       // Ship player2 = map.getPlayer2();
         
         int mapWidth = tilesToPixels(map.getWidth());
         int mapHeight = tilesToPixels(map.getHeight());
@@ -165,9 +165,14 @@ public class TileMapRenderer {
         
         drawLasers(g, map, offsetX, offsetY);
         player.drawShip(g, offsetX, offsetY);
-        if(player2 != null){
-        	player2.drawShip(g, offsetX, offsetY);
+        for(int i = 0; i < map.getAIShips().size(); i++){
+        	Ship player2 = null;
+        	player2 = map.getAIShips().get(i);
+        	if(player2 != null){
+            	player2.drawShip(g, offsetX, offsetY);
+            }
         }
+        
         
         
         // draw sprites

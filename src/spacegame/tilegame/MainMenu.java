@@ -46,6 +46,7 @@ import spacegame.graphics.Sprite;
 import spacegame.input.GameAction;
 import spacegame.input.InputManager;
 import spacegame.tilegame.SpaceMenu.InputComponent;
+import spacegame.tilegame.sprites.AIShip;
 import spacegame.tilegame.sprites.Player;
 import spacegame.tilegame.sprites.Ship;
 import spacegame.tilegame.sprites.Turret;
@@ -501,11 +502,12 @@ public class MainMenu implements ActionListener, ChangeListener{
 	        	Animation a = parent.resourceManager.createPlanetAnim((Image)parent.resourceManager.planetImages.get(0));
 	    		animation[0] = (Animation) a;
 	    		
-	            Ship player2 = new Ship(parent.resourceManager, animation);
+	            AIShip player2 = new AIShip(parent.resourceManager, animation);
 	            player2.setHitpoints(500);
 	            player2.setX(parent.getMap().getPlayer().getX());
 	            player2.setY(parent.getMap().getPlayer().getY());
-	        	parent.getMap().setPlayer2(player2);
+	            parent.getMap().getAIShips().add(player2);
+	        	//parent.getMap().setPlayer2(player2);
 	        }
 	        
 	        parent.screen.getFullScreenWindow().requestFocus();
