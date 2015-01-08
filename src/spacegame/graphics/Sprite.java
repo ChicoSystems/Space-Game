@@ -1,7 +1,9 @@
 package spacegame.graphics;
 import spacegame.tilegame.sprites.*;
+import spacegame.util.Vector2D;
 
 import java.awt.Image;
+import java.util.Vector;
 
 public class Sprite {
 
@@ -13,6 +15,8 @@ public class Sprite {
     // velocity (pixels per millisecond)
     protected float dx;
     protected float dy;
+    
+    protected Vector2D velocity;
     
     protected float currentRotation = 0;
     protected float futureRotation = 0;
