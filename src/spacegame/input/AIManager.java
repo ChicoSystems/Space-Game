@@ -13,6 +13,7 @@ import spacegame.tilegame.sprites.AIShip;
 import spacegame.tilegame.sprites.Creature;
 import spacegame.tilegame.sprites.Ship;
 import spacegame.tilegame.sprites.Turret;
+import spacegame.util.Vector2D;
 
 public class AIManager {
 	static final int STATE_DISCOVER = 0;
@@ -101,10 +102,11 @@ public class AIManager {
 		float totalDiff = (float) Math.sqrt((vectorDiffX * vectorDiffX)+(vectorDiffY * vectorDiffY));
 		totalDiff = (float) (totalDiff /.05);
 		if(totalDiff > 50){
-			System.out.println("totaldiff: " + totalDiff);
-			parent.setVelocityX(vectorDiffX/totalDiff);
-			parent.setVelocityY(vectorDiffY/totalDiff);
-			System.out.println("velx: " + parent.getVelocityX() + "vely: " + parent.getVelocityY());
+			//System.out.println("totaldiff: " + totalDiff);
+			//parent.setVelocityX(vectorDiffX/totalDiff);
+			//parent.setVelocityY(vectorDiffY/totalDiff);
+			//System.out.println("velx: " + parent.getVelocityX() + "vely: " + parent.getVelocityY());
+		parent.setVelocity(parent.steering.seek(target.getPosition())) ;
 		}else{
 			parent.setVelocityX(0);
 			parent.setVelocityY(0);
@@ -254,5 +256,7 @@ public class AIManager {
 	private void discoverFromEngagement(Creature target2){
 		
 	}
+	
+	
 
 }

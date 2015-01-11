@@ -102,6 +102,18 @@ public class Vector2D extends Point2D.Double {
     public Vector2D scalarMult(double scalar) {
         return new Vector2D(scalar * x, scalar * y);
     }
+    
+    /** Multiplies and sets this vector */
+    public void scalarMultVoid(double scalar) {
+        //return new Vector2D(scalar * x, scalar * y);
+        this.x = this.x * scalar;
+        this.y = this.y * scalar;
+    }
+    
+    /** Divide a vector by a scalar */
+    public Vector2D scalarDiv(double scalar){
+    	return new Vector2D(x / scalar, y / scalar);
+    }
 
     /** Dot product of the vector and rhs */
     public double dotProduct(Vector2D rhs) {
@@ -136,6 +148,13 @@ public class Vector2D extends Point2D.Double {
     public double length() {
         return getR();
     }
+    
+    /** Returns a perpendicular vector to this one. 
+     * obtained by transposing the Cartesian components and taking the minus sign of one
+     **/
+    public Vector2D perp(){
+    	return new Vector2D(y, x*(-1));
+    }
 
     /**
      * Returns a new vector with the same direction as the vector but with
@@ -162,5 +181,19 @@ public class Vector2D extends Point2D.Double {
     /** @return Standard string representation of a vector: "<x, y>" */
     public String toString() {
         return "<" + x + ", " + y + ">";
+    }
+    
+    /** truncates the vector to a limit. */
+    public void truncate(double max){
+    	double i;
+    	double length = length();
+    	if(length > .0001){
+    		double test = 0;
+    	}
+
+    		i = max / length();
+        	i = i < 1.0 ? i : 1.0;
+        	scalarMultVoid(i);
+    	
     }
 }

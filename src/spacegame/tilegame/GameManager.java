@@ -161,6 +161,7 @@ public class GameManager extends GameCore {
         inputManager.mapToMouse(shipMenuAction, InputManager.MOUSE_BUTTON_3);
         inputManager.mapToKey(exit, KeyEvent.VK_ESCAPE);
         inputManager.mapToKey(sndPlayerTurret, KeyEvent.VK_SPACE);
+       // inputManager.mapToKey(configAction, KeyEvent.VK_C);
         
         inputManager.mapToMouse(laser, InputManager.MOUSE_BUTTON_1);
     }

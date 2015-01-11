@@ -12,6 +12,7 @@ public class AIShip extends Ship {
 	public AIShip(ResourceManager parent, AIManager aiManager, Animation[] animArray) {
 		super(parent, animArray);
 		this.aiManager = aiManager;
+		this.setMaxSpeed(this.getMaxSpeed()/2);
 	}
 	
 	public AIShip(ResourceManager parent, Animation[] animArray) {

@@ -17,6 +17,7 @@ import java.util.Vector;
 import spacegame.graphics.Animation;
 import spacegame.graphics.Sprite;
 import spacegame.tilegame.ResourceManager;
+import spacegame.util.Vector2D;
 
 /**
  * The Ship is the main player vehicle. It automatically grows and changes size 
@@ -175,7 +176,7 @@ public class Ship extends Creature  {
 	    g.setTransform(identity);
 	    
 	    //rotate ship at the middle of it's saucer
-		g.rotate((Math.toRadians(this.getRotation())), this.x+offsetX, this.y+offsetY-engine1.engineHeight/2-nose.noseLength);
+		g.rotate((Math.toRadians(this.getRotation())), position.x+offsetX, position.y+offsetY-engine1.engineHeight/2-nose.noseLength);
 		drawBody(g, offsetX, offsetY);
 		drawEngines(g, offsetX, offsetY);
 		drawNose(g, offsetX, offsetY);
@@ -258,12 +259,7 @@ public class Ship extends Creature  {
 	    return (float) (engine1.engineHeight+nose.noseLength+nose.noseRadius/2);
 	}
 
-	/**
-		Gets the maximum speed of this Creature.
-	*/
-	public float getMaxSpeed() {
-	   return maxSpeed;
-	}
+
 	
 	/**
 	 * Returns the current number of hitpoints the ship has.
@@ -482,6 +478,8 @@ public class Ship extends Creature  {
 	
 	/**
 	    Updates the ships state, body, engines, nose and max speed.
+	    The ship doesn't have an animation, so we won't use the super classes
+	    animation method, we'll duplicate a little code, but i'm okay with that.
 	*/
 	public void update(long elapsedTime) {
 		//make sure totalpower pool is under the power limit.
@@ -495,8 +493,38 @@ public class Ship extends Creature  {
 		//if(state == STATE_DEAD){
 			//parent.parent.getMap().setPlayer2(null);
 		//}
-	    x += dx * elapsedTime;
-	    y += dy * elapsedTime;
+	    //x += dx * elapsedTime;
+	    //y += dy * elapsedTime;
+		//calculate the current steering force
+		
+    	Vector2D steeringForce = steering.calculate(velocity);
+    	
+    	System.out.println("steering Force   x:" + steeringForce.x + " y:" + steeringForce.y);
+    	steeringForce.truncate(.0001);
+    	System.out.println("steering Force   x:" + steeringForce.x + " y:" + steeringForce.y);
+    	
+    	//Acceleration = Force / Mass
+    	Vector2D acceleration = steeringForce.scalarDiv(dMass);
+    	System.out.println("accel x:" + acceleration.x + " y:" + acceleration.y);
+    	
+    	//update velocity
+    	velocity = velocity.plus(acceleration.scalarMult(elapsedTime));
+    	System.out.println("vel   x:" + velocity.x + " y:" + velocity.y);
+    	
+    	//make sure we do not exceed max speeds
+        velocity.truncate(dMaxSpeed);
+        System.out.println("vel t x:" + velocity.x + " y:" + velocity.y);
+        
+        //update the position
+        position = position.plus(velocity.scalarMult(elapsedTime));
+        System.out.println("pos   x:" + velocity.x + " y:" + velocity.y);
+        
+        // update the heading if the vehicle has a small velocity, but not too small
+        if(velocity.length() > 0.00001){
+        	heading = velocity.unitVector();
+        	side = heading.perp();
+        }
+        
 	    
 	    //check hp, if less than or = to 0 we will set state
         state = getStateFromHP(hitpoints);
