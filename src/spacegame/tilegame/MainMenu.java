@@ -504,8 +504,8 @@ public class MainMenu implements ActionListener, ChangeListener{
 	    		
 	            AIShip player2 = new AIShip(parent.resourceManager, animation);
 	            player2.setHitpoints(500);
-	            player2.setX(parent.getMap().getPlayer().getX());
-	            player2.setY(parent.getMap().getPlayer().getY());
+	            player2.setX(parent.getMap().getPlayer().getX()+100);
+	            player2.setY(parent.getMap().getPlayer().getY()+100);
 	            parent.getMap().getAIShips().add(player2);
 	        	//parent.getMap().setPlayer2(player2);
 	        }

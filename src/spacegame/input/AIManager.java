@@ -106,7 +106,7 @@ public class AIManager {
 			//parent.setVelocityX(vectorDiffX/totalDiff);
 			//parent.setVelocityY(vectorDiffY/totalDiff);
 			//System.out.println("velx: " + parent.getVelocityX() + "vely: " + parent.getVelocityY());
-		parent.setVelocity(parent.steering.seek(target.getPosition())) ;
+		parent.setVelocity(parent.steering.flee(target.getPosition())) ;
 		}else{
 			parent.setVelocityX(0);
 			parent.setVelocityY(0);
