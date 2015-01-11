@@ -167,6 +167,18 @@ public class Vector2D extends Point2D.Double {
         }
         return new Vector2D(0,0);
     }
+    
+    /**
+     * changes this one
+     */
+    public void unitVectorVoid() {
+        if (getR() != 0) {
+            x = x / getR();
+            y = y / getR();
+        }
+        x = 0;
+        y = 0;
+    }
 
     /** Polar version of the vector, with radius in x and angle in y */
     public Vector2D toPolar() {

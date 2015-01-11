@@ -7,6 +7,8 @@ import java.util.Random;
 import java.util.Vector;
 
 import spacegame.graphics.Sprite;
+import spacegame.graphics.SteeringBehaviors;
+import spacegame.graphics.SteeringBehaviors.Deceleration;
 import spacegame.tilegame.TileMap;
 import spacegame.tilegame.TileMapRenderer;
 import spacegame.tilegame.sprites.AIShip;
@@ -24,7 +26,7 @@ public class AIManager {
 	static final int STATE_GATHER = 5;
 	static final int STATE_SEARCH = 6;
 	static final int STATE_MOVETO = 7;
-	
+
 	
 	public Creature parent;
 	private Creature target;
@@ -106,7 +108,7 @@ public class AIManager {
 			//parent.setVelocityX(vectorDiffX/totalDiff);
 			//parent.setVelocityY(vectorDiffY/totalDiff);
 			//System.out.println("velx: " + parent.getVelocityX() + "vely: " + parent.getVelocityY());
-		parent.setVelocity(parent.steering.flee(target.getPosition())) ;
+		parent.setVelocity(parent.steering.wander()) ;
 		}else{
 			parent.setVelocityX(0);
 			parent.setVelocityY(0);

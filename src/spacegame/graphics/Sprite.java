@@ -9,7 +9,7 @@ import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
 
 public class Sprite {
 
-	protected float SPEED_ROTATION = .40f;
+	//protected float SPEED_ROTATION = .40f;
     protected Animation anim;
     // position (pixels)
     //protected float x;
@@ -33,11 +33,11 @@ public class Sprite {
     protected double dMass = .5;
     protected double dMaxSpeed = 1;
     protected double dMaxForce = .0001;
-    protected double dMaxTurnRate = 10;
+    protected double dMaxTurnRate = .55;
     
     protected float currentRotation = 0;
     protected float futureRotation = 0;
-    protected float rotationSpeed = SPEED_ROTATION;
+    protected float rotationSpeed = (float) dMaxTurnRate;
 
     /**
         Creates a new Sprite object with the specified Animation.
@@ -282,9 +282,9 @@ public class Sprite {
 			float rotationChange = calculateDifferenceBetweenAngles(getRotation(), getFutureRotation());
 			//System.out.println("Rot Change: " + getFutureRotation() + " : " + getRotation() + " : " +rotationChange + " : " + rotationSpeed);
 			if(rotationChange <= 0){
-				setRotationSpeed(-SPEED_ROTATION);
+				setRotationSpeed((float) -dMaxTurnRate);
 			}else{
-				setRotationSpeed(SPEED_ROTATION);
+				setRotationSpeed((float) dMaxTurnRate);
 			}
 			//System.out.println("Set Rot: " + ((float)(getRotation() + getRotationSpeed() * elapsedTime)));
 			setRotation((float)(getRotation() + getRotationSpeed() * elapsedTime));

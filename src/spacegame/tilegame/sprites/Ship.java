@@ -499,25 +499,25 @@ public class Ship extends Creature  {
 		
     	Vector2D steeringForce = steering.calculate(velocity);
     	
-    	System.out.println("steering Force   x:" + steeringForce.x + " y:" + steeringForce.y);
+    	//System.out.println("steering Force   x:" + steeringForce.x + " y:" + steeringForce.y);
     	steeringForce.truncate(.0001);
-    	System.out.println("steering Force   x:" + steeringForce.x + " y:" + steeringForce.y);
+    	//System.out.println("steering Force   x:" + steeringForce.x + " y:" + steeringForce.y);
     	
     	//Acceleration = Force / Mass
     	Vector2D acceleration = steeringForce.scalarDiv(dMass);
-    	System.out.println("accel x:" + acceleration.x + " y:" + acceleration.y);
+    	//System.out.println("accel x:" + acceleration.x + " y:" + acceleration.y);
     	
     	//update velocity
     	velocity = velocity.plus(acceleration.scalarMult(elapsedTime));
-    	System.out.println("vel   x:" + velocity.x + " y:" + velocity.y);
+    	//System.out.println("vel   x:" + velocity.x + " y:" + velocity.y);
     	
     	//make sure we do not exceed max speeds
         velocity.truncate(dMaxSpeed);
-        System.out.println("vel t x:" + velocity.x + " y:" + velocity.y);
+        //System.out.println("vel t x:" + velocity.x + " y:" + velocity.y);
         
         //update the position
         position = position.plus(velocity.scalarMult(elapsedTime));
-        System.out.println("pos   x:" + velocity.x + " y:" + velocity.y);
+       // System.out.println("pos   x:" + velocity.x + " y:" + velocity.y);
         
         // update the heading if the vehicle has a small velocity, but not too small
         if(velocity.length() > 0.00001){
