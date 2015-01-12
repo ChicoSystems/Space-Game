@@ -20,6 +20,7 @@ import spacegame.input.*;
 import spacegame.sound.*;
 import spacegame.test.GameCore;
 import spacegame.tilegame.sprites.*;
+import spacegame.util.Vector2D;
 
 
 /**
@@ -198,30 +199,60 @@ public class GameManager extends GameCore {
         Ship player = (Ship)map.getPlayer();
         
         if (player.isAlive()) {
-            float velocityX = 0;
-            float velocityY = 0;
-            if (moveLeft.isPressed()) {
-                velocityX-=player.getCurrentSpeed();
+        	
+        	Vector2D steeringForce = new Vector2D(0, 0);
+        	
+        	
+        	if (moveLeft.isPressed()) {
+                //velocityX-=player.getCurrentSpeed();
+        		//steeringForce = new Vector2D(-1, 0);
+        		steeringForce = steeringForce.plus(new Vector2D(-1, 0));
+            }else if (moveRight.isPressed()) {
+        		//steeringForce = new Vector2D(1, 0);
+            	steeringForce = steeringForce.plus(new Vector2D(1, 0));
+            }else{
+            	//System.out.println("x:" + player.velocity.x + " y:" +player.velocity.y);
+            	System.out.println("vel len:"+player.velocity.length());
+            	double newX = player.velocity.x / 1.5;
+            	if(Math.abs(newX) < .003 || player.velocity.length() <.02){
+            		newX = 0;
+            	}
+            	player.velocity = new Vector2D(newX, player.velocity.y);
             }
-            if (moveRight.isPressed()) {
-                velocityX+=player.getCurrentSpeed();
-            }
+        	
             if (moveUp.isPressed()) {
-                velocityY-=player.getCurrentSpeed();
+            	steeringForce = steeringForce.plus(new Vector2D(0, -1));
+            }else if (moveDown.isPressed()) {
+            	steeringForce = steeringForce.plus(new Vector2D(0, 1));
+            }else{
+            	double newY = player.velocity.y / 1.5;
+            	if(Math.abs(newY) < .003 || player.velocity.length() <.02){
+            		newY = 0;
+            	}
+            	player.velocity = new Vector2D(player.velocity.x, newY);
             }
-            if (moveDown.isPressed()) {
-                velocityY+=player.getCurrentSpeed();
-            }
-            if (jump.isPressed()) {
-               // player.jump(false);
-            }
-            if (speedBoost.isPressed()) {
-            	//player.setMaxSpeed(player.getMaxSpeed()*4);
-            	player.setVelocity(player.getVelocity().scalarMult(4));
-               // player.setCurrentSpeed(player.getBoostSpeed()*4);
+            
+        	steeringForce.truncate(player.dMaxForce*5);
+        	
+        	//Acceleration = Force / Mass
+        	Vector2D acceleration = steeringForce.scalarDiv(player.dMass);
+        	
+        	
+        	//update velocity
+        	player.velocity = player.velocity.plus(acceleration.scalarMult(elapsedTime));
+        	
+        	//make sure we do not exceed max speeds
+        	player.velocity.truncate(player.dMaxSpeed);
+        	player.setVelocity(player.getVelocity().scalarDiv(1));
+        	
+        	if (speedBoost.isPressed()) {
+            	
+        		player.dMaxSpeed = 10;
+            	//player.setVelocity(player.getVelocity().scalarMult(4));
+              
             }else if (!speedBoost.isPressed()) {
-               // player.setCurrentSpeed(player.getMaxSpeed());
-            	player.setMaxSpeed(player.getBoostSpeed());
+            	player.dMaxSpeed = 1;
+            	//player.setVelocity(player.getVelocity().scalarDiv(4));
             }
             if (fire.isPressed()) {
             	player.setX(100);
@@ -250,6 +281,26 @@ public class GameManager extends GameCore {
                 	menu.setMenuLocation(menu.tabbedBuildMenu, mousex+renderer.offX, mousey+renderer.offY);
             	}
             }
+        	
+        	/*
+            float velocityX = 0;
+            float velocityY = 0;
+            if (moveLeft.isPressed()) {
+                velocityX-=player.getCurrentSpeed();
+            }
+            if (moveRight.isPressed()) {
+                velocityX+=player.getCurrentSpeed();
+            }
+            if (moveUp.isPressed()) {
+                velocityY-=player.getCurrentSpeed();
+            }
+            if (moveDown.isPressed()) {
+                velocityY+=player.getCurrentSpeed();
+            }
+            if (jump.isPressed()) {
+               // player.jump(false);
+            }
+            
             double totalVel =  Math.sqrt((velocityX * velocityX)+(velocityY * velocityY));
             totalVel = (totalVel / .05);
             if(totalVel !=0){
@@ -262,7 +313,7 @@ public class GameManager extends GameCore {
                 player.setVelocityY(0);
             }
             
-            
+            */
            
         }
         

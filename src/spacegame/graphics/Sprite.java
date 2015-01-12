@@ -18,7 +18,7 @@ public class Sprite {
     //protected float dx;
     //protected float dy;
     
-    protected Vector2D velocity;
+    public Vector2D velocity;
     protected Vector2D position;
     
     // Normalized Vector pointing in the direction of the heading.
@@ -26,14 +26,14 @@ public class Sprite {
     public Vector2D oldheading;
     
     //A vector perpendicular to the heading vector.
-    protected Vector2D side;
+    public Vector2D side;
     
     //A class to keep track of steering behaviours.
     public SteeringBehaviors steering;
  
-    protected double dMass = .5;
-    protected double dMaxSpeed = 1;
-    protected double dMaxForce = .0001;
+    public double dMass = .5;
+    public double dMaxSpeed = 2;
+    public double dMaxForce = .0001;
     public double dMaxTurnRate = .05;
     
     protected float currentRotation = 0;

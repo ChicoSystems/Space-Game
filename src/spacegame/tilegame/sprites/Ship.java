@@ -129,6 +129,7 @@ public class Ship extends Creature  {
 	 */
 	public ResourceManager parent;
 	
+	
 	/**
 	 * Construct a new ship.
 	 * @param parent - The Parent of the ship. The games resource Manager. Gives
@@ -181,16 +182,16 @@ public class Ship extends Creature  {
 	    //if(velocity.length() > 0.008)
 	   // g.rotate(velocity.getTheta(), position.x+offsetX, position.y+offsetY-engine1.engineHeight/2-nose.noseLength);
 	    
-	    if(velocity.length() > 0.00001){
+	    if(velocity.length() > 0.0001){
 	    	Vector2D t_heading = heading;
 	    	Vector2D t_oldheading = oldheading;
 	    	Vector2D t_velocity = velocity;
-	    	double relativeHeading = t_velocity.minus(t_oldheading).perp().getTheta();
+	    	double relativeHeading = velocity.minus(t_oldheading).perp().getTheta();
 	    	//double relativeHeading = t_heading.getTheta() - t_oldheading.getTheta();
 	    	//System.out.println("c heading:" + t_heading.getTheta()*(180/Math.PI));
 	    	//System.out.println("o heading:" + t_oldheading.getTheta()*(180/Math.PI));
 	    	//System.out.println(" velocity:" + t_velocity.length());
-	    	//System.out.println("r heading:" + relativeHeading*(180/Math.PI));
+	    	System.out.println("r heading:" + relativeHeading);
 	    	//double newHeading = oldheading.plus(heading).getTheta();
 		    g.rotate(relativeHeading, position.x+offsetX, position.y+offsetY-engine1.engineHeight/2-nose.noseLength);
 		   // System.out.println("old heading: " + oldheading.getTheta() + " new: " + relativeHeading);
@@ -541,11 +542,11 @@ public class Ship extends Creature  {
        // System.out.println("pos   x:" + velocity.x + " y:" + velocity.y);
         
      // update the heading if the vehicle has a small velocity, but not too small
-        if(velocity.length() > 0.00001){
+        if(velocity.length() > .03){
         	oldheading = heading;
         	heading = velocity.unitVector();
-        	double angle = oldheading.dotProduct(heading);
-        	double radius = heading.length();
+        	//double angle = oldheading.dotProduct(heading);
+        	//double radius = heading.length();
         	//heading.setPolar(radius, angle);
         	side = heading.perp();
         }
