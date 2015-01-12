@@ -208,6 +208,25 @@ public class SteeringBehaviors {
 		return newVel;
 		
 	}
+	
+	//offsetpursuit behavior
+	public Vector2D offsetPursuit(Sprite leader, Vector2D offset){
+
+		//here is out translate to world space code
+		maths.Vector2D offset_maths = new maths.Vector2D(offset.x, offset.y);
+		maths.Vector2D heading_maths = new maths.Vector2D(parent.heading.x, parent.heading.y);
+		maths.Vector2D side_maths = new maths.Vector2D(parent.side.x, parent.side.y);
+		maths.Vector2D pos_maths = new maths.Vector2D(parent.position.x, parent.position.y);
+		maths.Vector2D pre_worldTarget = Transformations.pointToWorldSpace(offset_maths, heading_maths, side_maths, pos_maths);
+		Vector2D worldOffsetPos = new Vector2D(pre_worldTarget.x, pre_worldTarget.y);
+		
+		Vector2D toOffset = worldOffsetPos.minus(parent.position);
+		//look ahead time is proportional to the distance between leader and puruer.
+		double lookAheadTime = toOffset.length() /(parent.dMaxSpeed + leader.dMaxSpeed);
+		Vector2D newVel = arrive(leader.velocity.scalarMult(lookAheadTime).plus(worldOffsetPos), Deceleration.FAST);
+		//Vector2D newVel = arrive(worldOffsetPos.plus(leader.velocity).scalarMult(lookAheadTime), Deceleration.FAST);
+		return newVel;
+	}
 
 	
 
