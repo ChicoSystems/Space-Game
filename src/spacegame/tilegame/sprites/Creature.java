@@ -48,7 +48,7 @@ public abstract class Creature extends Sprite {
     public Creature(Animation[] anim/*Animation left, Animation right,
         Animation deadLeft, Animation deadRight*/)
     {
-        super(anim[0]);
+        super(anim[0], null);
         this.creatureAnim = anim;
         /*
          * super(right);

@@ -212,7 +212,7 @@ public class GameManager extends GameCore {
             	steeringForce = steeringForce.plus(new Vector2D(1, 0));
             }else{
             	//System.out.println("x:" + player.velocity.x + " y:" +player.velocity.y);
-            	System.out.println("vel len:"+player.velocity.length());
+            	//System.out.println("vel len:"+player.velocity.length());
             	double newX = player.velocity.x / 1.5;
             	if(Math.abs(newX) < .003 || player.velocity.length() <.02){
             		newX = 0;

@@ -1,4 +1,5 @@
 package spacegame.graphics;
+import spacegame.tilegame.ResourceManager;
 import spacegame.tilegame.sprites.*;
 import spacegame.util.Vector2D;
 
@@ -24,6 +25,7 @@ public class Sprite {
     // Normalized Vector pointing in the direction of the heading.
     public Vector2D heading;
     public Vector2D oldheading;
+    protected ResourceManager parent;
     
     //A vector perpendicular to the heading vector.
     public Vector2D side;
@@ -43,11 +45,12 @@ public class Sprite {
     /**
         Creates a new Sprite object with the specified Animation.
     */
-    public Sprite(Animation anim) {
+    public Sprite(Animation anim, ResourceManager parent) {
         this.anim = anim;
+        this.parent = parent;
         velocity = new Vector2D(0, 0);
         position = new Vector2D(0, 0);
-        heading = new Vector2D(0, 0);
+        heading = new Vector2D(1, 0);
         oldheading = new Vector2D(0,0);
         side = new Vector2D(0,0);
         steering = new SteeringBehaviors(this);
@@ -219,8 +222,8 @@ public class Sprite {
         Clones this Sprite. Does not clone position or velocity
         info.
     */
-    public Object clone() {
-        return new Sprite((Animation)anim.clone());
+    public Object clone(ResourceManager p) {
+        return new Sprite((Animation)anim.clone(), p);
     }
 
 	public double getRotationSpeed() {

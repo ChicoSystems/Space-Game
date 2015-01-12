@@ -191,7 +191,7 @@ public class Ship extends Creature  {
 	    	//System.out.println("c heading:" + t_heading.getTheta()*(180/Math.PI));
 	    	//System.out.println("o heading:" + t_oldheading.getTheta()*(180/Math.PI));
 	    	//System.out.println(" velocity:" + t_velocity.length());
-	    	System.out.println("r heading:" + relativeHeading);
+	    	//System.out.println("r heading:" + relativeHeading);
 	    	//double newHeading = oldheading.plus(heading).getTheta();
 		    g.rotate(relativeHeading, position.x+offsetX, position.y+offsetY-engine1.engineHeight/2-nose.noseLength);
 		   // System.out.println("old heading: " + oldheading.getTheta() + " new: " + relativeHeading);
@@ -548,8 +548,9 @@ public class Ship extends Creature  {
         	//double angle = oldheading.dotProduct(heading);
         	//double radius = heading.length();
         	//heading.setPolar(radius, angle);
-        	side = heading.perp();
+        	
         }
+        side = heading.perp();
         
 	    
 	    //check hp, if less than or = to 0 we will set state

@@ -339,7 +339,7 @@ public class ResourceManager {
             if(hostSprite instanceof Planet){
             	TileMap.createRandomPlanets(this, map, (map.getWidth()+map.getHeight())/20);
             }else{
-            	Sprite sprite = (Sprite)hostSprite.clone();
+            	Sprite sprite = (Sprite)hostSprite.clone(this);
             	// add it to the map
             	// center the sprite
                 sprite.setX(

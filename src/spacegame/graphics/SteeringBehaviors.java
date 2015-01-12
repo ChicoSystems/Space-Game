@@ -2,6 +2,8 @@ package spacegame.graphics;
 
 import java.util.Random;
 
+import maths.*;
+
 import spacegame.util.Vector2D;
 
 public class SteeringBehaviors {
@@ -100,8 +102,35 @@ public class SteeringBehaviors {
 		
 	}
 	
-	/** Wander behavior. */
+	/** Wander behavior.*/
 	public Vector2D wander(){
+		
+		double wanderRadius = 250;
+		double wanderDistance = 1000;
+		double wanderJitter = .02;
+		
+		double r1 = (r.nextDouble()*2)-1;
+		double r2 = (r.nextDouble()*2)-1;
+		Vector2D wanderTarget = new Vector2D(r1 * wanderJitter, r2 * wanderJitter);
+		//Vector2D wanderTarget = new Vector2D(0, 0);
+		wanderTarget = wanderTarget.unitVector();
+		wanderTarget = wanderTarget.scalarMult(wanderRadius);
+		parent.side = parent.heading.perp();
+		Vector2D targetLocal = wanderTarget.plus(new Vector2D(wanderDistance, 0));
+		maths.Vector2D targetLocal_maths = new maths.Vector2D(targetLocal.x, targetLocal.y);
+		maths.Vector2D heading_maths = new maths.Vector2D(parent.heading.x, parent.heading.y);
+		maths.Vector2D side_maths = new maths.Vector2D(parent.side.x, parent.side.y);
+		maths.Vector2D pos_maths = new maths.Vector2D(parent.position.x, parent.position.y);
+		maths.Vector2D pre_worldTarget = Transformations.pointToWorldSpace(targetLocal_maths, heading_maths, side_maths, pos_maths);
+		Vector2D targetWorld = new Vector2D(pre_worldTarget.x, pre_worldTarget.y);
+		Vector2D newVel = targetWorld.minus(parent.position);
+		return newVel;
+		
+		/*
+		AffineTransform translate= AffineTransform.getTranslateInstance(parent.position.x, parent.position.y);
+		System.out.println("Translate:" + translate.toString());
+		Vector2D newVector = new Vector2D(0, 0);
+		System.out.println("newVector:" + translate.transform(newVector, null));
 		Vector2D wanderTarget = parent.heading;
 		double wanderRadius = 50;
 		double wanderDistance = 700;
@@ -133,7 +162,8 @@ public class SteeringBehaviors {
        //System.out.println("parentpos: " + parent.position);
         //System.out.println("wanderpos: " + wanderPos);
         return seek(wanderPos);
-
+        
+*/
 
 		
 		/*
