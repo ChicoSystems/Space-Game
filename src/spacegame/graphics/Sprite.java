@@ -22,7 +22,8 @@ public class Sprite {
     protected Vector2D position;
     
     // Normalized Vector pointing in the direction of the heading.
-    protected Vector2D heading;
+    public Vector2D heading;
+    public Vector2D oldheading;
     
     //A vector perpendicular to the heading vector.
     protected Vector2D side;
@@ -33,11 +34,11 @@ public class Sprite {
     protected double dMass = .5;
     protected double dMaxSpeed = 1;
     protected double dMaxForce = .0001;
-    protected double dMaxTurnRate = .55;
+    public double dMaxTurnRate = .05;
     
     protected float currentRotation = 0;
     protected float futureRotation = 0;
-    protected float rotationSpeed = (float) dMaxTurnRate;
+    public float rotationSpeed = (float) dMaxTurnRate;
 
     /**
         Creates a new Sprite object with the specified Animation.
@@ -47,7 +48,8 @@ public class Sprite {
         velocity = new Vector2D(0, 0);
         position = new Vector2D(0, 0);
         heading = new Vector2D(0, 0);
-        side = new Vector2D();
+        oldheading = new Vector2D(0,0);
+        side = new Vector2D(0,0);
         steering = new SteeringBehaviors(this);
     }
 
@@ -56,6 +58,7 @@ public class Sprite {
         on the velocity.
     */
     public void update(long elapsedTime) {
+    	/*
         //x += dx * elapsedTime;
         //y += dy * elapsedTime;
     	
@@ -75,11 +78,11 @@ public class Sprite {
         position = position.plus(velocity.scalarMult(elapsedTime));
         
         // update the heading if the vehicle has a small velocity, but not too small
-        if(velocity.length() > 0.00001){
-        	heading = velocity.unitVector();
-        	side = heading.perp();
-        }
-    	
+        //if(velocity.length() > 0.00001){
+        //	heading = velocity.unitVector();
+        //	side = heading.perp();
+        //}
+    	*/
         anim.update(elapsedTime);
     }
     
@@ -257,25 +260,48 @@ public class Sprite {
 		this.futureRotation = toRotation;
 	}
 	
+	/*
+	public void updateHeading(long elapsedTime, Vector2D B){
+		double targetAngle = Math.atan2(B.y - position.y, B.x - position.x);
+		double currentAngle = heading.getTheta();
+
+		//Calculate angular deviation
+		double deviation = targetAngle - currentAngle;
+		double absDeviation = (deviation < 0 ? -deviation : deviation);
+
+		//double maxRotation = 5 * elapsedTime;
+
+		//If the absolute deviation is less than max rotation, rotate by.
+		//Else rotate the allowed radians in B's direction.
+		if(absDeviation <= dMaxTurnRate)
+		    heading = heading.rotate(deviation);
+		else
+		    heading = heading.rotate(Math.signum(deviation) * dMaxTurnRate);
+	}
+	
+	*/
+	
+	/*
 	public void updateRotation(long elapsedTime){
     	
-   	 float rotation = (float) Math.atan2(velocity.y, velocity.x);
+   	 //float rotation = (float) Math.atan2(velocity.y, velocity.x);
+		float rotation = (float) heading.getTheta();
         rotation = (float) Math.toDegrees(rotation);
         rotation = rotation + 90;
         
         
         //if((velocity.x == 0) && (velocity.y == 0)){
         //	rotation = this.getRotation(); // keeps from reseting rotation when velocity is 0
-       // }
+        //}
         
-        if(velocity.length() < .000001){
-        	rotation = this.getRotation(); // keeps from reseting rotation when velocity is 0
-        }
+        //if(velocity.length() < .0000001){
+        //	rotation = this.getRotation(); // keeps from reseting rotation when velocity is 0
+        //}
         	this.setFutureRotation(rotation);
         	
 		
 		//System.out.println("Current: " + currentRotation + " Future: " + futureRotation);
-		if(Math.abs(getRotation() - getFutureRotation()) < 5){//don't rotate if change is less then 2 degrees
+		if(Math.abs(getRotation() - getFutureRotation()) < 2){//don't rotate if change is less then 2 degrees
 			rotationSpeed = 0;
 			return;
 		}else{
@@ -288,10 +314,14 @@ public class Sprite {
 			}
 			//System.out.println("Set Rot: " + ((float)(getRotation() + getRotationSpeed() * elapsedTime)));
 			setRotation((float)(getRotation() + getRotationSpeed() * elapsedTime));
+			//setRotation((float) heading.perp().getTheta());
+			//p.setRotation((float) player.heading.perp().getTheta());
 			
 		}
 		
 	}
+	
+	*/
    
    private float calculateDifferenceBetweenAngles(float firstAngle, float secondAngle)
    {

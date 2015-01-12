@@ -208,7 +208,7 @@ public abstract class Creature extends Sprite {
         newAnim = creatureAnim[(int)getRotation()];
         // update the Animation
         if (anim != newAnim) {
-            anim = newAnim;
+           anim = newAnim;
             anim.start();
         }
         else {

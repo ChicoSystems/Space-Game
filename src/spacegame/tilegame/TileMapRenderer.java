@@ -165,6 +165,8 @@ public class TileMapRenderer {
         
         drawLasers(g, map, offsetX, offsetY);
         player.drawShip(g, offsetX, offsetY);
+        //Ship player2 = map.getAIShips().get(map.getAIShips().size()-1);
+        //player2.drawShip(g, offsetX, offsetY);
         for(int i = 0; i < map.getAIShips().size(); i++){
         	Ship player2 = null;
         	player2 = map.getAIShips().get(i);

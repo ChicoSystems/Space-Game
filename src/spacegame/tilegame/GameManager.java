@@ -216,7 +216,8 @@ public class GameManager extends GameCore {
                // player.jump(false);
             }
             if (speedBoost.isPressed()) {
-            	player.setMaxSpeed(player.getBoostSpeed()*4);
+            	//player.setMaxSpeed(player.getMaxSpeed()*4);
+            	player.setVelocity(player.getVelocity().scalarMult(4));
                // player.setCurrentSpeed(player.getBoostSpeed()*4);
             }else if (!speedBoost.isPressed()) {
                // player.setCurrentSpeed(player.getMaxSpeed());
@@ -254,8 +255,8 @@ public class GameManager extends GameCore {
             if(totalVel !=0){
             	player.setVelocityX((float) (velocityX/totalVel));
                 player.setVelocityY((float) (velocityY/totalVel));
-                System.out.println("vx: " + velocityX/totalVel);
-                System.out.println("vy: " + velocityY/totalVel);
+                //System.out.println("vx: " + velocityX/totalVel);
+                //System.out.println("vy: " + velocityY/totalVel);
             }else{
             	player.setVelocityX(0);
                 player.setVelocityY(0);
@@ -329,7 +330,7 @@ public class GameManager extends GameCore {
 		// TODO Auto-generated method stub
     	Projectile p = (Projectile) ((Projectile) resourceManager.rocketSprites.get((int)(Math.random()*resourceManager.rocketSprites.size()))).clone();
     	p.parentId = player.id;
-        p.setRotation(player.getRotation());
+        p.setRotation((float) player.heading.perp().getTheta());
         p.setVelocityX(player.getVelocityX()*1.5f);
         p.setVelocityY(player.getVelocityY()*1.5f);
         
@@ -626,12 +627,12 @@ public boolean isCollision(Laser s1, Turret s2) {
         checkInput(elapsedTime);
 
         // update player
-        updateShip(player, elapsedTime);
+       // updateShip(player, elapsedTime);
         player.update(elapsedTime);
         for(int i = 0; i < map.getAIShips().size(); i++){
         	Ship player2 = null;
         	player2 = map.getAIShips().get(i);
-        	if(player2 != null)updateShip(player2, elapsedTime);
+        	//if(player2 != null)updateShip(player2, elapsedTime);
             if(player2 != null) player2.update(elapsedTime);
         }
         
@@ -815,7 +816,7 @@ public boolean isCollision(Laser s1, Turret s2) {
     private void updateCreature(Creature creature,
         long elapsedTime)
     {
-    	creature.updateRotation(elapsedTime);
+    	//creature.updateRotation(elapsedTime);
 
         // change x
         float dx = creature.getVelocityX();
@@ -867,10 +868,15 @@ public boolean isCollision(Laser s1, Turret s2) {
 	    Updates the creature, applying gravity for creatures that
 	    aren't flying, and checks collisions.
 	*/
+    /*
 	private void updateShip(Ship creature,
 	    long elapsedTime)
 	{
-		creature.updateRotation(elapsedTime);
+		//if(creature.getVelocity().length() > .00001){
+			//creature.updateHeading(elapsedTime, creature.getVelocity());
+			//creature.updateRotation(elapsedTime);
+		//}
+		
 	
 	    // change x
 	    float dx = creature.getVelocityX();
@@ -929,7 +935,7 @@ public boolean isCollision(Laser s1, Turret s2) {
 	
 	}
 
-
+*/
     /**
         Checks for Player collision with other Sprites. If
         canKill is true, collisions with Creatures will kill

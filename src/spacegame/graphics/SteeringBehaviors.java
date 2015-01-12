@@ -40,7 +40,7 @@ public class SteeringBehaviors {
 	public Vector2D flee(Vector2D targetPos){
 		
 		//Only flee if the target is within panic distance.
-		double panicDist = 200 * 200;
+		double panicDist = 1000 * 1000;
 		if(parent.getPosition().distanceSq(targetPos) > panicDist){
 			return new Vector2D(0, 0);
 		}else{
@@ -103,9 +103,9 @@ public class SteeringBehaviors {
 	/** Wander behavior. */
 	public Vector2D wander(){
 		Vector2D wanderTarget = parent.heading;
-		double wanderRadius = 100;
-		double wanderDistance = 500;
-		double wanderJitter = .5;
+		double wanderRadius = 50;
+		double wanderDistance = 700;
+		double wanderJitter = .2;
 		
 		//this behavior is dependent on the update rate, so this line must
         //be included when using time independent framerate.
@@ -130,8 +130,8 @@ public class SteeringBehaviors {
         wanderPos = wanderPos.plus(parent.position);
         wanderPos = wanderPos.plus(wanderTarget);
        // System.out.println("wandertar: " + wanderTarget);
-        System.out.println("parentpos: " + parent.position);
-        System.out.println("wanderpos: " + wanderPos);
+       //System.out.println("parentpos: " + parent.position);
+        //System.out.println("wanderpos: " + wanderPos);
         return seek(wanderPos);
 
 

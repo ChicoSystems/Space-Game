@@ -208,4 +208,13 @@ public class Vector2D extends Point2D.Double {
         	scalarMultVoid(i);
     	
     }
+    
+    public Vector2D rotate(double radians)
+    {
+        double x = this.x * Math.cos(radians) - this.y * Math.sin(radians);
+        double y = this.x * Math.sin(radians) + this.y * Math.cos(radians);
+        this.x = x;
+        this.y = y;
+        return this;
+    }
 }
