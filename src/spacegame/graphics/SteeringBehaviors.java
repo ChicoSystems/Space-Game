@@ -117,12 +117,15 @@ public class SteeringBehaviors {
 		wanderTarget = wanderTarget.scalarMult(wanderRadius);
 		parent.side = parent.heading.perp();
 		Vector2D targetLocal = wanderTarget.plus(new Vector2D(wanderDistance, 0));
+		
+		//here is out translate to world space code
 		maths.Vector2D targetLocal_maths = new maths.Vector2D(targetLocal.x, targetLocal.y);
 		maths.Vector2D heading_maths = new maths.Vector2D(parent.heading.x, parent.heading.y);
 		maths.Vector2D side_maths = new maths.Vector2D(parent.side.x, parent.side.y);
 		maths.Vector2D pos_maths = new maths.Vector2D(parent.position.x, parent.position.y);
 		maths.Vector2D pre_worldTarget = Transformations.pointToWorldSpace(targetLocal_maths, heading_maths, side_maths, pos_maths);
 		Vector2D targetWorld = new Vector2D(pre_worldTarget.x, pre_worldTarget.y);
+		//done translating to world space.
 		Vector2D newVel = targetWorld.minus(parent.position);
 		return newVel;
 		
@@ -186,6 +189,23 @@ public class SteeringBehaviors {
 		
 		return targetLocal.minus(parent.position);
 		*/
+		
+	}
+	
+	//interpose behavior
+	public Vector2D interpose(Sprite s1, Sprite s2){
+		//figure out where they'll be in the future.
+		Vector2D midPoint = s1.position.plus(s2.position).scalarDiv(2);
+		double timeToReachMidPoint = Vector2D.distance(parent.position.x, parent.position.y, midPoint.x, midPoint.y) / parent.dMaxSpeed;
+		
+		//we have t, assume a and be will continue on trajectory, and extrapolate.
+		Vector2D s1Pos = s1.velocity.scalarMult(timeToReachMidPoint).plus(s1.position);
+		Vector2D s2Pos = s2.velocity.scalarMult(timeToReachMidPoint).plus(s2.position);
+		
+		//calculate midpoint of predicted positions.
+		midPoint = s1Pos.plus(s2Pos).scalarDiv(2);
+		Vector2D newVel = arrive(midPoint, Deceleration.FAST);
+		return newVel;
 		
 	}
 

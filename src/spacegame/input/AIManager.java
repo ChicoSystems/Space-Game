@@ -65,9 +65,11 @@ public class AIManager {
 				follow(targetLocation);
 			}else if(currentState == STATE_TEST){
 				ArrayList<Ship> ships = parent.parent.parent.getMap().getAIShips();
-				//if(ships.indexOf(parent) == 0){ //wander
+				if(ships.indexOf(parent) == 0){ //wander
 					parent.setVelocity(parent.steering.wander()) ;
-				//}//else{ //pursue previous ship
+				}else{ //pursue previous ship
+					parent.setVelocity(parent.steering.interpose(parent.parent.parent.getMap().getPlayer(), ships.get(ships.indexOf(parent) -1)));
+				}
 				//	if(ships.indexOf(parent) % 2 == 0){
 				//		parent.setVelocity(parent.steering.wander());
 				//	}else{
