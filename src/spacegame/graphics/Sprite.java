@@ -1,24 +1,11 @@
 package spacegame.graphics;
 import spacegame.tilegame.ResourceManager;
-import spacegame.tilegame.sprites.*;
 import spacegame.util.Vector2D;
-
 import java.awt.Image;
-import java.util.Vector;
-
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
 
 public class Sprite {
-
-	//protected float SPEED_ROTATION = .40f;
     protected Animation anim;
-    // position (pixels)
-    //protected float x;
-    //protected float y;
-    // velocity (pixels per millisecond)
-    //protected float dx;
-    //protected float dy;
-    
+   
     public Vector2D velocity;
     protected Vector2D position;
     

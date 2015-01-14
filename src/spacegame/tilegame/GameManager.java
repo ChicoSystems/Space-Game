@@ -2,11 +2,9 @@ package spacegame.tilegame;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.ListIterator;
 
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
