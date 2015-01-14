@@ -95,6 +95,11 @@ public abstract class SpriteV2 {
 		this.maxTurnRate = maxTurnRate;
 	}
 
-	public abstract void update(double elapsedTime);
+	public void update(double elapsedTime){
+		updateLocation(elapsedTime);
+		drawSprite(elapsedTime);
+	}
 	
+	protected abstract void updateLocation(double elapsedTime);
+	protected abstract void drawSprite(double elapsedTime);
 }
