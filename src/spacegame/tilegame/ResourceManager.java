@@ -10,7 +10,9 @@ import java.util.ArrayList;
 import javax.swing.ImageIcon;
 
 import spacegame.graphics.*;
+import spacegame.input.LocationManager;
 import spacegame.tilegame.sprites.*;
+import spacegame.util.Vector2D;
 
 
 
@@ -324,6 +326,11 @@ public class ResourceManager {
         newMap.setPlayer(player);
        // System.out.println("Add Player: " + player.toString() + " " + player.getWidth() + " " + player.getHeight());
 
+        //add a SpriteV2 test
+        ShipV2 shipV2 = new ShipV2(this, 0);
+        shipV2.setPosition(player.getPosition().plus(new Vector2D(25, 25)));
+        newMap.addSpriteV2(shipV2);
+        
         addSprite(newMap, planetSprites.get(1), 0, 0);
         return newMap;
     }

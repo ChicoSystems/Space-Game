@@ -195,6 +195,7 @@ public class GameManager extends GameCore {
         }
 
         Ship player = (Ship)map.getPlayer();
+        ShipV2 shipV2 = (ShipV2)map.getSpriteV2().get(0);
         
         if (player.isAlive()) {
         	
@@ -205,9 +206,11 @@ public class GameManager extends GameCore {
                 //velocityX-=player.getCurrentSpeed();
         		//steeringForce = new Vector2D(-1, 0);
         		steeringForce = steeringForce.plus(new Vector2D(-1, 0));
+        		shipV2.pressMoveLeft();
             }else if (moveRight.isPressed()) {
         		//steeringForce = new Vector2D(1, 0);
             	steeringForce = steeringForce.plus(new Vector2D(1, 0));
+            	shipV2.pressMoveRight();
             }else{
             	//System.out.println("x:" + player.velocity.x + " y:" +player.velocity.y);
             	//System.out.println("vel len:"+player.velocity.length());
@@ -220,8 +223,10 @@ public class GameManager extends GameCore {
         	
             if (moveUp.isPressed()) {
             	steeringForce = steeringForce.plus(new Vector2D(0, -1));
+            	shipV2.pressMoveUp();
             }else if (moveDown.isPressed()) {
             	steeringForce = steeringForce.plus(new Vector2D(0, 1));
+            	shipV2.pressMoveDown();
             }else{
             	double newY = player.velocity.y / 1.5;
             	if(Math.abs(newY) < .003 || player.velocity.length() <.02){
@@ -678,6 +683,10 @@ public boolean isCollision(Laser s1, Turret s2) {
         // update player
        // updateShip(player, elapsedTime);
         player.update(elapsedTime);
+        
+        // spritev2 test
+        this.getMap().getSpriteV2().get(0).update(elapsedTime);
+        
         for(int i = 0; i < map.getAIShips().size(); i++){
         	Ship player2 = null;
         	player2 = map.getAIShips().get(i);

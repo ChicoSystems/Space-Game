@@ -1,4 +1,6 @@
 package spacegame.graphics;
+import java.awt.Graphics2D;
+
 import spacegame.input.LocationManager;
 import spacegame.tilegame.ResourceManager;
 import spacegame.util.Vector2D;
@@ -19,6 +21,10 @@ public abstract class SpriteV2 {
     /** Creates a new Sprite object with the specified Animation. */
 	public SpriteV2(ResourceManager parent) {
 		 this.parent = parent;
+		 mass = 1;
+		 maxForce = 1;
+		 maxSpeed = 1;
+		 maxTurnRate = 1;
 		 currentForce = new Vector2D(0, 0);
 		 currentAcceleration = new Vector2D(0, 0);
 	     velocity = new Vector2D(0, 0);
@@ -100,13 +106,13 @@ public abstract class SpriteV2 {
 	}
 	
 	/** Clones this Sprite. Does not clone position or velocity info. */
-	public abstract Object clone(ResourceManager p, LocationManager l);
+	public abstract Object clone(ResourceManager p, int type);
 
 	public void update(double elapsedTime){
 		updateLocation(elapsedTime);
-		drawSprite(elapsedTime);
+		//drawSprite(parent.parent.screen.getGraphics());
 	}
 	
 	protected abstract void updateLocation(double elapsedTime);
-	protected abstract void drawSprite(double elapsedTime);
+	public abstract void drawSprite(Graphics2D g, int offsetX, int offsetY);
 }

@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import spacegame.graphics.Sprite;
+import spacegame.graphics.SpriteV2;
 import spacegame.tilegame.sprites.Laser;
 import spacegame.tilegame.sprites.Planet;
 import spacegame.tilegame.sprites.Player;
@@ -29,8 +30,18 @@ public class TileMap {
     private ArrayList <Laser> lasers;
     private Ship player;
     private ArrayList <Ship> aiShips;
+    private ArrayList <SpriteV2> spritev2;
 
-    /**
+    public ArrayList<SpriteV2> getSpriteV2() {
+		return spritev2;
+	}
+	
+	public void addSpriteV2(SpriteV2 s){
+		spritev2.add(s);
+	}
+
+
+	/**
         Creates a new TileMap with the specified width and
         height (in number of tiles) of the map.
     */
@@ -40,6 +51,7 @@ public class TileMap {
         sprites = new LinkedList();
         lasers = new ArrayList<Laser>();
         aiShips = new ArrayList<Ship>();
+        spritev2 = new ArrayList<SpriteV2>();
         
         //createRandomPlanets(sprites, 1000);
     }

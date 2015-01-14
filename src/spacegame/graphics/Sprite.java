@@ -29,9 +29,7 @@ public class Sprite {
     protected float futureRotation = 0;
     public float rotationSpeed = (float) dMaxTurnRate;
 
-    /**
-        Creates a new Sprite object with the specified Animation.
-    */
+    /** Creates a new Sprite object with the specified Animation. */
     public Sprite(Animation anim, ResourceManager parent) {
         this.anim = anim;
         this.parent = parent;
