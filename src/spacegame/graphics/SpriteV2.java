@@ -6,11 +6,13 @@ import spacegame.util.Vector2D;
 public abstract class SpriteV2 {
 	protected ResourceManager parent;
 	protected Vector2D currentForce;
+	protected Vector2D currentAcceleration;
 	protected Vector2D velocity;
     protected Vector2D position;
     protected Vector2D heading;
     protected Vector2D side;
     protected double mass;
+    protected double maxForce;
     protected double maxSpeed;
     protected double maxTurnRate;
     
@@ -18,6 +20,7 @@ public abstract class SpriteV2 {
 	public SpriteV2(ResourceManager parent) {
 		 this.parent = parent;
 		 currentForce = new Vector2D(0, 0);
+		 currentAcceleration = new Vector2D(0, 0);
 	     velocity = new Vector2D(0, 0);
 	     position = new Vector2D(0, 0);
 	     heading = new Vector2D(1, 0);
