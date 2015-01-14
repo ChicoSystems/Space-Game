@@ -26,6 +26,12 @@ public class ShipV2 extends SpriteV2 {
 	protected void drawSprite(double elapsedTime) {
 		
 	}
+	
+	/** Clones this Sprite. Does not clone position or velocity info. */
+	public Object clone(ResourceManager p, LocationManager l) {
+	    return new ShipV2(p, l);
+	}
+
 
 
 }

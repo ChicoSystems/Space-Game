@@ -1,4 +1,5 @@
 package spacegame.graphics;
+import spacegame.input.LocationManager;
 import spacegame.tilegame.ResourceManager;
 import spacegame.util.Vector2D;
 
@@ -94,6 +95,9 @@ public abstract class SpriteV2 {
 	public void setMaxTurnRate(double maxTurnRate) {
 		this.maxTurnRate = maxTurnRate;
 	}
+	
+	/** Clones this Sprite. Does not clone position or velocity info. */
+	public abstract Object clone(ResourceManager p, LocationManager l);
 
 	public void update(double elapsedTime){
 		updateLocation(elapsedTime);
