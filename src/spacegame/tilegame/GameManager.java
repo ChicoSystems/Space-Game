@@ -56,6 +56,8 @@ public class GameManager extends GameCore {
     public GameAction moveDown;
     public GameAction moveLeft;
     public GameAction moveRight;
+    public GameAction rotateLeft;
+    public GameAction rotateRight;
     public GameAction moveUp2;
     public GameAction moveDown2;
     public GameAction moveLeft2;
@@ -122,6 +124,8 @@ public class GameManager extends GameCore {
         moveDown = new GameAction("moveDown");
         moveLeft = new GameAction("moveLeft");
         moveRight = new GameAction("moveRight");
+        rotateLeft = new GameAction("rotateLeft");
+        rotateRight = new GameAction("rotateRight");
         moveUp2 = new GameAction("moveUp2");
         moveDown2 = new GameAction("moveDown2");
         moveLeft2 = new GameAction("moveLeft2");
@@ -154,6 +158,8 @@ public class GameManager extends GameCore {
         inputManager.mapToKey(moveDown, KeyEvent.VK_S);
         inputManager.mapToKey(moveLeft, KeyEvent.VK_A);
         inputManager.mapToKey(moveRight, KeyEvent.VK_D);
+        inputManager.mapToKey(rotateLeft, KeyEvent.VK_Q);
+        inputManager.mapToKey(rotateRight, KeyEvent.VK_E);
         inputManager.mapToKey(speedBoost, KeyEvent.VK_SHIFT);
         inputManager.mapToKey(fire, KeyEvent.VK_F);
         inputManager.mapToKey(menuAction, KeyEvent.VK_F1);
@@ -200,6 +206,12 @@ public class GameManager extends GameCore {
         if (player.isAlive()) {
         	
         	Vector2D steeringForce = new Vector2D(0, 0);
+        	
+        	if(rotateLeft.isPressed()){
+        		shipV2.pressRotateLeft();
+        	}else if(rotateRight.isPressed()){
+        		shipV2.pressRotateRight();
+        	}
         	
         	
         	if (moveLeft.isPressed()) {

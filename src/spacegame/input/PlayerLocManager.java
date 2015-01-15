@@ -14,11 +14,13 @@ public class PlayerLocManager implements LocationManager {
 	SpriteV2 parent;
 	SteeringBehaviorsV2 steering;
 	public Vector2D inputVector; // Used to find players input
+	public double inputTorque;
 	
 	public PlayerLocManager(SpriteV2 parent){
 		this.parent = parent;
 		steering = new SteeringBehaviorsV2(this.parent);
 		inputVector = new Vector2D(0 ,0);
+		inputTorque = 0;
 	}
 
 	public SpriteV2 getParent() {
@@ -38,16 +40,17 @@ public class PlayerLocManager implements LocationManager {
 	}
 
 	public Vector2D calculate(double elapsedTime) {
-		// Calculate the forces on the ship containing this locationManager
-		//
-		//inputVector = inputVector.plus(steering.addFriction(.01/elapsedTime)); // Add friction
 		Vector2D returnVector = new Vector2D(inputVector.x, inputVector.y); 
-		//inputVector = inputVector.scalarMult(elapsedTime);
-		//if(inputVector.length() < .00000008 && inputVector.length() != 0) inputVector = new Vector2D(0, 0); // reduce input vector over time
 		inputVector = new Vector2D(0,0);
 		System.out.println(inputVector.length());
 		
 		return returnVector;
+	}
+	
+	public double calculateTorque(double elapsedTime){
+		double returnTorque = inputTorque;
+		inputTorque = 0;
+		return returnTorque;
 	}
 
 	
@@ -71,6 +74,14 @@ public class PlayerLocManager implements LocationManager {
 	@Override
 	public void pressMoveUp() {
 		inputVector = inputVector.plus(steering.pressMoveUp());
+	}
+	
+	public void pressRotateRight(){
+		inputTorque = inputTorque + steering.pressRotateRight();
+	}
+	
+	public void pressRotateLeft(){
+		inputTorque = inputTorque + steering.pressRotateLeft();
 	}
 
 

@@ -11,6 +11,11 @@ public abstract class SpriteV2 {
 	protected Vector2D velocity;
     protected Vector2D position;
     protected Vector2D heading;
+    // Angular components
+    protected double orientation; // radians
+    protected double angularVelocity; //radian per second
+    protected double angularAcceleration;
+    protected double torque; //
     protected Vector2D side;
     protected double mass;
     protected double maxForce;

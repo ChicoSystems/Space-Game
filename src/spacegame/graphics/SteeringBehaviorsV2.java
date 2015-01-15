@@ -243,6 +243,14 @@ public class SteeringBehaviorsV2 {
 	public Vector2D pressMoveDown() {
 		return new Vector2D(0, 1);
 	}
+	
+	public double pressRotateRight(){
+		return 10;
+	}
+	
+	public double pressRotateLeft(){
+		return -10;
+	}
 
 	public Vector2D addFriction(double fricCoeff){
 		//vector 180's different from velocity, scaled by the fricCoeff, which should be < 1
