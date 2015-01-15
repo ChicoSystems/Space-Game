@@ -49,11 +49,12 @@ public class ShipV2 extends SpriteV2 {
     	velocity.truncate(maxSpeed); //Limit velocity based on maxSpeed.
     	//update rotation
     	torque = locMan.calculateTorque(elapsedTime);	
-    	angularAcceleration = torque / mass; 
+    	angularAcceleration = torque / (mass/2); 
     	angularVelocity += angularAcceleration * (elapsedTime/1000);
-    	angularVelocity = angularVelocity - angularVelocity * 1*(elapsedTime/1000);
-    	if(Math.abs(angularVelocity) < .005) angularVelocity = 0;
-    	orientation += 0.5 * angularVelocity * (elapsedTime/1000);
+    	angularVelocity = angularVelocity - angularVelocity * 1*(elapsedTime/1000); //angular friction
+    	if(Math.abs(angularVelocity) < .005) angularVelocity = 0; // stop when low enough
+    	orientation += 0.6 * angularVelocity * (elapsedTime/1000);
+    	orientation = orientation % (Math.PI*2); // keep orientation under 360 degrees
     	
     	
         position = position.plus(velocity); //Update position based on velocity.
@@ -70,10 +71,13 @@ public class ShipV2 extends SpriteV2 {
 	    Ellipse2D.Double saucer = new Ellipse2D.Double(this.position.x, this.position.y, 25, 25);
 	    double middleX = (int)saucer.getX()+offsetX+(int)saucer.getWidth()/2;
 	    double middleY = (int)saucer.getY()+offsetY+(int)saucer.getHeight()/2;
-	    g.rotate(this.orientation, middleX, middleY);
+	    Vector2D endLine = new Vector2D(middleX - heading.x*50, middleY - heading.y*50);
+	    g.rotate(orientation, middleX, middleY);
 	    g.setColor(Color.blue);
 	    g.fillArc((int)saucer.getX()+offsetX, (int)saucer.getY()+offsetY, (int)saucer.getWidth(), (int)saucer.getHeight(), 0, 360);
 	    g.drawLine((int)saucer.getX()+offsetX, (int)saucer.getY()+offsetY, (int)saucer.getX()+offsetX+25, (int)saucer.getY()+offsetY);
+	    g.setColor(Color.RED);
+	    g.drawLine((int)middleX, (int)middleY, (int)endLine.x, (int)endLine.y);
 	    g.setColor(Color.white);
 	    g.fillArc((int)middleX, (int)middleY, 4, 4, 0, 360);
 	    g.setTransform(saveTransform); //unrotate
@@ -95,6 +99,7 @@ public class ShipV2 extends SpriteV2 {
 		g.drawString("angAC: "+ angularAcceleration, 5, 175);
 		g.drawString("angVL: "+ angularVelocity, 5, 200);
 		g.drawString("orien: "+ orientation*180/Math.PI, 5, 225);
+		g.drawString("headi: "+ heading, 5, 250);
 	}
 	
 	public void pressMoveUp(){
