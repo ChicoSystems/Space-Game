@@ -20,4 +20,5 @@ public interface LocationManager {
 	public void pressRotateRight();
 	void pressMoveForward();
 	void pressMoveBackward();
+	Vector2D calculateGravity(double elapsedTime);
 }

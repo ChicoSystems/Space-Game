@@ -267,10 +267,14 @@ public class GameManager extends GameCore {
         	if (speedBoost.isPressed()) {
             	
         		player.dMaxSpeed = 10;
+        		shipV2.setMaxSpeed(20);
+        		shipV2.setMaxForce(.1);
             	//player.setVelocity(player.getVelocity().scalarMult(4));
               
             }else if (!speedBoost.isPressed()) {
             	player.dMaxSpeed = 1;
+            	shipV2.setMaxSpeed(5);
+            	shipV2.setMaxForce(.01);
             	//player.setVelocity(player.getVelocity().scalarDiv(4));
             }
             if (fire.isPressed()) {

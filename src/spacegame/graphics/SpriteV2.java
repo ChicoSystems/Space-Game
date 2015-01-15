@@ -118,6 +118,10 @@ public abstract class SpriteV2 {
 		//drawSprite(parent.parent.screen.getGraphics());
 	}
 	
+	public void setMaxForce(double f) {
+		maxForce = f;
+	}
+	
 	public abstract double getWidth();
 	public abstract double getHeight();
 	

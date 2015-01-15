@@ -35,6 +35,7 @@ public class ShipV2 extends SpriteV2 {
 
 	protected void updateLocation(double elapsedTime) {
 		currentForce = locMan.calculate(elapsedTime); // Update the applied forces.
+		currentForce = currentForce.plus(locMan.calculateGravity(elapsedTime));
 		currentForce.truncate(maxForce); // Reduce force if it's over max.
 		currentAcceleration = currentForce.scalarDiv(mass); // calculate acceleration
 		currentAcceleration = currentAcceleration.scalarMult(elapsedTime); //Reduce acceleration over time passed
@@ -43,7 +44,7 @@ public class ShipV2 extends SpriteV2 {
     	//apply friction get the tanget from the normal (perp vector)
     	Vector2D tangent = velocity.unitVector().perp().perp();
 		// compute the tangential velocity, scale by friction
-    	double tv = velocity.dotProduct(tangent)*.8*(elapsedTime/1000);
+    	double tv = velocity.dotProduct(tangent)*.3*(elapsedTime/1000);
 		// subtract that from the main velocity
     	velocity = velocity.minus(tangent.scalarMult(tv));
     	if(velocity.length() < .001)velocity = new Vector2D(0,0); //stop velocity if it's to slow
@@ -142,4 +143,6 @@ public class ShipV2 extends SpriteV2 {
 	public double getHeight(){
 		return body.height;
 	}
+
+	
 }

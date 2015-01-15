@@ -1,7 +1,11 @@
 package spacegame.input;
 
+import java.util.LinkedList;
+
+import spacegame.graphics.Sprite;
 import spacegame.graphics.SpriteV2;
 import spacegame.graphics.SteeringBehaviorsV2;
+import spacegame.tilegame.sprites.Planet;
 import spacegame.util.Vector2D;
 
 /**
@@ -91,6 +95,37 @@ public class PlayerLocManager implements LocationManager {
 	public void pressMoveBackward() {
 		inputVector = inputVector.minus(steering.pressMoveBackward()).unitVector();
 	}
+
+	@Override
+	public Vector2D calculateGravity(double elapsedTime) {
+		LinkedList<Sprite>sprites = parent.getParent().parent.getMap().getSprites();
+		Vector2D force = new Vector2D(0,0);
+		for(int i = 0; i < sprites.size(); i++){ // Add all sprites that are planets
+			if(sprites.get(i) instanceof Planet){
+				Planet p = (Planet)sprites.get(i);
+				double g = .002;
+				double pMass = p.dMass;
+				double sMass = parent.getMass();
+				Vector2D pCenter = p.getPosition().plus(new Vector2D(p.getWidth()/2, p.getHeight()/2));
+				Vector2D sCenter = parent.getPosition().plus(new Vector2D(parent.getWidth()/2, parent.getHeight()/2));
+				double distanceSQ = sCenter.distanceSq(pCenter); //the new vector offsets the position so we orbit around the center of the planet
+				double distance = sCenter.distance(pCenter);
+				double pRadius = p.circle.getBounds().height/2;
+				if(distance > 25 && distance < pRadius){ // don't calculate if too close, or too far
+					Vector2D preForce = new Vector2D(0,0);
+					preForce = (pCenter.minus(sCenter));
+					preForce = preForce.scalarMult(g * pMass * sMass);
+					preForce = preForce.scalarDiv(distanceSQ);
+					force = force.plus(preForce);
+				}
+				
+			}
+		}
+		//force = force.scalarMult(elapsedTime);
+		return force;
+	}
+	
+	
 
 
 }

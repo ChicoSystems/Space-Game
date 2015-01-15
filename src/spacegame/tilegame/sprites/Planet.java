@@ -28,7 +28,7 @@ public class Planet extends Creature {
     	totalPower = 0;
     	setLastCollideTime(0);
     	circle = new Ellipse2D.Double(this.getX(), this.getY(), this.getWidth(), this.getHeight());
-    	
+    	dMass = 1000;
     	Random random = new Random();
 		int randomNumber1 = random.nextInt(255);
 		int randomNumber2 = random.nextInt(255);
@@ -82,6 +82,8 @@ public class Planet extends Creature {
 		super.update(elapsedTime);
 		if(this.totalPower <= 0)this.setState(STATE_DEAD);
 		
+		//update planet mass bbased on planet power
+		dMass = totalPower / 100;
 		
 		double newWidth = totalPower()/Planet.POWER_TO_SIZE+50;
 		double newHeight = totalPower()/Planet.POWER_TO_SIZE+50;
