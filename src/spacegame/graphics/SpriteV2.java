@@ -118,6 +118,9 @@ public abstract class SpriteV2 {
 		//drawSprite(parent.parent.screen.getGraphics());
 	}
 	
+	public abstract double getWidth();
+	public abstract double getHeight();
+	
 	protected abstract void updateLocation(double elapsedTime);
 	public abstract void drawSprite(Graphics2D g, int offsetX, int offsetY);
 }

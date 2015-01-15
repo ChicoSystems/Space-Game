@@ -84,5 +84,13 @@ public class PlayerLocManager implements LocationManager {
 		inputTorque = inputTorque + steering.pressRotateLeft();
 	}
 
+	public void pressMoveForward() {
+		inputVector = inputVector.minus(steering.pressMoveForward()).unitVector();
+	}
+
+	public void pressMoveBackward() {
+		inputVector = inputVector.minus(steering.pressMoveBackward()).unitVector();
+	}
+
 
 }

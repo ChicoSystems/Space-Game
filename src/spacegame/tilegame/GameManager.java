@@ -236,10 +236,12 @@ public class GameManager extends GameCore {
         	
             if (moveUp.isPressed()) {
             	steeringForce = steeringForce.plus(new Vector2D(0, -1));
-            	shipV2.pressMoveUp();
+            	//shipV2.pressMoveUp();
+            	shipV2.pressMoveForward();
             }else if (moveDown.isPressed()) {
             	steeringForce = steeringForce.plus(new Vector2D(0, 1));
-            	shipV2.pressMoveDown();
+            	//shipV2.pressMoveDown();
+            	shipV2.pressMoveBackward();
             }else{
             	double newY = player.velocity.y / 1.5;
             	if(Math.abs(newY) < .003 || player.velocity.length() <.02){

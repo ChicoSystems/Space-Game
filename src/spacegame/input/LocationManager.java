@@ -18,4 +18,6 @@ public interface LocationManager {
 	void pressMoveUp();
 	public void pressRotateLeft();
 	public void pressRotateRight();
+	void pressMoveForward();
+	void pressMoveBackward();
 }

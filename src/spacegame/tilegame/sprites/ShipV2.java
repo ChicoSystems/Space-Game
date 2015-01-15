@@ -20,11 +20,12 @@ import spacegame.util.Vector2D;
  * ship type 0 is player controlled, ship type 1 is ai controlled.
  */
 public class ShipV2 extends SpriteV2 {
-	protected Ellipse2D.Double body;
+	public Ellipse2D.Double body;
 	protected LocationManager locMan;
 
 	public ShipV2(ResourceManager parent, int type) {
 		super(parent);
+		body = new Ellipse2D.Double();
 		if(type == 0){
 			locMan = new PlayerLocManager(this);
 		}else{
@@ -55,7 +56,7 @@ public class ShipV2 extends SpriteV2 {
     	if(Math.abs(angularVelocity) < .005) angularVelocity = 0; // stop when low enough
     	orientation += 0.6 * angularVelocity * (elapsedTime/1000);
     	orientation = orientation % (Math.PI*2); // keep orientation under 360 degrees
-    	
+    	heading.setPolar(1, orientation-Math.PI/2);
     	
         position = position.plus(velocity); //Update position based on velocity.
 	}
@@ -68,14 +69,14 @@ public class ShipV2 extends SpriteV2 {
 	    g.setTransform(identity);
 	    
 	    
-	    Ellipse2D.Double saucer = new Ellipse2D.Double(this.position.x, this.position.y, 25, 25);
-	    double middleX = (int)saucer.getX()+offsetX+(int)saucer.getWidth()/2;
-	    double middleY = (int)saucer.getY()+offsetY+(int)saucer.getHeight()/2;
-	    Vector2D endLine = new Vector2D(middleX - heading.x*50, middleY - heading.y*50);
+	    body = new Ellipse2D.Double(this.position.x, this.position.y, 25, 25);
+	    double middleX = (int)body.getX()+offsetX+(int)body.getWidth()/2;
+	    double middleY = (int)body.getY()+offsetY+(int)body.getHeight()/2;
+	    Vector2D endLine = new Vector2D(middleX, middleY + 50);
 	    g.rotate(orientation, middleX, middleY);
 	    g.setColor(Color.blue);
-	    g.fillArc((int)saucer.getX()+offsetX, (int)saucer.getY()+offsetY, (int)saucer.getWidth(), (int)saucer.getHeight(), 0, 360);
-	    g.drawLine((int)saucer.getX()+offsetX, (int)saucer.getY()+offsetY, (int)saucer.getX()+offsetX+25, (int)saucer.getY()+offsetY);
+	    g.fillArc((int)body.getX()+offsetX, (int)body.getY()+offsetY, (int)body.getWidth(), (int)body.getHeight(), 0, 360);
+	    g.drawLine((int)body.getX()+offsetX, (int)body.getY()+offsetY, (int)body.getX()+offsetX+25, (int)body.getY()+offsetY);
 	    g.setColor(Color.RED);
 	    g.drawLine((int)middleX, (int)middleY, (int)endLine.x, (int)endLine.y);
 	    g.setColor(Color.white);
@@ -124,5 +125,21 @@ public class ShipV2 extends SpriteV2 {
 	
 	public void pressRotateLeft(){
 		locMan.pressRotateLeft();
+	}
+
+	public void pressMoveForward() {
+		locMan.pressMoveForward();
+	}
+	
+	public void pressMoveBackward() {
+		locMan.pressMoveBackward();
+	}
+	
+	public double getWidth(){
+		return body.width;
+	}
+	
+	public double getHeight(){
+		return body.height;
 	}
 }

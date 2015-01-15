@@ -229,11 +229,13 @@ public class SteeringBehaviorsV2 {
 	}
 
 	public Vector2D pressMoveRight() {
-		return new Vector2D(1, 0);
+		//return new Vector2D(1, 0);
+		return parent.heading.perp().unitVector(); // one perp makes a right
 	}
 	
 	public Vector2D pressMoveLeft() {
-		return new Vector2D(-1, 0);
+		//return new Vector2D(-1, 0);
+		return parent.heading.perp().perp().perp().unitVector(); // three perps makes a left
 	}
 	
 	public Vector2D pressMoveUp() {
@@ -242,6 +244,14 @@ public class SteeringBehaviorsV2 {
 	
 	public Vector2D pressMoveDown() {
 		return new Vector2D(0, 1);
+	}
+	
+	public Vector2D pressMoveForward() {
+		return parent.heading.unitVector();
+	}
+	
+	public Vector2D pressMoveBackward() {
+		return parent.heading.perp().perp().unitVector(); // to perps makes a backwards;
 	}
 	
 	public double pressRotateRight(){
@@ -257,5 +267,7 @@ public class SteeringBehaviorsV2 {
 		Vector2D fricVector = parent.velocity.rotate(Math.PI).unitVector();
 		return fricVector;
 	}
+
+	
 
 }
