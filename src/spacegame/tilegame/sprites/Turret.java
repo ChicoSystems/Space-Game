@@ -52,7 +52,7 @@ public class Turret extends Creature  {
 	}
 	
 	public void update(long elapsedTime){
-		super.update(elapsedTime);
+		//super.update(elapsedTime);
 		if(this.state == STATE_DEAD){
 			parent.getParent().parent.getMap().removeLaser(this);
 			parent.getParent().parent.getMap().removeSprite(this);

@@ -17,6 +17,7 @@ import java.util.Vector;
 import spacegame.graphics.Animation;
 import spacegame.graphics.Sprite;
 import spacegame.tilegame.ResourceManager;
+import spacegame.util.Vector2D;
 
 /**
  * The Ship is the main player vehicle. It automatically grows and changes size 
@@ -126,7 +127,8 @@ public class Ship extends Creature  {
 	 * The parent of the ship. The games resource manager. Gives the ship access
 	 * to the rest of the game.
 	 */
-	private ResourceManager parent;
+	public ResourceManager parent;
+	
 	
 	/**
 	 * Construct a new ship.
@@ -175,8 +177,29 @@ public class Ship extends Creature  {
 	    g.setTransform(identity);
 	    
 	    //rotate ship at the middle of it's saucer
-		g.rotate((Math.toRadians(this.getRotation())), this.x+offsetX, this.y+offsetY-engine1.engineHeight/2-nose.noseLength);
-		drawBody(g, offsetX, offsetY);
+		//g.rotate((Math.toRadians(this.getRotation())), position.x+offsetX, position.y+offsetY-engine1.engineHeight/2-nose.noseLength);
+		//Vector2D r_heading = heading.rotate(Math.PI/2);
+	    //if(velocity.length() > 0.008)
+	   // g.rotate(velocity.getTheta(), position.x+offsetX, position.y+offsetY-engine1.engineHeight/2-nose.noseLength);
+	    
+	    if(velocity.length() > 0.0001){
+	    	Vector2D t_heading = heading;
+	    	Vector2D t_oldheading = oldheading;
+	    	Vector2D t_velocity = velocity;
+	    	double relativeHeading = velocity.minus(t_oldheading).perp().getTheta();
+	    	//double relativeHeading = t_heading.getTheta() - t_oldheading.getTheta();
+	    	//System.out.println("c heading:" + t_heading.getTheta()*(180/Math.PI));
+	    	//System.out.println("o heading:" + t_oldheading.getTheta()*(180/Math.PI));
+	    	//System.out.println(" velocity:" + t_velocity.length());
+	    	//System.out.println("r heading:" + relativeHeading);
+	    	//double newHeading = oldheading.plus(heading).getTheta();
+		    g.rotate(relativeHeading, position.x+offsetX, position.y+offsetY-engine1.engineHeight/2-nose.noseLength);
+		   // System.out.println("old heading: " + oldheading.getTheta() + " new: " + relativeHeading);
+	    }
+	    
+	    
+	    
+	    drawBody(g, offsetX, offsetY);
 		drawEngines(g, offsetX, offsetY);
 		drawNose(g, offsetX, offsetY);
 		int sx = Math.round(getX()) + offsetX;
@@ -258,12 +281,7 @@ public class Ship extends Creature  {
 	    return (float) (engine1.engineHeight+nose.noseLength+nose.noseRadius/2);
 	}
 
-	/**
-		Gets the maximum speed of this Creature.
-	*/
-	public float getMaxSpeed() {
-	   return maxSpeed;
-	}
+
 	
 	/**
 	 * Returns the current number of hitpoints the ship has.
@@ -482,6 +500,8 @@ public class Ship extends Creature  {
 	
 	/**
 	    Updates the ships state, body, engines, nose and max speed.
+	    The ship doesn't have an animation, so we won't use the super classes
+	    animation method, we'll duplicate a little code, but i'm okay with that.
 	*/
 	public void update(long elapsedTime) {
 		//make sure totalpower pool is under the power limit.
@@ -495,8 +515,43 @@ public class Ship extends Creature  {
 		//if(state == STATE_DEAD){
 			//parent.parent.getMap().setPlayer2(null);
 		//}
-	    x += dx * elapsedTime;
-	    y += dy * elapsedTime;
+	    //x += dx * elapsedTime;
+	    //y += dy * elapsedTime;
+		//calculate the current steering force
+		
+    	Vector2D steeringForce = steering.calculate(velocity);
+    	
+    	//System.out.println("steering Force   x:" + steeringForce.x + " y:" + steeringForce.y);
+    	steeringForce.truncate(.0001);
+    	//System.out.println("steering Force   x:" + steeringForce.x + " y:" + steeringForce.y);
+    	
+    	//Acceleration = Force / Mass
+    	Vector2D acceleration = steeringForce.scalarDiv(dMass);
+    	//System.out.println("accel x:" + acceleration.x + " y:" + acceleration.y);
+    	
+    	//update velocity
+    	velocity = velocity.plus(acceleration.scalarMult(elapsedTime));
+    	//System.out.println("vel   x:" + velocity.x + " y:" + velocity.y);
+    	
+    	//make sure we do not exceed max speeds
+        velocity.truncate(dMaxSpeed);
+        //System.out.println("vel t x:" + velocity.x + " y:" + velocity.y);
+        
+        //update the position
+        position = position.plus(velocity.scalarMult(elapsedTime));
+       // System.out.println("pos   x:" + velocity.x + " y:" + velocity.y);
+        
+     // update the heading if the vehicle has a small velocity, but not too small
+        if(velocity.length() > .03){
+        	oldheading = heading;
+        	heading = velocity.unitVector();
+        	//double angle = oldheading.dotProduct(heading);
+        	//double radius = heading.length();
+        	//heading.setPolar(radius, angle);
+        	
+        }
+        side = heading.perp();
+        
 	    
 	    //check hp, if less than or = to 0 we will set state
         state = getStateFromHP(hitpoints);

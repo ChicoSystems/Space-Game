@@ -2,11 +2,9 @@ package spacegame.tilegame;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.ListIterator;
 
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
@@ -20,6 +18,7 @@ import spacegame.input.*;
 import spacegame.sound.*;
 import spacegame.test.GameCore;
 import spacegame.tilegame.sprites.*;
+import spacegame.util.Vector2D;
 
 
 /**
@@ -57,6 +56,8 @@ public class GameManager extends GameCore {
     public GameAction moveDown;
     public GameAction moveLeft;
     public GameAction moveRight;
+    public GameAction rotateLeft;
+    public GameAction rotateRight;
     public GameAction moveUp2;
     public GameAction moveDown2;
     public GameAction moveLeft2;
@@ -123,6 +124,8 @@ public class GameManager extends GameCore {
         moveDown = new GameAction("moveDown");
         moveLeft = new GameAction("moveLeft");
         moveRight = new GameAction("moveRight");
+        rotateLeft = new GameAction("rotateLeft");
+        rotateRight = new GameAction("rotateRight");
         moveUp2 = new GameAction("moveUp2");
         moveDown2 = new GameAction("moveDown2");
         moveLeft2 = new GameAction("moveLeft2");
@@ -155,12 +158,15 @@ public class GameManager extends GameCore {
         inputManager.mapToKey(moveDown, KeyEvent.VK_S);
         inputManager.mapToKey(moveLeft, KeyEvent.VK_A);
         inputManager.mapToKey(moveRight, KeyEvent.VK_D);
+        inputManager.mapToKey(rotateLeft, KeyEvent.VK_Q);
+        inputManager.mapToKey(rotateRight, KeyEvent.VK_E);
         inputManager.mapToKey(speedBoost, KeyEvent.VK_SHIFT);
         inputManager.mapToKey(fire, KeyEvent.VK_F);
         inputManager.mapToKey(menuAction, KeyEvent.VK_F1);
         inputManager.mapToMouse(shipMenuAction, InputManager.MOUSE_BUTTON_3);
         inputManager.mapToKey(exit, KeyEvent.VK_ESCAPE);
         inputManager.mapToKey(sndPlayerTurret, KeyEvent.VK_SPACE);
+       // inputManager.mapToKey(configAction, KeyEvent.VK_C);
         
         inputManager.mapToMouse(laser, InputManager.MOUSE_BUTTON_1);
     }
@@ -195,35 +201,82 @@ public class GameManager extends GameCore {
         }
 
         Ship player = (Ship)map.getPlayer();
+        ShipV2 shipV2 = (ShipV2)map.getSpriteV2().get(0);
         
         if (player.isAlive()) {
-            float velocityX = 0;
-            float velocityY = 0;
-            if (moveLeft.isPressed()) {
-                velocityX-=player.getCurrentSpeed();
+        	
+        	Vector2D steeringForce = new Vector2D(0, 0);
+        	
+        	if(rotateLeft.isPressed()){
+        		shipV2.pressRotateLeft();
+        	}else if(rotateRight.isPressed()){
+        		shipV2.pressRotateRight();
+        	}
+        	
+        	
+        	if (moveLeft.isPressed()) {
+                //velocityX-=player.getCurrentSpeed();
+        		//steeringForce = new Vector2D(-1, 0);
+        		steeringForce = steeringForce.plus(new Vector2D(-1, 0));
+        		shipV2.pressMoveLeft();
+            }else if (moveRight.isPressed()) {
+        		//steeringForce = new Vector2D(1, 0);
+            	steeringForce = steeringForce.plus(new Vector2D(1, 0));
+            	shipV2.pressMoveRight();
+            }else{
+            	//System.out.println("x:" + player.velocity.x + " y:" +player.velocity.y);
+            	//System.out.println("vel len:"+player.velocity.length());
+            	double newX = player.velocity.x / 1.5;
+            	if(Math.abs(newX) < .003 || player.velocity.length() <.02){
+            		newX = 0;
+            	}
+            	player.velocity = new Vector2D(newX, player.velocity.y);
+            	//shipV2.releaseMoveHorizontal();
             }
-            if (moveRight.isPressed()) {
-                velocityX+=player.getCurrentSpeed();
-            }
+        	
             if (moveUp.isPressed()) {
-                velocityY-=player.getCurrentSpeed();
+            	steeringForce = steeringForce.plus(new Vector2D(0, -1));
+            	//shipV2.pressMoveUp();
+            	shipV2.pressMoveForward();
+            }else if (moveDown.isPressed()) {
+            	steeringForce = steeringForce.plus(new Vector2D(0, 1));
+            	//shipV2.pressMoveDown();
+            	shipV2.pressMoveBackward();
+            }else{
+            	double newY = player.velocity.y / 1.5;
+            	if(Math.abs(newY) < .003 || player.velocity.length() <.02){
+            		newY = 0;
+            	}
+            	player.velocity = new Vector2D(player.velocity.x, newY);
+            	//shipV2.releaseMoveVertical();
             }
-            if (moveDown.isPressed()) {
-                velocityY+=player.getCurrentSpeed();
-            }
-            if (jump.isPressed()) {
-               // player.jump(false);
-            }
-            if (speedBoost.isPressed()) {
-            	player.setMaxSpeed(player.getBoostSpeed()*4);
-               // player.setCurrentSpeed(player.getBoostSpeed()*4);
+            
+        	steeringForce.truncate(player.dMaxForce*5);
+        	
+        	//Acceleration = Force / Mass
+        	Vector2D acceleration = steeringForce.scalarDiv(player.dMass);
+        	
+        	
+        	//update velocity
+        	player.velocity = player.velocity.plus(acceleration.scalarMult(elapsedTime));
+        	
+        	//make sure we do not exceed max speeds
+        	player.velocity.truncate(player.dMaxSpeed);
+        	player.setVelocity(player.getVelocity().scalarDiv(1));
+        	
+        	if (speedBoost.isPressed()) {
+            	
+        		player.dMaxSpeed = 10;
+            	//player.setVelocity(player.getVelocity().scalarMult(4));
+              
             }else if (!speedBoost.isPressed()) {
-               // player.setCurrentSpeed(player.getMaxSpeed());
-            	player.setMaxSpeed(player.getBoostSpeed());
+            	player.dMaxSpeed = 1;
+            	//player.setVelocity(player.getVelocity().scalarDiv(4));
             }
             if (fire.isPressed()) {
             	player.setX(100);
             	player.setY(100);
+            	shipV2.setPosition(new Vector2D(100,100));
                createProjectile(player);
             }
             if(laser.isPressed()) {
@@ -248,19 +301,39 @@ public class GameManager extends GameCore {
                 	menu.setMenuLocation(menu.tabbedBuildMenu, mousex+renderer.offX, mousey+renderer.offY);
             	}
             }
+        	
+        	/*
+            float velocityX = 0;
+            float velocityY = 0;
+            if (moveLeft.isPressed()) {
+                velocityX-=player.getCurrentSpeed();
+            }
+            if (moveRight.isPressed()) {
+                velocityX+=player.getCurrentSpeed();
+            }
+            if (moveUp.isPressed()) {
+                velocityY-=player.getCurrentSpeed();
+            }
+            if (moveDown.isPressed()) {
+                velocityY+=player.getCurrentSpeed();
+            }
+            if (jump.isPressed()) {
+               // player.jump(false);
+            }
+            
             double totalVel =  Math.sqrt((velocityX * velocityX)+(velocityY * velocityY));
             totalVel = (totalVel / .05);
             if(totalVel !=0){
             	player.setVelocityX((float) (velocityX/totalVel));
                 player.setVelocityY((float) (velocityY/totalVel));
-                System.out.println("vx: " + velocityX/totalVel);
-                System.out.println("vy: " + velocityY/totalVel);
+                //System.out.println("vx: " + velocityX/totalVel);
+                //System.out.println("vy: " + velocityY/totalVel);
             }else{
             	player.setVelocityX(0);
                 player.setVelocityY(0);
             }
             
-            
+            */
            
         }
         
@@ -328,7 +401,7 @@ public class GameManager extends GameCore {
 		// TODO Auto-generated method stub
     	Projectile p = (Projectile) ((Projectile) resourceManager.rocketSprites.get((int)(Math.random()*resourceManager.rocketSprites.size()))).clone();
     	p.parentId = player.id;
-        p.setRotation(player.getRotation());
+        p.setRotation((float) player.heading.perp().getTheta());
         p.setVelocityX(player.getVelocityX()*1.5f);
         p.setVelocityY(player.getVelocityY()*1.5f);
         
@@ -625,12 +698,16 @@ public boolean isCollision(Laser s1, Turret s2) {
         checkInput(elapsedTime);
 
         // update player
-        updateShip(player, elapsedTime);
+       // updateShip(player, elapsedTime);
         player.update(elapsedTime);
+        
+        // spritev2 test
+        this.getMap().getSpriteV2().get(0).update(elapsedTime);
+        
         for(int i = 0; i < map.getAIShips().size(); i++){
         	Ship player2 = null;
         	player2 = map.getAIShips().get(i);
-        	if(player2 != null)updateShip(player2, elapsedTime);
+        	//if(player2 != null)updateShip(player2, elapsedTime);
             if(player2 != null) player2.update(elapsedTime);
         }
         
@@ -814,7 +891,7 @@ public boolean isCollision(Laser s1, Turret s2) {
     private void updateCreature(Creature creature,
         long elapsedTime)
     {
-    	creature.updateRotation(elapsedTime);
+    	//creature.updateRotation(elapsedTime);
 
         // change x
         float dx = creature.getVelocityX();
@@ -866,10 +943,15 @@ public boolean isCollision(Laser s1, Turret s2) {
 	    Updates the creature, applying gravity for creatures that
 	    aren't flying, and checks collisions.
 	*/
+    /*
 	private void updateShip(Ship creature,
 	    long elapsedTime)
 	{
-		creature.updateRotation(elapsedTime);
+		//if(creature.getVelocity().length() > .00001){
+			//creature.updateHeading(elapsedTime, creature.getVelocity());
+			//creature.updateRotation(elapsedTime);
+		//}
+		
 	
 	    // change x
 	    float dx = creature.getVelocityX();
@@ -928,7 +1010,7 @@ public boolean isCollision(Laser s1, Turret s2) {
 	
 	}
 
-
+*/
     /**
         Checks for Player collision with other Sprites. If
         canKill is true, collisions with Creatures will kill

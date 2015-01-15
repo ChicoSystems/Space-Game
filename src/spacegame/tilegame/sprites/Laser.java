@@ -58,7 +58,7 @@ public class Laser extends Sprite{
 	 * @param p The object that spawn this laser.
 	 */
 	public Laser(double x1, double y1, double x2, double y2, Object p){
-		super(null);
+		super(null, null);
 		lastUpdate = System.currentTimeMillis();
 		collisionSpriteTimes = new HashMap<Sprite, Long>();
 		line = new Line2D.Double(x1, y1, x2, y2);

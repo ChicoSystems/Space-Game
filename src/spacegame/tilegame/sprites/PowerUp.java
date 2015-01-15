@@ -10,7 +10,7 @@ import spacegame.graphics.*;
 public abstract class PowerUp extends Sprite {
 
     public PowerUp(Animation anim) {
-        super(anim);
+        super(anim, null);
     }
 
 

@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import spacegame.graphics.Sprite;
+import spacegame.graphics.SpriteV2;
 import spacegame.tilegame.sprites.Creature;
 import spacegame.tilegame.sprites.Laser;
 import spacegame.tilegame.sprites.Planet;
@@ -93,6 +94,9 @@ public class TileMapRenderer {
         Ship player = map.getPlayer();
        // Ship player2 = map.getPlayer2();
         
+        //test drawing spritev2
+        SpriteV2 spriteV2 = map.getSpriteV2().get(0);
+        
         int mapWidth = tilesToPixels(map.getWidth());
         int mapHeight = tilesToPixels(map.getHeight());
 
@@ -165,6 +169,10 @@ public class TileMapRenderer {
         
         drawLasers(g, map, offsetX, offsetY);
         player.drawShip(g, offsetX, offsetY);
+        spriteV2.drawSprite(g, offsetX, offsetY);
+        
+        //Ship player2 = map.getAIShips().get(map.getAIShips().size()-1);
+        //player2.drawShip(g, offsetX, offsetY);
         for(int i = 0; i < map.getAIShips().size(); i++){
         	Ship player2 = null;
         	player2 = map.getAIShips().get(i);

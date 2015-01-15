@@ -28,7 +28,6 @@ public abstract class Creature extends Sprite {
     public static final int STATE_NORMAL = 0;
     public static final int STATE_DYING = 1;
     public static final int STATE_DEAD = 2;
-    protected float maxSpeed = 0;
     protected float currentSpeed = 0;
     protected float boostSpeed = 0;
     public double id;
@@ -49,7 +48,7 @@ public abstract class Creature extends Sprite {
     public Creature(Animation[] anim/*Animation left, Animation right,
         Animation deadLeft, Animation deadRight*/)
     {
-        super(anim[0]);
+        super(anim[0], null);
         this.creatureAnim = anim;
         /*
          * super(right);
@@ -87,14 +86,16 @@ public abstract class Creature extends Sprite {
         Gets the maximum speed of this Creature.
     */
     public float getMaxSpeed() {
-        return maxSpeed;
+       // return maxSpeed;
+       return (float) this.dMaxSpeed;
     }
     
     /**
     Gets the maximum speed of this Creature.
 	*/
 	public void setMaxSpeed(Float speed) {
-	    maxSpeed = speed;
+	   // maxSpeed = speed;
+		this.dMaxSpeed = speed;
 	}
     /**
     Gets the maximum speed of this Creature.
@@ -207,7 +208,7 @@ public abstract class Creature extends Sprite {
         newAnim = creatureAnim[(int)getRotation()];
         // update the Animation
         if (anim != newAnim) {
-            anim = newAnim;
+           anim = newAnim;
             anim.start();
         }
         else {

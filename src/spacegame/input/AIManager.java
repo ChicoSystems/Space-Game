@@ -7,12 +7,15 @@ import java.util.Random;
 import java.util.Vector;
 
 import spacegame.graphics.Sprite;
+import spacegame.graphics.SteeringBehaviors;
+import spacegame.graphics.SteeringBehaviors.Deceleration;
 import spacegame.tilegame.TileMap;
 import spacegame.tilegame.TileMapRenderer;
 import spacegame.tilegame.sprites.AIShip;
 import spacegame.tilegame.sprites.Creature;
 import spacegame.tilegame.sprites.Ship;
 import spacegame.tilegame.sprites.Turret;
+import spacegame.util.Vector2D;
 
 public class AIManager {
 	static final int STATE_DISCOVER = 0;
@@ -23,19 +26,20 @@ public class AIManager {
 	static final int STATE_GATHER = 5;
 	static final int STATE_SEARCH = 6;
 	static final int STATE_MOVETO = 7;
+	static final int STATE_TEST = 8;
+
 	
-	
-	public Creature parent;
+	public Ship parent;
 	private Creature target;
 	private Vector targetLocation;
 	private int currentState;
 	private int aggression;
 	private int areaOfInterest = 2000;
 	
-	public AIManager(Creature p){
+	public AIManager(Ship p){
 		parent = p;
 		aggression = 1;
-		currentState = STATE_DISCOVER;
+		currentState = STATE_TEST;
 	}
 	
 	public void updateAI(long timeElapsed){
@@ -52,43 +56,33 @@ public class AIManager {
 				v.add(target.getY());
 				follow(v);
 			}else if(currentState == STATE_FLEE){
-				flee(target);
+				//flee(target);
 			}else if(currentState == STATE_GATHER){
-				gather(target);
+				//gather(target);
 			}else if(currentState == STATE_SEARCH){
-				search(target);
+				//search(target);
 			}else if(currentState == STATE_MOVETO){
 				follow(targetLocation);
+			}else if(currentState == STATE_TEST){
+				ArrayList<Ship> ships = parent.parent.parent.getMap().getAIShips();
+				if(ships.indexOf(parent) == 0){ //wander
+					//parent.setVelocity(parent.steering.wander()) ;
+					parent.setVelocity(parent.steering.offsetPursuit(parent.parent.parent.getMap().getPlayer(), new Vector2D(0, 0)));
+				}else{ //pursue previous ship
+					//parent.setVelocity(parent.steering.interpose(parent.parent.parent.getMap().getPlayer(), ships.get(ships.indexOf(parent) -1)));
+					parent.setVelocity(parent.steering.offsetPursuit(ships.get(ships.indexOf(parent) -1), new Vector2D(0, 0)));
+				}
+				//	if(ships.indexOf(parent) % 2 == 0){
+				//		parent.setVelocity(parent.steering.wander());
+				//	}else{
+				//		parent.setVelocity(parent.steering.pursuit(ships.get(ships.indexOf(parent)-1)));
+				//	}
+					
+				//}
 			}
 		}
 	}
 	
-	/**
-	 * Search the map for a target.
-	 * @param target2
-	 */
-	private void search(Creature target2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * Gather Resources from a target.
-	 * @param target2
-	 */
-	private void gather(Creature target2) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	/**
-	 * Flee from a target.
-	 * @param target2
-	 */
-	private void flee(Creature target2) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	/**
 	 * Follow a target.
@@ -101,10 +95,11 @@ public class AIManager {
 		float totalDiff = (float) Math.sqrt((vectorDiffX * vectorDiffX)+(vectorDiffY * vectorDiffY));
 		totalDiff = (float) (totalDiff /.05);
 		if(totalDiff > 50){
-			System.out.println("totaldiff: " + totalDiff);
-			parent.setVelocityX(vectorDiffX/totalDiff);
-			parent.setVelocityY(vectorDiffY/totalDiff);
-			System.out.println("velx: " + parent.getVelocityX() + "vely: " + parent.getVelocityY());
+			//System.out.println("totaldiff: " + totalDiff);
+			//parent.setVelocityX(vectorDiffX/totalDiff);
+			//parent.setVelocityY(vectorDiffY/totalDiff);
+			//System.out.println("velx: " + parent.getVelocityX() + "vely: " + parent.getVelocityY());
+		parent.setVelocity(parent.steering.wander()) ;
 		}else{
 			parent.setVelocityX(0);
 			parent.setVelocityY(0);
@@ -254,5 +249,7 @@ public class AIManager {
 	private void discoverFromEngagement(Creature target2){
 		
 	}
+	
+	
 
 }
