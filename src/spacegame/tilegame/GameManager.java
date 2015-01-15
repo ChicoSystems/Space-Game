@@ -219,6 +219,7 @@ public class GameManager extends GameCore {
             		newX = 0;
             	}
             	player.velocity = new Vector2D(newX, player.velocity.y);
+            	//shipV2.releaseMoveHorizontal();
             }
         	
             if (moveUp.isPressed()) {
@@ -233,6 +234,7 @@ public class GameManager extends GameCore {
             		newY = 0;
             	}
             	player.velocity = new Vector2D(player.velocity.x, newY);
+            	//shipV2.releaseMoveVertical();
             }
             
         	steeringForce.truncate(player.dMaxForce*5);
@@ -260,6 +262,7 @@ public class GameManager extends GameCore {
             if (fire.isPressed()) {
             	player.setX(100);
             	player.setY(100);
+            	shipV2.setPosition(new Vector2D(100,100));
                createProjectile(player);
             }
             if(laser.isPressed()) {

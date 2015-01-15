@@ -13,7 +13,7 @@ import spacegame.util.Vector2D;
 public class PlayerLocManager implements LocationManager {
 	SpriteV2 parent;
 	SteeringBehaviorsV2 steering;
-	Vector2D inputVector; // Used to find players input
+	public Vector2D inputVector; // Used to find players input
 	
 	public PlayerLocManager(SpriteV2 parent){
 		this.parent = parent;
@@ -40,11 +40,11 @@ public class PlayerLocManager implements LocationManager {
 	public Vector2D calculate(double elapsedTime) {
 		// Calculate the forces on the ship containing this locationManager
 		//
-		//inputVector = inputVector.plus(steering.addFriction(.01)); // Add friction
+		//inputVector = inputVector.plus(steering.addFriction(.01/elapsedTime)); // Add friction
 		Vector2D returnVector = new Vector2D(inputVector.x, inputVector.y); 
-		//inputVector = inputVector.scalarMult(3*(elapsedTime/1000));
+		//inputVector = inputVector.scalarMult(elapsedTime);
 		//if(inputVector.length() < .00000008 && inputVector.length() != 0) inputVector = new Vector2D(0, 0); // reduce input vector over time
-	
+		inputVector = new Vector2D(0,0);
 		System.out.println(inputVector.length());
 		
 		return returnVector;
@@ -52,13 +52,15 @@ public class PlayerLocManager implements LocationManager {
 
 	
 	public void pressMoveRight() {
+		//inputVector = new Vector2D(0, inputVector.y).plus(steering.pressMoveRight());
 		inputVector = inputVector.plus(steering.pressMoveRight());
 	}
 
 	@Override
 	public void pressMoveLeft() {
+		//inputVector = new Vector2D(0, inputVector.y).plus(steering.pressMoveLeft());
 		inputVector = inputVector.plus(steering.pressMoveLeft());
-		System.out.println("playerLocMan: pressMoveLeft() " + inputVector);
+		//System.out.println("playerLocMan: pressMoveLeft() " + inputVector);
 	}
 
 	@Override
@@ -70,5 +72,6 @@ public class PlayerLocManager implements LocationManager {
 	public void pressMoveUp() {
 		inputVector = inputVector.plus(steering.pressMoveUp());
 	}
+
 
 }

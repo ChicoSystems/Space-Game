@@ -20,9 +20,9 @@ public abstract class SpriteV2 {
     /** Creates a new Sprite object with the specified Animation. */
 	public SpriteV2(ResourceManager parent) {
 		 this.parent = parent;
-		 mass = 1;
-		 maxForce = 1;
-		 maxSpeed = .1;
+		 mass = 2;
+		 maxForce = .01;
+		 maxSpeed = 5;
 		 maxTurnRate = 1;
 		 currentForce = new Vector2D(0, 0);
 		 currentAcceleration = new Vector2D(0, 0);

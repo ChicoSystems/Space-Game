@@ -228,25 +228,25 @@ public class SteeringBehaviorsV2 {
 		return newVel;
 	}
 
-	public static Vector2D pressMoveRight() {
+	public Vector2D pressMoveRight() {
 		return new Vector2D(1, 0);
 	}
 	
-	public static Vector2D pressMoveLeft() {
+	public Vector2D pressMoveLeft() {
 		return new Vector2D(-1, 0);
 	}
 	
-	public static Vector2D pressMoveUp() {
+	public Vector2D pressMoveUp() {
 		return new Vector2D(0, -1);
 	}
 	
-	public static Vector2D pressMoveDown() {
+	public Vector2D pressMoveDown() {
 		return new Vector2D(0, 1);
 	}
 
 	public Vector2D addFriction(double fricCoeff){
 		//vector 180's different from velocity, scaled by the fricCoeff, which should be < 1
-		Vector2D fricVector = parent.velocity.rotate(Math.PI).scalarMult(fricCoeff);
+		Vector2D fricVector = parent.velocity.rotate(Math.PI).unitVector();
 		return fricVector;
 	}
 
