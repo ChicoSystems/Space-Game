@@ -37,12 +37,17 @@ public class PlayerLocManager implements LocationManager {
 		this.steering = steering;
 	}
 
-	public Vector2D calculate() {
+	public Vector2D calculate(double elapsedTime) {
 		// Calculate the forces on the ship containing this locationManager
-		Vector2D returnVector = new Vector2D(inputVector.x, inputVector.y);
-		inputVector = new Vector2D(0, 0);
+		//
+		//inputVector = inputVector.plus(steering.addFriction(.01)); // Add friction
+		Vector2D returnVector = new Vector2D(inputVector.x, inputVector.y); 
+		//inputVector = inputVector.scalarMult(3*(elapsedTime/1000));
+		//if(inputVector.length() < .00000008 && inputVector.length() != 0) inputVector = new Vector2D(0, 0); // reduce input vector over time
+	
+		System.out.println(inputVector.length());
+		
 		return returnVector;
-		//return new Vector2D(0, 0);
 	}
 
 	

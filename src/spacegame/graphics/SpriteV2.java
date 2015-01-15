@@ -1,7 +1,6 @@
 package spacegame.graphics;
 import java.awt.Graphics2D;
 
-import spacegame.input.LocationManager;
 import spacegame.tilegame.ResourceManager;
 import spacegame.util.Vector2D;
 
@@ -23,7 +22,7 @@ public abstract class SpriteV2 {
 		 this.parent = parent;
 		 mass = 1;
 		 maxForce = 1;
-		 maxSpeed = 1;
+		 maxSpeed = .1;
 		 maxTurnRate = 1;
 		 currentForce = new Vector2D(0, 0);
 		 currentAcceleration = new Vector2D(0, 0);

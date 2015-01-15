@@ -8,7 +8,7 @@ import spacegame.util.Vector2D;
  *
  */
 public interface LocationManager {
-	Vector2D calculate();
+	Vector2D calculate(double elapsedTime);
 	public SteeringBehaviorsV2 getSteering();
 	public void setSteering(SteeringBehaviorsV2 steering);
 	void pressMoveRight();

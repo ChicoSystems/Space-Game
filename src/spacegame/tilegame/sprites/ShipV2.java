@@ -31,13 +31,13 @@ public class ShipV2 extends SpriteV2 {
 	}
 
 	protected void updateLocation(double elapsedTime) {
-		currentForce = locMan.calculate(); // Update the applied forces.
-		currentForce.truncate(maxForce); // Reduce force if it's over max.
+		currentForce = locMan.calculate(elapsedTime); // Update the applied forces.
+		//currentForce.truncate(maxForce); // Reduce force if it's over max.
 		currentAcceleration = currentForce.scalarDiv(mass); // calculate acceleration
 		currentAcceleration = currentAcceleration.scalarMult(elapsedTime); //Reduce acceleration over time passed
     	velocity = velocity.plus(currentAcceleration);//update velocity
     	velocity.truncate(maxSpeed); //Limit velocity based on maxSpeed.
-    	velocity = velocity.scalarMult(elapsedTime); //Reduce velocity based on time passed.
+    	//velocity = velocity.scalarMult(2*(elapsedTime)); //Reduce velocity based on time passed.
         position = position.plus(velocity); //Update position based on velocity.
 	}
 
