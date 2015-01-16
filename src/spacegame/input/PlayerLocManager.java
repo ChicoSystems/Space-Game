@@ -69,16 +69,6 @@ public class PlayerLocManager implements LocationManager {
 		inputVector = inputVector.plus(steering.pressMoveLeft());
 		//System.out.println("playerLocMan: pressMoveLeft() " + inputVector);
 	}
-
-	@Override
-	public void pressMoveDown() {
-		inputVector = inputVector.plus(steering.pressMoveDown());
-	}
-
-	@Override
-	public void pressMoveUp() {
-		inputVector = inputVector.plus(steering.pressMoveUp());
-	}
 	
 	public void pressRotateRight(){
 		inputTorque = inputTorque + steering.pressRotateRight();

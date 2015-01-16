@@ -117,14 +117,6 @@ public class ShipV2 extends SpriteV2 {
 		g.drawString("headi: "+ heading, 5, 250);
 	}
 	
-	public void pressMoveUp(){
-		locMan.pressMoveUp();
-	}
-	
-	public void pressMoveDown(){
-		locMan.pressMoveDown();
-	}
-	
 	public void pressMoveLeft(){
 		locMan.pressMoveLeft();
 	}

@@ -13,7 +13,7 @@ import spacegame.graphics.Animation;
 public class Planet extends Creature {
 	
 	
-	public static final int POWER_TO_SIZE = 1000;
+	public static final int POWER_TO_SIZE = 700;
 	String name;
 	double totalPower;
 	int planetType;

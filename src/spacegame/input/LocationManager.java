@@ -14,8 +14,6 @@ public interface LocationManager {
 	public double calculateTorque(double elapsedTime);
 	void pressMoveRight();
 	void pressMoveLeft();
-	void pressMoveDown();
-	void pressMoveUp();
 	public void pressRotateLeft();
 	public void pressRotateRight();
 	void pressMoveForward();
