@@ -14,6 +14,7 @@ import spacegame.tilegame.sprites.Creature;
 import spacegame.tilegame.sprites.Laser;
 import spacegame.tilegame.sprites.Planet;
 import spacegame.tilegame.sprites.Ship;
+import spacegame.tilegame.sprites.ShipV2;
 import spacegame.tilegame.sprites.Turret;
 
 
@@ -91,11 +92,12 @@ public class TileMapRenderer {
     public void draw(Graphics2D g, TileMap map,
         int screenWidth, int screenHeight)
     {
-        Ship player = map.getPlayer();
+        //Ship player = map.getPlayer(); //former way to get player
        // Ship player2 = map.getPlayer2();
         
         //test drawing spritev2
-        SpriteV2 spriteV2 = map.getSpriteV2().get(0);
+        //SpriteV2 spriteV2 = map.getSpriteV2().get(0);
+    	SpriteV2 player = map.getPlayer();
         
         int mapWidth = tilesToPixels(map.getWidth());
         int mapHeight = tilesToPixels(map.getHeight());
@@ -103,13 +105,13 @@ public class TileMapRenderer {
         // get the scrolling position of the map
         // based on player's position
         int offsetX = (int) (screenWidth / 2 -
-            Math.round(spriteV2.getPosition().x) - TILE_SIZE);
+            Math.round(player.getPosition().x) - TILE_SIZE);
         offsetX = Math.min(offsetX, 0);
         offsetX = Math.max(offsetX, screenWidth - mapWidth);
 
         // get the y offset to draw all sprites and tiles
         int offsetY = (int) (screenHeight / 2 -
-                Math.round(spriteV2.getPosition().y) - TILE_SIZE);
+                Math.round(player.getPosition().y) - TILE_SIZE);
             offsetY = Math.min(offsetY, 0);
             offsetY = Math.max(offsetY, screenHeight - mapHeight);
 
@@ -168,8 +170,8 @@ public class TileMapRenderer {
         }
         
         drawLasers(g, map, offsetX, offsetY);
-        player.drawShip(g, offsetX, offsetY);
-        spriteV2.drawSprite(g, offsetX, offsetY);
+        // player.drawShip(g, offsetX, offsetY); // old way to draw the ship
+        player.drawSprite(g, offsetX, offsetY);
         
         //Ship player2 = map.getAIShips().get(map.getAIShips().size()-1);
         //player2.drawShip(g, offsetX, offsetY);

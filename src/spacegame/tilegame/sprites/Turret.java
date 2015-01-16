@@ -110,8 +110,10 @@ public class Turret extends Creature  {
 	 * @return The newly aquired target, null if no target available.
 	 */
 	private Sprite aquireTarget(){
+		
 		//add player to a new list of sprites so we can check for targets.
 		Sprite newTarget = null;
+		/*
 		Sprite o = map.getPlayer();
 		ArrayList <Ship>aiShips = map.getAIShips();
 		LinkedList<Sprite>possibleTargets = (LinkedList<Sprite>) map.getSprites().clone();
@@ -141,7 +143,7 @@ public class Turret extends Creature  {
 			}
 		}else if(newTarget == null){
 			bodyColor = Color.white;
-		}
+		}*/
 		return newTarget;
 	}
 	

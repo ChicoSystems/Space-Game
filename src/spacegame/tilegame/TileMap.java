@@ -28,7 +28,7 @@ public class TileMap {
     private Image[][] tiles;
     private LinkedList sprites;
     private ArrayList <Laser> lasers;
-    private Ship player;
+    private SpriteV2 player;
     private ArrayList <Ship> aiShips;
     private ArrayList <SpriteV2> spritev2;
 
@@ -101,7 +101,7 @@ public class TileMap {
     /**
         Gets the player Sprite.
     */
-    public Ship getPlayer() {
+    public SpriteV2 getPlayer() {
         return player;
     }
 
@@ -109,7 +109,7 @@ public class TileMap {
     /**
         Sets the player Sprite.
     */
-    public void setPlayer(Ship player) {
+    public void setPlayer(SpriteV2 player) {
         this.player = player;
     }
     

@@ -200,97 +200,93 @@ public class GameManager extends GameCore {
         	menu.displayMainMenu = !menu.displayMainMenu;
         }
 
-        Ship player = (Ship)map.getPlayer();
-        ShipV2 shipV2 = (ShipV2)map.getSpriteV2().get(0);
+        //Ship player = (Ship)map.getPlayer(); //old reference to player
+        ShipV2 player = (ShipV2)map.getPlayer();
         
         if (player.isAlive()) {
         	
-        	Vector2D steeringForce = new Vector2D(0, 0);
+        	//Vector2D steeringForce = new Vector2D(0, 0); //used by old way to update ship
         	
         	if(rotateLeft.isPressed()){
-        		shipV2.pressRotateLeft();
+        		player.pressRotateLeft();
         	}else if(rotateRight.isPressed()){
-        		shipV2.pressRotateRight();
+        		player.pressRotateRight();
         	}
-        	
         	
         	if (moveLeft.isPressed()) {
                 //velocityX-=player.getCurrentSpeed();
         		//steeringForce = new Vector2D(-1, 0);
-        		steeringForce = steeringForce.plus(new Vector2D(-1, 0));
-        		shipV2.pressMoveLeft();
+        		//steeringForce = steeringForce.plus(new Vector2D(-1, 0)); //old way to steer ship
+        		player.pressMoveLeft(); //New way to steer ship
             }else if (moveRight.isPressed()) {
         		//steeringForce = new Vector2D(1, 0);
-            	steeringForce = steeringForce.plus(new Vector2D(1, 0));
-            	shipV2.pressMoveRight();
+            	//steeringForce = steeringForce.plus(new Vector2D(1, 0));//old way to steer ship
+            	player.pressMoveRight(); // New way to steer ship
             }else{
             	//System.out.println("x:" + player.velocity.x + " y:" +player.velocity.y);
             	//System.out.println("vel len:"+player.velocity.length());
+            	/* Old way to slow down ship
             	double newX = player.velocity.x / 1.5;
             	if(Math.abs(newX) < .003 || player.velocity.length() <.02){
             		newX = 0;
             	}
             	player.velocity = new Vector2D(newX, player.velocity.y);
+            	*/
             	//shipV2.releaseMoveHorizontal();
             }
         	
             if (moveUp.isPressed()) {
-            	steeringForce = steeringForce.plus(new Vector2D(0, -1));
+            	//steeringForce = steeringForce.plus(new Vector2D(0, -1));//old way to steer ship
             	//shipV2.pressMoveUp();
-            	shipV2.pressMoveForward();
+            	player.pressMoveForward(); // New way to steer the ship
             }else if (moveDown.isPressed()) {
-            	steeringForce = steeringForce.plus(new Vector2D(0, 1));
+            	//steeringForce = steeringForce.plus(new Vector2D(0, 1));//old way to steer ship
             	//shipV2.pressMoveDown();
-            	shipV2.pressMoveBackward();
+            	player.pressMoveBackward(); //New way to steer the ship
             }else{
+            	/* Old way to add friction
             	double newY = player.velocity.y / 1.5;
             	if(Math.abs(newY) < .003 || player.velocity.length() <.02){
             		newY = 0;
             	}
             	player.velocity = new Vector2D(player.velocity.x, newY);
+            	*/
             	//shipV2.releaseMoveVertical();
             }
             
-        	steeringForce.truncate(player.dMaxForce*5);
+        	//steeringForce.truncate(player.dMaxForce*5); //old way to limit steering force
         	
         	//Acceleration = Force / Mass
-        	Vector2D acceleration = steeringForce.scalarDiv(player.dMass);
+        	//Vector2D acceleration = steeringForce.scalarDiv(player.dMass); //Old way to update acceleration
         	
         	
         	//update velocity
-        	player.velocity = player.velocity.plus(acceleration.scalarMult(elapsedTime));
+        	//player.velocity = player.velocity.plus(acceleration.scalarMult(elapsedTime)); //old way to update velocity
         	
         	//make sure we do not exceed max speeds
-        	player.velocity.truncate(player.dMaxSpeed);
-        	player.setVelocity(player.getVelocity().scalarDiv(1));
+        	//player.velocity.truncate(player.dMaxSpeed); // old way to limit velocity
+        	//player.setVelocity(player.getVelocity().scalarDiv(1)); //old way to set velocity
         	
         	if (speedBoost.isPressed()) {
-            	(shipV2.getLocMan()).getSteering().currentImpulseScalar = (shipV2.getLocMan()).getSteering().impulseScalar*3;
-        		//player.dMaxSpeed = 10;
-        		//shipV2.setMaxSpeed(20);
-        		//shipV2.setMaxForce(.1);
-            	//player.setVelocity(player.getVelocity().scalarMult(4));
+            	(player.getLocMan()).getSteering().currentImpulseScalar = (player.getLocMan()).getSteering().impulseScalar*3;
               
             }else if (!speedBoost.isPressed()) {
-            	(shipV2.getLocMan()).getSteering().currentImpulseScalar = (shipV2.getLocMan()).getSteering().impulseScalar;
-            	//player.dMaxSpeed = 1;
-            	//shipV2.setMaxSpeed(5);
-            	//shipV2.setMaxForce(.01);
-            	//player.setVelocity(player.getVelocity().scalarDiv(4));
+            	(player.getLocMan()).getSteering().currentImpulseScalar = (player.getLocMan()).getSteering().impulseScalar;
             }
             if (fire.isPressed()) {
-            	player.setX(100);
-            	player.setY(100);
-            	shipV2.setPosition(new Vector2D(100,100));
-               createProjectile(player);
+            	//player.setX(100);
+            	//player.setY(100);
+            	player.setPosition(new Vector2D(100,100));
+               //createProjectile(player);
             }
             if(laser.isPressed()) {
                 createLaser(player, inputManager.getMouseX(), inputManager.getMouseY());
             }else{
-            	destroyLaser(player); 
+            	//destroyLaser(player); 
             }
             
             if(shipMenuAction.isPressed()){
+            	/*
             	//menu.displayMainMenu = !menu.displayMainMenu;
             	int mousex = inputManager.getMouseX()-renderer.offX;
             	int mousey = inputManager.getMouseY()-renderer.offY;
@@ -304,7 +300,7 @@ public class GameManager extends GameCore {
             		if(menu.tabbedShipMenu.isVisible())menu.tabbedShipMenu.setVisible(false);
             		menu.tabbedBuildMenu.setVisible(!menu.tabbedBuildMenu.isVisible());
                 	menu.setMenuLocation(menu.tabbedBuildMenu, mousex+renderer.offX, mousey+renderer.offY);
-            	}
+            	}*/
             }
         	
         	/*
@@ -366,19 +362,21 @@ public class GameManager extends GameCore {
 
     }
     
-    private void createLaser(Ship player, int xTarget, int yTarget) {
+    private void createLaser(ShipV2 player, int xTarget, int yTarget) {
     	if(map.laserExists(player)){
     		//do nothing there is already a laser for this player.
     	}else{
     		//this player does not already have a laser, it is being added.
+    		/*
     		map.addLaser((float)player.getNose().noseX,
     					(float)player.getNose().noseY, 
    				 		// (player.getX()+xTarget-(screen.getWidth()/2))+player.getWidth(), 
    				 		 //(player.getY()+yTarget-(screen.getHeight()/2))+player.getHeight(), 
     					(float)((xTarget)+player.getNose().noseX), 
     					(float)((yTarget)+player.getNose().noseY), 
-   				player);
+   				player);*/
     	}
+    	
     }
     
     private void createLaser(Turret t) {
@@ -687,17 +685,17 @@ public boolean isCollision(Laser s1, Turret s2) {
     */
     public void update(long elapsedTime) {
     	
-        Ship player = (Ship)map.getPlayer();
+        ShipV2 player = (ShipV2)map.getPlayer();
         JTabbedPane tabbelShipMenu = menu.tabbedShipMenu;
-        JPanel sliderMenu = ((JPanel)menu.tabbedShipMenu.getComponent(0));
-        menu.updateShipSliders(sliderMenu);
+        //JPanel sliderMenu = ((JPanel)menu.tabbedShipMenu.getComponent(0));
+        //menu.updateShipSliders(sliderMenu);
 
-
+        /* don't plan on doing this now
         // player is dead! start map over
         if (player.getState() == Creature.STATE_DEAD) {
             map = resourceManager.reloadMap();
             return;
-        }
+        }*/
 
         // get keyboard/mouse input
         checkInput(elapsedTime);
@@ -707,17 +705,19 @@ public boolean isCollision(Laser s1, Turret s2) {
         player.update(elapsedTime);
         
         // spritev2 test
-        this.getMap().getSpriteV2().get(0).update(elapsedTime);
+        //this.getMap().getSpriteV2().get(0).update(elapsedTime);
         
+        /* ai ships are going to be represented in the main sprite list
         for(int i = 0; i < map.getAIShips().size(); i++){
         	Ship player2 = null;
         	player2 = map.getAIShips().get(i);
         	//if(player2 != null)updateShip(player2, elapsedTime);
             if(player2 != null) player2.update(elapsedTime);
         }
+        */
         
         
-        updateLasers();
+        //updateLasers(); // not worrying about lasers right now
 
         // update other sprites
         //ListIterator i = (ListIterator) map.getSprites();
@@ -795,7 +795,7 @@ public boolean isCollision(Laser s1, Turret s2) {
         //Iterator i = map.getSprites();
     	LinkedList <Sprite> oldSprites = map.getSprites();
     	LinkedList <Sprite> sprites = (LinkedList<Sprite>) oldSprites.clone();
-    	sprites.add(map.getPlayer());
+    	//sprites.add(map.getPlayer()); Not doing this right now
     	for(int i = 0; i < map.getAIShips().size(); i++){
     		sprites.add(map.getAIShips().get(i));
     	}
