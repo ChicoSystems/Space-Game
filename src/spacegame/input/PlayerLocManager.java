@@ -122,14 +122,9 @@ public class PlayerLocManager implements LocationManager {
 				}else if(distance <= 9){
 					parent.setVelocity(parent.getVelocity().scalarMult(-.5));
 				}
-				
 			}
 		}
 		force = force.scalarMult(elapsedTime/1000);
 		return force;
 	}
-	
-	
-
-
 }
