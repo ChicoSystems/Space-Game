@@ -23,6 +23,14 @@ public class ShipV2 extends SpriteV2 {
 	public Ellipse2D.Double body;
 	protected LocationManager locMan;
 
+	public LocationManager getLocMan() {
+		return locMan;
+	}
+
+	public void setLocMan(LocationManager locMan) {
+		this.locMan = locMan;
+	}
+
 	public ShipV2(ResourceManager parent, int type) {
 		super(parent);
 		body = new Ellipse2D.Double();
@@ -36,7 +44,9 @@ public class ShipV2 extends SpriteV2 {
 	protected void updateLocation(double elapsedTime) {
 		currentForce = locMan.calculate(elapsedTime); // Update the applied forces.
 		currentForce = currentForce.plus(locMan.calculateGravity(elapsedTime));
-		currentForce.truncate(maxForce); // Reduce force if it's over max.
+		double forceReduction = 1; // makes orbits more graceful
+		this.currentForce = currentForce.scalarMult(forceReduction*(elapsedTime/1000)); //scale forces by time
+		//currentForce.truncate(maxForce); // Reduce force if it's over max.
 		currentAcceleration = currentForce.scalarDiv(mass); // calculate acceleration
 		currentAcceleration = currentAcceleration.scalarMult(elapsedTime); //Reduce acceleration over time passed
 		//velocity = velocity.scalarMult(elapsedTime/1000); //Reduce acceleration over time passed
@@ -44,11 +54,12 @@ public class ShipV2 extends SpriteV2 {
     	//apply friction get the tanget from the normal (perp vector)
     	Vector2D tangent = velocity.unitVector().perp().perp();
 		// compute the tangential velocity, scale by friction
-    	double tv = velocity.dotProduct(tangent)*.3*(elapsedTime/1000);
+    	double frictionConstant = .5;
+    	double tv = velocity.dotProduct(tangent)*frictionConstant*(elapsedTime/1000);
 		// subtract that from the main velocity
     	velocity = velocity.minus(tangent.scalarMult(tv));
     	if(velocity.length() < .001)velocity = new Vector2D(0,0); //stop velocity if it's to slow
-    	velocity.truncate(maxSpeed); //Limit velocity based on maxSpeed.
+    	//velocity.truncate(maxSpeed); //Limit velocity based on maxSpeed.
     	//update rotation
     	torque = locMan.calculateTorque(elapsedTime);	
     	angularAcceleration = torque / (mass/2); 
@@ -60,6 +71,8 @@ public class ShipV2 extends SpriteV2 {
     	heading.setPolar(1, orientation-Math.PI/2);
     	
         position = position.plus(velocity); //Update position based on velocity.
+        
+        
 	}
 
 	public void drawSprite(Graphics2D g, int offsetX, int offsetY) {

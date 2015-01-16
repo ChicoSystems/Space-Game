@@ -8,6 +8,8 @@ import spacegame.util.Vector2D;
 
 public class SteeringBehaviorsV2 {
 	protected SpriteV2 parent;
+	public double impulseScalar = .5;
+	public double currentImpulseScalar = impulseScalar;
 	Random r;// = new Random(System.currentTimeMillis());
 	
 	public static enum Deceleration {
@@ -230,12 +232,12 @@ public class SteeringBehaviorsV2 {
 
 	public Vector2D pressMoveRight() {
 		//return new Vector2D(1, 0);
-		return parent.heading.perp().unitVector(); // one perp makes a right
+		return parent.heading.perp().unitVector().scalarMult(currentImpulseScalar); // one perp makes a right
 	}
 	
 	public Vector2D pressMoveLeft() {
 		//return new Vector2D(-1, 0);
-		return parent.heading.perp().perp().perp().unitVector(); // three perps makes a left
+		return parent.heading.perp().perp().perp().unitVector().scalarMult(currentImpulseScalar); // three perps makes a left
 	}
 	
 	public Vector2D pressMoveUp() {
@@ -247,11 +249,11 @@ public class SteeringBehaviorsV2 {
 	}
 	
 	public Vector2D pressMoveForward() {
-		return parent.heading.unitVector();
+		return parent.heading.unitVector().scalarMult(currentImpulseScalar);
 	}
 	
 	public Vector2D pressMoveBackward() {
-		return parent.heading.perp().perp().unitVector(); // to perps makes a backwards;
+		return parent.heading.perp().perp().unitVector().scalarMult(currentImpulseScalar); // to perps makes a backwards;
 	}
 	
 	public double pressRotateRight(){

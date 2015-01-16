@@ -89,11 +89,11 @@ public class PlayerLocManager implements LocationManager {
 	}
 
 	public void pressMoveForward() {
-		inputVector = inputVector.minus(steering.pressMoveForward()).unitVector();
+		inputVector = inputVector.minus(steering.pressMoveForward());
 	}
 
 	public void pressMoveBackward() {
-		inputVector = inputVector.minus(steering.pressMoveBackward()).unitVector();
+		inputVector = inputVector.minus(steering.pressMoveBackward());
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class PlayerLocManager implements LocationManager {
 		for(int i = 0; i < sprites.size(); i++){ // Add all sprites that are planets
 			if(sprites.get(i) instanceof Planet){
 				Planet p = (Planet)sprites.get(i);
-				double g = .002;
+				double g = .08;
 				double pMass = p.dMass;
 				double sMass = parent.getMass();
 				Vector2D pCenter = p.getPosition().plus(new Vector2D(p.getWidth()/2, p.getHeight()/2));
@@ -111,17 +111,21 @@ public class PlayerLocManager implements LocationManager {
 				double distanceSQ = sCenter.distanceSq(pCenter); //the new vector offsets the position so we orbit around the center of the planet
 				double distance = sCenter.distance(pCenter);
 				double pRadius = p.circle.getBounds().height/2;
-				if(distance > 25 && distance < pRadius){ // don't calculate if too close, or too far
+				
+				//this part allow the ship to settle into the planet and stop
+				if(distance > 35 && distance < pRadius){ // don't calculate if too close, or too far
 					Vector2D preForce = new Vector2D(0,0);
 					preForce = (pCenter.minus(sCenter));
 					preForce = preForce.scalarMult(g * pMass * sMass);
 					preForce = preForce.scalarDiv(distanceSQ);
 					force = force.plus(preForce);
+				}else if(distance <= 9){
+					parent.setVelocity(parent.getVelocity().scalarMult(-.5));
 				}
 				
 			}
 		}
-		//force = force.scalarMult(elapsedTime);
+		force = force.scalarMult(elapsedTime/1000);
 		return force;
 	}
 	

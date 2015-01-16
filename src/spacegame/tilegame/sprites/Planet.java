@@ -83,7 +83,7 @@ public class Planet extends Creature {
 		if(this.totalPower <= 0)this.setState(STATE_DEAD);
 		
 		//update planet mass bbased on planet power
-		dMass = totalPower / 100;
+		dMass = totalPower / 50;
 		
 		double newWidth = totalPower()/Planet.POWER_TO_SIZE+50;
 		double newHeight = totalPower()/Planet.POWER_TO_SIZE+50;

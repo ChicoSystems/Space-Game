@@ -27,8 +27,8 @@ public abstract class SpriteV2 {
 	public SpriteV2(ResourceManager parent) {
 		 this.parent = parent;
 		 mass = 2;
-		 maxForce = .01;
-		 maxSpeed = 5;
+		 maxForce = 1;
+		 maxSpeed = 50;
 		 maxTurnRate = 1;
 		 currentForce = new Vector2D(0, 0);
 		 currentAcceleration = new Vector2D(0, 0);
