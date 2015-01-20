@@ -1,5 +1,6 @@
 package spacegame.tilegame;
 
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
@@ -287,6 +288,26 @@ public class TileMap {
 		
 				float distance = (float) Math.sqrt(((x2-x1)*(x2-x1)) + ((y2-y1)*(y2-y1)));
 				return distance;
+	}
+
+	/**
+	 * Updates all the new sprites
+	 * @param elapsedTime
+	 */
+	public void updateSpriteV2(long elapsedTime) {
+		for(int i = 0; i < spritev2.size(); i++){
+			spritev2.get(i).update(elapsedTime);
+		}
+	}
+
+	public void drawSprites(Graphics2D g, int offsetX, int offsetY) {
+		for(int i = 0; i < spritev2.size(); i++){
+			spritev2.get(i).drawSprite(g, offsetX, offsetY);
+		}
+	}
+
+	public void setSpriteV2s(ArrayList<SpriteV2> arrayList) {
+		spritev2 = arrayList;
 	}
 
 

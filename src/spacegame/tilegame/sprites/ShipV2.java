@@ -10,6 +10,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 
 import spacegame.graphics.SpriteV2;
+import spacegame.input.AILocManager;
 import spacegame.input.LocationManager;
 import spacegame.input.PlayerLocManager;
 import spacegame.tilegame.ResourceManager;
@@ -22,6 +23,7 @@ import spacegame.util.Vector2D;
 public class ShipV2 extends SpriteV2 {
 	public Ellipse2D.Double body;
 	protected LocationManager locMan;
+	int type; //0 if player controlled
 
 	public LocationManager getLocMan() {
 		return locMan;
@@ -33,11 +35,12 @@ public class ShipV2 extends SpriteV2 {
 
 	public ShipV2(ResourceManager parent, int type) {
 		super(parent);
+		this.type = type;
 		body = new Ellipse2D.Double();
 		if(type == 0){
 			locMan = new PlayerLocManager(this);
 		}else{
-			locMan = new PlayerLocManager(this); // we'll need to change this line to an ai manager
+			locMan = new AILocManager(this); // we'll need to change this line to an ai manager
 		}	
 	}
 
@@ -105,16 +108,19 @@ public class ShipV2 extends SpriteV2 {
 	}
 	
 	public void drawTestGui(Graphics2D g){
-		g.drawString("input: "+ ((PlayerLocManager)locMan).inputVector, 5, 25);
-		g.drawString("force: "+ currentForce, 5, 50	);
-		g.drawString("accel: "+ currentAcceleration, 5, 75	);
-		g.drawString("veloc: "+ velocity, 5, 100	);
-		g.drawString("posit: "+ position, 5, 125	);
-		g.drawString("torqu: "+ torque, 5, 150);
-		g.drawString("angAC: "+ angularAcceleration, 5, 175);
-		g.drawString("angVL: "+ angularVelocity, 5, 200);
-		g.drawString("orien: "+ orientation*180/Math.PI, 5, 225);
-		g.drawString("headi: "+ heading, 5, 250);
+		if(this.type != 0){
+			//g.drawString("input: "+ ((PlayerLocManager)locMan).inputVector, 5, 25);
+			g.drawString("force: "+ currentForce, 5, 50	);
+			g.drawString("accel: "+ currentAcceleration, 5, 75	);
+			g.drawString("veloc: "+ velocity, 5, 100	);
+			g.drawString("posit: "+ position, 5, 125	);
+			g.drawString("torqu: "+ torque, 5, 150);
+			g.drawString("angAC: "+ angularAcceleration, 5, 175);
+			g.drawString("angVL: "+ angularVelocity, 5, 200);
+			g.drawString("orien: "+ orientation*180/Math.PI, 5, 225);
+			g.drawString("headi: "+ heading, 5, 250);
+		}
+		
 	}
 	
 	public void pressMoveLeft(){

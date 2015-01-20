@@ -1,6 +1,8 @@
 package spacegame.tilegame;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Arc2D;
 import java.awt.geom.Line2D;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -98,6 +100,8 @@ public class TileMapRenderer {
         //test drawing spritev2
         //SpriteV2 spriteV2 = map.getSpriteV2().get(0);
     	SpriteV2 player = map.getPlayer();
+    	
+    	
         
         int mapWidth = tilesToPixels(map.getWidth());
         int mapHeight = tilesToPixels(map.getHeight());
@@ -124,6 +128,8 @@ public class TileMapRenderer {
             g.setColor(Color.black);
             g.fillRect(0, 0, screenWidth, screenHeight);
         }
+        
+     
 
         // draw parallax background image
         if (background != null) {
@@ -136,6 +142,18 @@ public class TileMapRenderer {
 
             g.drawImage(background, x, y, null);
         }
+        
+     // Save the current transform of the graphics contexts.
+	    AffineTransform saveTransform = g.getTransform();
+	   // AffineTransform tx = new AffineTransform();
+
+	    //tx.translate(10,10); //10, 10 is height and width of img divide by 2
+	   // tx.translate((int)player.getPosition().x+offsetX, (int)player.getPosition().y+offsetY);
+	    
+	   // tx.rotate(player.getHeading().getTheta());
+	   // tx.translate(player.getPosition().x, -player.getPosition().y);
+	   // g.setTransform(tx);
+	    //tx.translate(-10,-10); 
 
         // draw the visible tiles
         int firstTileX = pixelsToTiles(-offsetX);
@@ -171,7 +189,8 @@ public class TileMapRenderer {
         
         drawLasers(g, map, offsetX, offsetY);
         // player.drawShip(g, offsetX, offsetY); // old way to draw the ship
-        player.drawSprite(g, offsetX, offsetY);
+        
+        map.drawSprites(g, offsetX, offsetY);
         
         //Ship player2 = map.getAIShips().get(map.getAIShips().size()-1);
         //player2.drawShip(g, offsetX, offsetY);
@@ -208,9 +227,26 @@ public class TileMapRenderer {
             	g.drawString(tPower, sx-sprite.getWidth()/2, sy);
             	//g.drawArc((int)(centerX), (int)(centerY), (int)newWidth, (int)newHeight, 0, 360);
             	
+            	
             	Color saveColor = g.getColor();
+            	Color centerColor = new Color(p.color.getRed(), p.color.getGreen(), p.color.getBlue(), 130);
+            	Color edgeColor = new Color(p.color.getRed(), p.color.getGreen(), p.color.getBlue(), 1);
+            	double radius = newWidth;
+               // double xP = //(p.getWidth() - radius) / 2;
+               // double yP = //(p.getHeight() - radius) / 2;
+                RadialGradientPaint rgp = new RadialGradientPaint(
+                                new Point((int)(centerX+radius/2), (int)(centerY+radius/2)),
+                                (float) radius,
+                                new float[]{.01f, .5f},
+                                new Color[]{centerColor, edgeColor}
+                                );
+                g.setPaint(rgp);
+                g.fill(new Arc2D.Float((int)(centerX), (int)(centerY), (int)radius, (int)radius, 0, 360, Arc2D.PIE));
+            	
+            	
+            	
             	g.setColor(p.color);
-            	g.fillArc((int)(centerX), (int)(centerY), (int)newWidth, (int)newHeight, 0, 360);
+            	//g.fillArc((int)(centerX), (int)(centerY), (int)newWidth, (int)newHeight, 0, 360);
             	g.setColor(saveColor);
             }
             
@@ -235,6 +271,9 @@ public class TileMapRenderer {
                 ((Creature)sprite).wakeUp();
             } 
         }
+        g.setTransform(saveTransform);
+        g.drawString("test", (int)player.getPosition().x+offsetX, (int)player.getPosition().y+offsetY);
+        player.drawSprite(g, offsetX, offsetY);
     }
     
     private void drawLasers(Graphics2D g, TileMap map, int offsetX, int offsetY){

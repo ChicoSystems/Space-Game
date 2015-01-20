@@ -37,6 +37,8 @@ public class SteeringBehaviorsV2 {
 		Vector2D desiredVelocity = targetPos.minus(parent.getPosition()).scalarMult(parent.getMaxSpeed());
 		desiredVelocity = desiredVelocity.minus(parent.getVelocity());
 		desiredVelocity.truncate(parent.getMaxSpeed());
+		desiredVelocity = desiredVelocity.unitVector().scalarMult(currentImpulseScalar);
+		//System.out.println("seek");
 		return desiredVelocity.minus(parent.getVelocity());
 	}
 	
@@ -80,24 +82,24 @@ public class SteeringBehaviorsV2 {
 	}
 	
 	/** Pursuit behavior */
-	public Vector2D pursuit(Sprite target){
-		Vector2D toTarget = target.getPosition().minus(parent.getPosition());
-		double relativeHeading = parent.heading.dotProduct(target.heading);
+	public Vector2D pursuit(SpriteV2 spriteV2){
+		Vector2D toTarget = spriteV2.getPosition().minus(parent.getPosition());
+		double relativeHeading = parent.heading.dotProduct(spriteV2.heading);
 		
 		if( (toTarget.dotProduct(parent.heading) > 0) && (relativeHeading < -0.95)	){
-			return seek(target.position);
+			return seek(spriteV2.position);
 		}else{
 			//look ahead time is proportional to the distance from parent to target
 			//it's inversly proportional to the sum of the velocities.
-			double lookAheadTime = toTarget.length() / (parent.getMaxSpeed() + target.getMaxSpeed());
+			double lookAheadTime = toTarget.length() / (parent.getMaxSpeed() + spriteV2.getMaxSpeed());
 			
 			//seek to the future position
-			return seek(target.velocity.scalarMult(lookAheadTime).plus(target.position));
+			return seek(spriteV2.velocity.scalarMult(lookAheadTime).plus(spriteV2.position));
 		}
 	}
 	
 	/** Evade behavior */
-	public Vector2D evade(Sprite pursuer){
+	public Vector2D evade(SpriteV2 pursuer){
 		Vector2D toPursuer = pursuer.position.minus(parent.position);
 		double lookAheadTime = toPursuer.length() / (parent.getMaxSpeed() + pursuer.getMaxSpeed());
 		return flee(pursuer.velocity.scalarMult(lookAheadTime).plus(pursuer.position));
@@ -129,6 +131,7 @@ public class SteeringBehaviorsV2 {
 		Vector2D targetWorld = new Vector2D(pre_worldTarget.x, pre_worldTarget.y);
 		//done translating to world space.
 		Vector2D newVel = targetWorld.minus(parent.position);
+		newVel.truncate(parent.maxForce);
 		return newVel;
 		
 		/*
@@ -195,7 +198,7 @@ public class SteeringBehaviorsV2 {
 	}
 	
 	//interpose behavior
-	public Vector2D interpose(Sprite s1, Sprite s2){
+	public Vector2D interpose(SpriteV2 s1, SpriteV2 s2){
 		//figure out where they'll be in the future.
 		Vector2D midPoint = s1.position.plus(s2.position).scalarDiv(2);
 		double timeToReachMidPoint = Vector2D.distance(parent.position.x, parent.position.y, midPoint.x, midPoint.y) / parent.getMass();
@@ -212,7 +215,7 @@ public class SteeringBehaviorsV2 {
 	}
 	
 	//offsetpursuit behavior
-	public Vector2D offsetPursuit(Sprite leader, Vector2D offset){
+	public Vector2D offsetPursuit(SpriteV2 leader, Vector2D offset){
 
 		//here is out translate to world space code
 		maths.Vector2D offset_maths = new maths.Vector2D(offset.x, offset.y);
@@ -224,7 +227,7 @@ public class SteeringBehaviorsV2 {
 		
 		Vector2D toOffset = worldOffsetPos.minus(parent.position);
 		//look ahead time is proportional to the distance between leader and puruer.
-		double lookAheadTime = toOffset.length() /(parent.getMaxSpeed() + leader.dMaxSpeed);
+		double lookAheadTime = toOffset.length() /(parent.getMaxSpeed() + leader.getMaxSpeed());
 		Vector2D newVel = arrive(leader.velocity.scalarMult(lookAheadTime).plus(worldOffsetPos), Deceleration.FAST);
 		//Vector2D newVel = arrive(worldOffsetPos.plus(leader.velocity).scalarMult(lookAheadTime), Deceleration.FAST);
 		return newVel;

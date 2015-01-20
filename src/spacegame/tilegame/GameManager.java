@@ -3,6 +3,7 @@ package spacegame.tilegame;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.geom.Ellipse2D;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -178,6 +179,10 @@ public class GameManager extends GameCore {
         }
         
         if(sndPlayerTurret.isPressed()){
+        	ShipV2 s = new ShipV2(this.resourceManager, 1);
+        	s.setPosition(getMap().getPlayer().getPosition().plus(new Vector2D(50, 50)));
+        	map.addSpriteV2(s);
+        	/* old way to add an ai ship
         	if(!map.getAIShips().isEmpty()){
         		Ship player2 = map.getAIShips().get(0);
             	if(player2 != null){
@@ -188,6 +193,7 @@ public class GameManager extends GameCore {
             		getMap().addSprite(t);
             	}
         	}
+        	*/
         }
         
         if (configAction.isPressed()) {
@@ -277,6 +283,12 @@ public class GameManager extends GameCore {
             	//player.setX(100);
             	//player.setY(100);
             	player.setPosition(new Vector2D(100,100));
+            	//remove all spritev2, except the first one, and place it at player coords
+            	SpriteV2 s = map.getSpriteV2().get(0);
+            	map.setSpriteV2s(new ArrayList<SpriteV2>());
+            	s.setPosition(player.getPosition());
+            	s.setVelocity(new Vector2D(0,0));
+            	map.addSpriteV2(s);
                //createProjectile(player);
             }
             if(laser.isPressed()) {
@@ -703,6 +715,7 @@ public boolean isCollision(Laser s1, Turret s2) {
         // update player
        // updateShip(player, elapsedTime);
         player.update(elapsedTime);
+        map.updateSpriteV2(elapsedTime);
         
         // spritev2 test
         //this.getMap().getSpriteV2().get(0).update(elapsedTime);

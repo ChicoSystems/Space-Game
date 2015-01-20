@@ -31,7 +31,7 @@ public abstract class SpriteV2 {
 		 this.parent = parent;
 		 mass = 2;
 		 maxForce = 1;
-		 maxSpeed = 50;
+		 maxSpeed = 10;
 		 maxTurnRate = 1;
 		 currentForce = new Vector2D(0, 0);
 		 currentAcceleration = new Vector2D(0, 0);

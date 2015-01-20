@@ -46,7 +46,7 @@ public class PlayerLocManager implements LocationManager {
 	public Vector2D calculate(double elapsedTime) {
 		Vector2D returnVector = new Vector2D(inputVector.x, inputVector.y); 
 		inputVector = new Vector2D(0,0);
-		System.out.println(inputVector.length());
+		//System.out.println(inputVector.length());
 		
 		return returnVector;
 	}
