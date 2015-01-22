@@ -103,7 +103,7 @@ public class PlayerLocManager implements LocationManager {
 				double pRadius = p.circle.getBounds().height/2;
 				
 				//this part allow the ship to settle into the planet and stop
-				if(distance > 35 && distance < pRadius){ // don't calculate if too close, or too far
+				if(distance > 35 && distance < pRadius-150){ // don't calculate if too close, or too far
 					Vector2D preForce = new Vector2D(0,0);
 					preForce = (pCenter.minus(sCenter));
 					preForce = preForce.scalarMult(g * pMass * sMass);

@@ -10,6 +10,7 @@ public abstract class SpriteV2 {
 	protected Vector2D currentAcceleration;
 	protected Vector2D velocity;
     protected Vector2D position;
+    protected Vector2D oldPosition;
     protected Vector2D heading;
     protected Vector2D oldHeading;
     // Angular components
@@ -36,6 +37,7 @@ public abstract class SpriteV2 {
 		 currentForce = new Vector2D(0, 0);
 		 currentAcceleration = new Vector2D(0, 0);
 	     velocity = new Vector2D(0, 0);
+	     position = new Vector2D(0, 0);
 	     position = new Vector2D(0, 0);
 	     heading = new Vector2D(0, 1);
 	     side = new Vector2D(0,1);
@@ -71,7 +73,16 @@ public abstract class SpriteV2 {
 	}
 
 	public void setPosition(Vector2D position) {
+		oldPosition = this.position;
 		this.position = position;
+	}
+	
+	public Vector2D getOldPosition() {
+		return oldPosition;
+	}
+
+	public void setOldPosition(Vector2D newOldPosition) {
+		oldPosition = newOldPosition;
 	}
 
 	public Vector2D getHeading() {

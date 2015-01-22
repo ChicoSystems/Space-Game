@@ -711,23 +711,9 @@ public boolean isCollision(Laser s1, Turret s2) {
 
         // get keyboard/mouse input
         checkInput(elapsedTime);
-
-        // update player
-       // updateShip(player, elapsedTime);
+        checkCollisions(elapsedTime);
         player.update(elapsedTime);
         map.updateSpriteV2(elapsedTime);
-        
-        // spritev2 test
-        //this.getMap().getSpriteV2().get(0).update(elapsedTime);
-        
-        /* ai ships are going to be represented in the main sprite list
-        for(int i = 0; i < map.getAIShips().size(); i++){
-        	Ship player2 = null;
-        	player2 = map.getAIShips().get(i);
-        	//if(player2 != null)updateShip(player2, elapsedTime);
-            if(player2 != null) player2.update(elapsedTime);
-        }
-        */
         
         
         //updateLasers(); // not worrying about lasers right now
@@ -749,9 +735,35 @@ public boolean isCollision(Laser s1, Turret s2) {
             // normal update
             sprite.update(elapsedTime);
         }
+
+
+}
+
+    private void checkCollisions(long elapsedTime) {
+		//main player collision
+    	ShipV2 player = (ShipV2) map.getPlayer();
+    	ArrayList<Planet>planets = map.getPlanets();
+		checkShipToPlanetsCollision(player, planets);
+	}
+    
+    private void checkShipToPlanetsCollision(ShipV2 player, ArrayList<Planet>p){
+    	for(int i = 0; i < p.size();i++){
+    		Planet planet = p.get(i);
+    		if(player.getPosition().x >= planet.getPosition().x && 
+    		   player.getPosition().x <= (planet.getPosition().x + planet.getWidth()) &&
+    		   player.getPosition().y >= planet.getPosition().y &&
+    		   player.getPosition().y <= (planet.getPosition().y + planet.getHeight())){
+    			collideShipToPlanet(player, planet);
+    		}
+    	}
+    }
+    
+    private void collideShipToPlanet(ShipV2 player, Planet planet){
+    	player.setVelocity(new Vector2D(0,0));
     }
 
-    //updates one end of each laser too follow it's parent.
+
+	//updates one end of each laser too follow it's parent.
     private void updateLasers(){
     	Iterator l = map.getLasers();
     	Laser laser;

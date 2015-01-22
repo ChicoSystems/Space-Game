@@ -18,7 +18,7 @@ public class AILocManager implements LocationManager {
 
 	@Override
 	public Vector2D calculate(double elapsedTime) {
-		inputVector = inputVector.plus(steering.evade(parent.getParent().parent.getMap().getPlayer()));
+		inputVector = inputVector.plus(steering.seek(parent.getParent().parent.getMap().getPlayer().getPosition()));
 		//inputVector = inputVector.plus(steering.wander());
 		//System.out.println("inputVecot.length "+inputVector.length());
 		Vector2D returnVector = new Vector2D(inputVector.x, inputVector.y); 

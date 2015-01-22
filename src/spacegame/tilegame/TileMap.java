@@ -310,6 +310,14 @@ public class TileMap {
 		spritev2 = arrayList;
 	}
 
+	public ArrayList<Planet>getPlanets() {
+		ArrayList<Planet>p = new ArrayList<Planet>();
+		for(int i = 0; i < sprites.size(); i++){
+			if(sprites.get(i) instanceof Planet)p.add((Planet) sprites.get(i));
+		}
+		return p;
+	}
+
 
 	
 
