@@ -1,5 +1,6 @@
 package spacegame.tilegame;
 
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
@@ -28,7 +29,7 @@ public class TileMap {
     private Image[][] tiles;
     private LinkedList sprites;
     private ArrayList <Laser> lasers;
-    private Ship player;
+    private SpriteV2 player;
     private ArrayList <Ship> aiShips;
     private ArrayList <SpriteV2> spritev2;
 
@@ -101,7 +102,7 @@ public class TileMap {
     /**
         Gets the player Sprite.
     */
-    public Ship getPlayer() {
+    public SpriteV2 getPlayer() {
         return player;
     }
 
@@ -109,7 +110,7 @@ public class TileMap {
     /**
         Sets the player Sprite.
     */
-    public void setPlayer(Ship player) {
+    public void setPlayer(SpriteV2 player) {
         this.player = player;
     }
     
@@ -287,6 +288,34 @@ public class TileMap {
 		
 				float distance = (float) Math.sqrt(((x2-x1)*(x2-x1)) + ((y2-y1)*(y2-y1)));
 				return distance;
+	}
+
+	/**
+	 * Updates all the new sprites
+	 * @param elapsedTime
+	 */
+	public void updateSpriteV2(long elapsedTime) {
+		for(int i = 0; i < spritev2.size(); i++){
+			spritev2.get(i).update(elapsedTime);
+		}
+	}
+
+	public void drawSprites(Graphics2D g, int offsetX, int offsetY) {
+		for(int i = 0; i < spritev2.size(); i++){
+			spritev2.get(i).drawSprite(g, offsetX, offsetY);
+		}
+	}
+
+	public void setSpriteV2s(ArrayList<SpriteV2> arrayList) {
+		spritev2 = arrayList;
+	}
+
+	public ArrayList<Planet>getPlanets() {
+		ArrayList<Planet>p = new ArrayList<Planet>();
+		for(int i = 0; i < sprites.size(); i++){
+			if(sprites.get(i) instanceof Planet)p.add((Planet) sprites.get(i));
+		}
+		return p;
 	}
 
 

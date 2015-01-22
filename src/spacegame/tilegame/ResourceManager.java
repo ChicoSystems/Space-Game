@@ -320,16 +320,18 @@ public class ResourceManager {
     	Animation a = parent.resourceManager.createPlanetAnim((Image)parent.resourceManager.planetImages.get(0));
 		animation[0] = (Animation) a;
 		
+		/*// remove former player unit
         Ship player = new Ship(this, animation);
         player.setX(TileMapRenderer.tilesToPixels(newMap.getWidth()/2));
         player.setY(TileMapRenderer.tilesToPixels(newMap.getHeight()/2));
         newMap.setPlayer(player);
+        */
        // System.out.println("Add Player: " + player.toString() + " " + player.getWidth() + " " + player.getHeight());
 
         //add a SpriteV2 test
-        ShipV2 shipV2 = new ShipV2(this, 0);
-        shipV2.setPosition(player.getPosition().plus(new Vector2D(25, 25)));
-        newMap.addSpriteV2(shipV2);
+        ShipV2 player = new ShipV2(this, 0);
+        player.setPosition(new Vector2D(250, 250));
+        newMap.setPlayer(player);
         
         addSprite(newMap, planetSprites.get(1), 0, 0);
         return newMap;

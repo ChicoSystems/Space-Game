@@ -97,7 +97,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 		
 		 inputs = new ArrayList();
 	     tabbedMainMenu = createMainMenu();
-	     tabbedShipMenu = createShipMenu();
+	     //tabbedShipMenu = createShipMenu(); // worry about this later
 	     tabbedBuildMenu = createBuildMenu();
 	     displayMainMenu = false;
 	     //keep menus from flickering
@@ -122,8 +122,8 @@ public class MainMenu implements ActionListener, ChangeListener{
 	     screen.getFullScreenWindow().getLayeredPane().add(tabbedMainMenu,
 	         JLayeredPane.MODAL_LAYER);
 	     
-	     screen.getFullScreenWindow().getLayeredPane().add(tabbedShipMenu,
-		         JLayeredPane.MODAL_LAYER);
+	    // screen.getFullScreenWindow().getLayeredPane().add(tabbedShipMenu,
+		  //       JLayeredPane.MODAL_LAYER);
 	     
 	     screen.getFullScreenWindow().getLayeredPane().add(tabbedBuildMenu,
 		         JLayeredPane.MODAL_LAYER);
@@ -304,6 +304,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 	}
 	
 	public void updateShipSliders(JPanel sliderMenu){
+		/* worry about this later
 		
 		JLabel label = ((JLabel)sliderMenu.getComponent(0));
 		ShipSlider slider = ((ShipSlider)sliderMenu.getComponent(1));
@@ -336,11 +337,12 @@ public class MainMenu implements ActionListener, ChangeListener{
 		double hitPoints = parent.getMap().getPlayer().getHitpoints();
 		label.setText("Hit Points: " + hitPoints);
 		
-		
+		*/
 	}
 	
-	private JSlider createShipSlider(String s){
-		
+	private JSlider createShipSlider(String s){ 
+		return null;
+		/* worry about this later
 		if(s.equals("power")){
 			ShipSlider powerSlider;
 			powerSlider = new ShipSlider("power", Ship.POWER_MIN, 
@@ -422,6 +424,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 			totalPowerSlider.setDoubleBuffered(true);
 			return totalPowerSlider;
 		}
+		*/
 	}
 
 	public void setMenuLocation(JTabbedPane menu, int x, int y){
@@ -498,16 +501,19 @@ public class MainMenu implements ActionListener, ChangeListener{
 	        }
 	        
 	        if(e.getSource() == sndPlayerButton){
+	        	/* gonna change this soon
 	        	Animation[] animation = new Animation[1];
 	        	Animation a = parent.resourceManager.createPlanetAnim((Image)parent.resourceManager.planetImages.get(0));
 	    		animation[0] = (Animation) a;
 	    		
 	            AIShip player2 = new AIShip(parent.resourceManager, animation);
 	            player2.setHitpoints(500);
-	            player2.setX(parent.getMap().getPlayer().getX()+100);
-	            player2.setY(parent.getMap().getPlayer().getY()+100);
+	            player2.setX(parent.getMap().getPlayer().getPosition().x+100);
+	            player2.setY(parent.getMap().getPlayer().getPosition().y+100);
 	            parent.getMap().getAIShips().add(player2);
 	        	//parent.getMap().setPlayer2(player2);
+	        	 * 
+	        	 */
 	        }
 	        
 	        parent.screen.getFullScreenWindow().requestFocus();
@@ -515,6 +521,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 	}
 	
 	public void addTurret(){
+		/* Worry about hsi later
 		float x = parent.getMap().getPlayer().getX();//-parent.renderer.offX;
     	float y = parent.getMap().getPlayer().getY();//-parent.renderer.offY;
     	Animation[] animation = new Animation[1];
@@ -532,10 +539,12 @@ public class MainMenu implements ActionListener, ChangeListener{
     	
     	
     	//System.out.println(x + ":" +y);
+	*/
 	}
 	
 	@Override
 	public void stateChanged(ChangeEvent e) {
+		/* worry about this later
 		ShipSlider source = (ShipSlider)e.getSource();
 		if (!source.getValueIsAdjusting()) {
 			if(source.name.equals("power")){
@@ -557,7 +566,7 @@ public class MainMenu implements ActionListener, ChangeListener{
 				parent.getMap().getPlayer().setTotalPower(totalPower);
 			}
 	    }
-		
+		*/
 		parent.screen.getFullScreenWindow().requestFocus();
 	}
 	
