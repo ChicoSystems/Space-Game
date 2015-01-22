@@ -8,8 +8,12 @@ import java.awt.Graphics2D;
 import java.awt.Polygon;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
 
+import spacegame.graphics.GamePolygon;
 import spacegame.graphics.SpriteV2;
+import spacegame.input.AILocManager;
 import spacegame.input.LocationManager;
 import spacegame.input.PlayerLocManager;
 import spacegame.tilegame.ResourceManager;
@@ -20,8 +24,10 @@ import spacegame.util.Vector2D;
  * ship type 0 is player controlled, ship type 1 is ai controlled.
  */
 public class ShipV2 extends SpriteV2 {
-	public Ellipse2D.Double body;
+	GamePolygon body;
+	Ellipse2D.Double oldBody;
 	protected LocationManager locMan;
+	int type; //0 if player controlled
 
 	public LocationManager getLocMan() {
 		return locMan;
@@ -33,15 +39,29 @@ public class ShipV2 extends SpriteV2 {
 
 	public ShipV2(ResourceManager parent, int type) {
 		super(parent);
-		body = new Ellipse2D.Double();
+		this.type = type;
+		oldBody = new Ellipse2D.Double();
+		
+		body = new GamePolygon(position);
+		//body.
+		//body.translate((int)position.x, (int)position.x);
+		buildBody();
 		if(type == 0){
 			locMan = new PlayerLocManager(this);
 		}else{
-			locMan = new PlayerLocManager(this); // we'll need to change this line to an ai manager
+			locMan = new AILocManager(this); // we'll need to change this line to an ai manager
 		}	
+	}
+	
+	private void buildBody(){
+		body.addPoint(position.x+0, position.y+10);
+		body.addPoint(position.x-4.5, position.y-9.5);
+		body.addPoint(position.x-0, position.y-5);
+		body.addPoint(position.x+4.5, position.y-9.5);
 	}
 
 	protected void updateLocation(double elapsedTime) {
+		//oldPosition = position;
 		currentForce = locMan.calculate(elapsedTime); // Update the applied forces.
 		currentForce = currentForce.plus(locMan.calculateGravity(elapsedTime));
 		double forceReduction = 1; // makes orbits more graceful
@@ -70,9 +90,11 @@ public class ShipV2 extends SpriteV2 {
     	orientation = orientation % (Math.PI*2); // keep orientation under 360 degrees
     	heading.setPolar(1, orientation-Math.PI/2);
     	
-        position = position.plus(velocity); //Update position based on velocity.
-        
-        
+       // position = position.plus(velocity); //Update position based on velocity.
+        position.setLocation(position.plus(velocity));
+        body.updatePosition(position);
+        //body.translate((int)(position.x - oldPosition.x), (int)(position.y - oldPosition.y));
+        //body.
 	}
 
 	public void drawSprite(Graphics2D g, int offsetX, int offsetY) {
@@ -81,40 +103,54 @@ public class ShipV2 extends SpriteV2 {
 	    // Create a identity affine transform, and apply to the Graphics2D context
 	    AffineTransform identity = new AffineTransform();
 	    g.setTransform(identity);
+	    g.rotate(orientation, offsetX, offsetY);
+	   
+	    g.setTransform(saveTransform); //unrotate
 	    
-	    
-	    body = new Ellipse2D.Double(this.position.x, this.position.y, 25, 25);
-	    double middleX = (int)body.getX()+offsetX+(int)body.getWidth()/2;
-	    double middleY = (int)body.getY()+offsetY+(int)body.getHeight()/2;
+	   
+	    oldBody = new Ellipse2D.Double(this.position.x, this.position.y, 25, 25);
+	    double middleX = (int)oldBody.getX()+offsetX+(int)oldBody.getWidth()/2;
+	    double middleY = (int)oldBody.getY()+offsetY+(int)oldBody.getHeight()/2;
 	    Vector2D endLine = new Vector2D(middleX, middleY + 50);
 	    g.rotate(orientation, middleX, middleY);
-	    g.setColor(Color.blue);
-	    g.fillArc((int)body.getX()+offsetX, (int)body.getY()+offsetY, (int)body.getWidth(), (int)body.getHeight(), 0, 360);
-	    g.drawLine((int)body.getX()+offsetX, (int)body.getY()+offsetY, (int)body.getX()+offsetX+25, (int)body.getY()+offsetY);
-	    g.setColor(Color.RED);
-	    g.drawLine((int)middleX, (int)middleY, (int)endLine.x, (int)endLine.y);
-	    g.setColor(Color.white);
-	    g.fillArc((int)middleX, (int)middleY, 4, 4, 0, 360);
+	    
+	    //g.setColor(Color.blue);
+	    //g.fillArc((int)oldBody.getX()+offsetX, (int)oldBody.getY()+offsetY, (int)oldBody.getWidth(), (int)oldBody.getHeight(), 0, 360);
+	    //g.drawLine((int)oldBody.getX()+offsetX, (int)oldBody.getY()+offsetY, (int)oldBody.getX()+offsetX+25, (int)oldBody.getY()+offsetY);
+	    //g.setColor(Color.RED);
+	    //g.drawLine((int)middleX, (int)middleY, (int)endLine.x, (int)endLine.y);
+	    //g.setColor(Color.white);
+	    //g.fillArc((int)middleX, (int)middleY, 4, 4, 0, 360);
+	    body.drawGamePolygon(g, offsetX, offsetY);
 	    g.setTransform(saveTransform); //unrotate
 	    drawTestGui(g);
+	    
 	}
 	
+	
+
 	/** Clones this Sprite. Does not clone position or velocity info. */
 	public Object clone(ResourceManager p, int type) {
 	    return new ShipV2(p, type);
 	}
 	
 	public void drawTestGui(Graphics2D g){
-		g.drawString("input: "+ ((PlayerLocManager)locMan).inputVector, 5, 25);
-		g.drawString("force: "+ currentForce, 5, 50	);
-		g.drawString("accel: "+ currentAcceleration, 5, 75	);
-		g.drawString("veloc: "+ velocity, 5, 100	);
-		g.drawString("posit: "+ position, 5, 125	);
-		g.drawString("torqu: "+ torque, 5, 150);
-		g.drawString("angAC: "+ angularAcceleration, 5, 175);
-		g.drawString("angVL: "+ angularVelocity, 5, 200);
-		g.drawString("orien: "+ orientation*180/Math.PI, 5, 225);
-		g.drawString("headi: "+ heading, 5, 250);
+		if(this.type != 1){
+			//g.drawString("input: "+ ((PlayerLocManager)locMan).inputVector, 5, 25);
+			/*
+			g.drawString("force: "+ currentForce, 5, 50	);
+			g.drawString("accel: "+ currentAcceleration, 5, 75	);
+			g.drawString("veloc: "+ velocity, 5, 100	);
+			g.drawString("posit: "+ position, 5, 125	);
+			g.drawString("torqu: "+ torque, 5, 150);
+			g.drawString("angAC: "+ angularAcceleration, 5, 175);
+			g.drawString("angVL: "+ angularVelocity, 5, 200);
+			g.drawString("orien: "+ orientation*180/Math.PI, 5, 225);
+			g.drawString("headi: "+ heading, 5, 250);*/
+			//g.drawString("Poly position " + body.xpoints[0] + ":"+ body.ypoints[0], 5, 50	);
+			
+		}
+		
 	}
 	
 	public void pressMoveLeft(){
@@ -142,11 +178,11 @@ public class ShipV2 extends SpriteV2 {
 	}
 	
 	public double getWidth(){
-		return body.width;
+		return body.getWidth();
 	}
 	
 	public double getHeight(){
-		return body.height;
+		return body.getHeight();
 	}
 
 	
